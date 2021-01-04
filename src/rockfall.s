@@ -1,32 +1,39 @@
           *= $4000
-        
-sprite0 = $7f8
-enable  = $d015
-color0  = $d027
-sp0x    = $d000
-sp0y    = $d001
-msbx    = $d010
-jstick  = $dc00
-shouse  = $0340
 
-        jsr $e544
-        lda #$0d
+v       = 53248 ;
+clear   = $e544 ; clear screen       
+enable  = $d015 ; 53269 enable sprites
+enablem = $d01C ; 53276 enable multi-color sprites
+sprite0 = $7f8  ; 2040
+color0  = $d027 ; 53287
+sp0x    = $d000 ; 53248
+sp0y    = $d001 ; 53249
+msbx    = $d010 ; 53264 horizontal high bit
+jstick  = $dc00 ; 56320
+
+shouse  = $0340 ; 832
+
+
+setup   jsr clear
+        lda #$0e
+        sta 53280
+        sta 53281
+        lda #$0d    ; block 13
         sta sprite0
-        lda #1
-        sta enable
-        lda #2
-        sta color0
-        ldx #0
-        lda #0
-        
-cleanup sta shouse,x
-        inx
-        cpx #63
-        bne cleanup
-        ldx #0
         lda #$ff
+        sta enable
+        lda #$ff
+        sta enablem
+        lda #$00     ; black
+        sta color0
+        lda #$02    ; sprite multicolor 1 (red)
+        sta $d025
+        lda #$0f    ; sprite multicolor 2 (light grey)
+        sta $d026
+        ldx #0
 
-build   sta shouse,x
+build   lda databoyr,x
+        sta shouse,x
         inx
         cpx #63
         bne build
@@ -86,11 +93,24 @@ pause   iny
         bne pause
         jmp main        
         
-        rts                
-                
-                 
-        
-    
-    
+        rts                    
 
+
+databoyr .byte $00,$aa,$00,$02,$be,$80,$0a,$bf
+         .byte $c0,$0b,$be,$c0,$0b,$be,$f0,$0b
+         .byte $ff,$c0,$0b,$ff,$c0,$02,$fa,$00
+         .byte $00,$3f,$00,$01,$be,$40,$01,$69
+         .byte $40,$03,$55,$c0,$03,$55,$c0,$03
+         .byte $55,$c0,$00,$55,$00,$01,$69,$40
+         .byte $01,$41,$40,$05,$41,$50,$0f,$c3
+         .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80
+
+databoyl .byte $00,$aa,$00,$02,$be,$80,$03,$fe
+         .byte $a0,$03,$be,$e0,$0f,$be,$e0,$03
+         .byte $ff,$e0,$03,$ff,$e0,$00,$af,$80
+         .byte $00,$fc,$00,$01,$be,$40,$01,$69
+         .byte $40,$03,$55,$c0,$03,$55,$c0,$03
+         .byte $55,$c0,$00,$55,$00,$01,$69,$40
+         .byte $01,$41,$40,$05,$41,$50,$0f,$c3
+         .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80        
 
