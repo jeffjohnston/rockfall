@@ -1,22 +1,27 @@
           *= $4000
 
-v       = 53248 ;
-clear   = $e544 ; clear screen       
-enable  = $d015 ; 53269 enable sprites
-enablem = $d01C ; 53276 enable multi-color sprites
-sprite0 = $7f8  ; 2040
-color0  = $d027 ; 53287
-sp0x    = $d000 ; 53248
-sp0y    = $d001 ; 53249
-msbx    = $d010 ; 53264 horizontal high bit
-jstick  = $dc00 ; 56320
+v           = 53248 ;
+leftedge    = $4001 ; detect left edge
+rightedge   = $4002 ; detect right edge
+topedge     = $4003 ; detect top edge
+bottomedge  = $4004 ; detect bottom edge
+clear       = $e544 ; clear screen       
+enable      = $d015 ; 53269 enable sprites
+enablem     = $d01C ; 53276 enable multi-color sprites
+sprite0     = $7f8  ; 2040
+color0      = $d027 ; 53287
+sp0x        = $d000 ; 53248
+sp0y        = $d001 ; 53249
+msbx        = $d010 ; 53264 most significant high bit x-coord
+jstick      = $dc00 ; 56320
 
-shouse  = $0340 ; 832
+shouse      = $0340 ; 832
 
 
 setup   jsr clear
-        lda #$0e
+        lda #$00
         sta 53280
+        lda #$06
         sta 53281
         lda #$0d    ; block 13
         sta sprite0
@@ -39,10 +44,10 @@ build   lda databoyr,x
         bne build
         lda #0
         sta msbx
-        ldx #100
-        lda #70
+        ldx #25
         stx sp0x
-        sta sp0y
+        ldy #51
+        sty sp0y
         
 main    lda jstick
         and #15
@@ -56,7 +61,12 @@ main    lda jstick
         beq down
         jmp main
         
-right   ldx sp0x
+right   jsr rightedgefunc ; detect if hit right edge
+        lda rightedge
+        cmp #1
+        beq main
+
+        ldx sp0x
         inx
         cpx #255
         bne movex
@@ -64,7 +74,12 @@ right   ldx sp0x
         sta msbx
         jmp movex
         
-left    ldx sp0x
+left    jsr leftedgefunc ; detect if hit left edge
+        lda leftedge
+        cmp #1
+        beq main
+        
+        ldx sp0x
         dex
         cpx #255
         bne movex
@@ -72,11 +87,21 @@ left    ldx sp0x
         sta msbx
         jmp movex
         
-up      ldx sp0y
+up      jsr topedgefunc ; detect if hit top edge
+        lda topedge
+        cmp #1
+        beq main
+
+        ldx sp0y
         dex
         jmp movey
         
-down    ldx sp0y
+down    jsr bottomedgefunc ; detect if hit bottom edge
+        lda bottomedge
+        cmp #1
+        beq main
+
+        ldx sp0y
         inx
         jmp movey
         
@@ -91,9 +116,73 @@ movey   stx sp0y
 pause   iny
         cpy #255
         bne pause
-        jmp main        
+        jmp main    
         
-        rts                    
+; -------- function to detect left edge --------
+        
+leftedgefunc lda #0
+             sta leftedge
+             lda msbx
+             cmp #0
+             beq leftedge0
+             rts
+           
+leftedge0    ldx sp0x
+             cpx #25
+             beq hitleftedge
+             rts
+                  
+hitleftedge  lda #1
+             sta leftedge
+             rts                      
+        
+; -------- function to detect right edge --------
+        
+rightedgefunc lda #0
+              sta rightedge
+              lda msbx
+              cmp #1
+              beq rightedge1
+              rts
+           
+rightedge1    ldx sp0x
+              cpx #63
+              beq hitrightedge
+              rts
+                  
+hitrightedge  lda #1
+              sta rightedge
+              rts                      
+        
+; -------- function to detect top edge --------
+        
+topedgefunc lda #0
+            sta topedge
+            ldx sp0y
+            cpx #51
+            beq hittopedge
+            rts           
+                  
+hittopedge  lda #1
+            sta topedge
+            rts                      
+
+; -------- function to detect bottom edge --------
+        
+bottomedgefunc lda #0
+               sta bottomedge
+               ldx sp0y
+               cpx #228
+               beq hitbottomedge
+               rts           
+                  
+hitbottomedge  lda #1
+               sta bottomedge
+               rts                      
+        
+; -------- end game --------
+                
+end     rts                    
 
 
 databoyr .byte $00,$aa,$00,$02,$be,$80,$0a,$bf
