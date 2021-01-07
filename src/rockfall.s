@@ -1,4 +1,4 @@
-          *= $4000
+            *= $4000
 
 v           = 53248 ;
 leftedge    = $4001 ; detect left edge
@@ -13,7 +13,7 @@ color0      = $d027 ; 53287
 sp0x        = $d000 ; 53248
 sp0y        = $d001 ; 53249
 msbx        = $d010 ; 53264 most significant high bit x-coord
-jstick      = $dc00 ; 56320
+jstick      = $dc01 ; 56321 joystick 1
 
 shouse      = $0340 ; 832
 
@@ -50,14 +50,14 @@ build   lda databoyr,x
         sty sp0y
         
 main    lda jstick
-        and #15
-        cmp #7
+        eor #255
+        cmp #8
         beq right
-        cmp #11
+        cmp #4
         beq left
-        cmp #14
+        cmp #1
         beq up
-        cmp #13
+        cmp #2
         beq down
         jmp main
         
