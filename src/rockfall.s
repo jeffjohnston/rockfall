@@ -68,11 +68,11 @@ right   jsr rightedgefunc ; detect if hit right edge
 
         ldx sp0x
         inx
-        cpx #255
-        bne movex
-        lda #1
-        sta msbx
-        jmp movex
+        stx sp0x
+        
+        jsr pause
+        jsr testScreenX1
+        jmp main
         
 left    jsr leftedgefunc ; detect if hit left edge
         lda leftedge
@@ -81,11 +81,11 @@ left    jsr leftedgefunc ; detect if hit left edge
         
         ldx sp0x
         dex
-        cpx #255
-        bne movex
-        lda #0
-        sta msbx
-        jmp movex
+        stx sp0x
+        
+        jsr pause
+        jsr testScreenX0
+        jmp main
         
 up      jsr topedgefunc ; detect if hit top edge
         lda topedge
@@ -94,7 +94,10 @@ up      jsr topedgefunc ; detect if hit top edge
 
         ldx sp0y
         dex
-        jmp movey
+        stx sp0y
+        
+        jsr pause
+        jmp main
         
 down    jsr bottomedgefunc ; detect if hit bottom edge
         lda bottomedge
@@ -103,20 +106,42 @@ down    jsr bottomedgefunc ; detect if hit bottom edge
 
         ldx sp0y
         inx
-        jmp movey
+        stx sp0y
         
-movex   stx sp0x
-        ldy #0
-        jmp pause
+        jsr pause
+        jmp main
         
-movey   stx sp0y
-        ldy #0
-        jmp pause
+; -------- subroutine to set the high bit to 1 if needed --------
+
+testScreenX1 ldx sp0x
+             cpx #255
+             beq moveHighBit1
+             rts
+             
+moveHighBit1 lda #1
+             sta msbx
+             rts
+
+; -------- subroutine to set the high bit to 0 if needed --------
+
+testScreenX0 ldx sp0x
+             cpx #255
+             beq moveHighBit0
+             rts
+             
+moveHighBit0 lda #0
+             sta msbx
+             rts
         
-pause   iny
-        cpy #255
-        bne pause
-        jmp main    
+; -------- subroutine to pause motion --------
+        
+pause    ldy #0
+         jsr pause255
+
+pause255 iny
+         cpy #255
+         bne pause255
+         rts
         
 ; -------- function to detect left edge --------
         
