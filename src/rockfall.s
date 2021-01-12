@@ -1,10 +1,10 @@
             *= $4000
 
 v           = 53248 ;
-leftedge    = $4001 ; detect left edge
-rightedge   = $4002 ; detect right edge
-topedge     = $4003 ; detect top edge
-bottomedge  = $4004 ; detect bottom edge
+leftEdge    = $4001 ; detect left edge
+rightEdge   = $4002 ; detect right edge
+topEdge     = $4003 ; detect top edge
+bottomEdge  = $4004 ; detect bottom edge
 clear       = $e544 ; clear screen       
 enable      = $d015 ; 53269 enable sprites
 enablem     = $d01C ; 53276 enable multi-color sprites
@@ -61,8 +61,8 @@ main    lda jstick
         beq down
         jmp main
         
-right   jsr rightedgefunc ; detect if hit right edge
-        lda rightedge
+right   jsr rightEdgeFunc ; detect if hit right edge
+        lda rightEdge
         cmp #1
         beq main
 
@@ -74,8 +74,8 @@ right   jsr rightedgefunc ; detect if hit right edge
         jsr testScreenX1
         jmp main
         
-left    jsr leftedgefunc ; detect if hit left edge
-        lda leftedge
+left    jsr leftEdgeFunc ; detect if hit left edge
+        lda leftEdge
         cmp #1
         beq main
         
@@ -87,8 +87,8 @@ left    jsr leftedgefunc ; detect if hit left edge
         jsr testScreenX0
         jmp main
         
-up      jsr topedgefunc ; detect if hit top edge
-        lda topedge
+up      jsr topEdgeFunc ; detect if hit top edge
+        lda topEdge
         cmp #1
         beq main
 
@@ -99,8 +99,8 @@ up      jsr topedgefunc ; detect if hit top edge
         jsr pause
         jmp main
         
-down    jsr bottomedgefunc ; detect if hit bottom edge
-        lda bottomedge
+down    jsr bottomEdgeFunc ; detect if hit bottom edge
+        lda bottomEdge
         cmp #1
         beq main
 
@@ -145,64 +145,64 @@ pause255 iny
         
 ; -------- function to detect left edge --------
         
-leftedgefunc lda #0
-             sta leftedge
+leftEdgeFunc lda #0
+             sta leftEdge
              lda msbx
              cmp #0
-             beq leftedge0
+             beq leftEdge0
              rts
            
-leftedge0    ldx sp0x
+leftEdge0    ldx sp0x
              cpx #25
-             beq hitleftedge
+             beq hitLeftEdge
              rts
                   
-hitleftedge  lda #1
-             sta leftedge
+hitLeftEdge  lda #1
+             sta leftEdge
              rts                      
         
 ; -------- function to detect right edge --------
         
-rightedgefunc lda #0
-              sta rightedge
+rightEdgeFunc lda #0
+              sta rightEdge
               lda msbx
               cmp #1
-              beq rightedge1
+              beq rightEdge1
               rts
            
-rightedge1    ldx sp0x
+rightEdge1    ldx sp0x
               cpx #63
-              beq hitrightedge
+              beq hitRightEdge
               rts
                   
-hitrightedge  lda #1
-              sta rightedge
+hitRightEdge  lda #1
+              sta rightEdge
               rts                      
         
 ; -------- function to detect top edge --------
         
-topedgefunc lda #0
-            sta topedge
+topEdgeFunc lda #0
+            sta topEdge
             ldx sp0y
             cpx #51
-            beq hittopedge
+            beq hitTopEdge
             rts           
                   
-hittopedge  lda #1
-            sta topedge
+hitTopEdge  lda #1
+            sta topEdge
             rts                      
 
 ; -------- function to detect bottom edge --------
         
-bottomedgefunc lda #0
-               sta bottomedge
+bottomEdgeFunc lda #0
+               sta bottomEdge
                ldx sp0y
                cpx #228
-               beq hitbottomedge
+               beq hitBottomEdge
                rts           
                   
-hitbottomedge  lda #1
-               sta bottomedge
+hitBottomEdge  lda #1
+               sta bottomEdge
                rts                      
         
 ; -------- end game --------
