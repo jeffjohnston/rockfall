@@ -93,7 +93,7 @@ right        jsr rightEdgeFunc
             
              jsr pause
              jsr testScreenX1
-             jmp main
+             jmp rightJmpMain
         
 rightJmpMain jmp main
         
@@ -110,7 +110,7 @@ left        jsr leftEdgeFunc
             
             jsr pause
             jsr testScreenX0
-            jmp main        
+            jmp leftJmpMain        
         
 leftJmpMain jmp main
         
@@ -126,7 +126,7 @@ up        jsr topEdgeFunc
           stx sp0y
         
           jsr pause
-          jmp main
+          jmp upJmpMain
         
 upJmpMain jmp main        
         
@@ -142,7 +142,7 @@ down        jsr bottomEdgeFunc
             stx sp0y
 
             jsr pause
-            jmp main
+            jmp downJmpMain
                 
 downJmpMain jmp main        
 
@@ -167,7 +167,8 @@ downRight        jsr bottomEdgeFunc
                  stx sp0y
                
                  jsr pause
-                 jmp main
+                 jsr testScreenX1
+                 jmp downRightJmpMain
                 
 downRightJmpMain jmp main        
 
@@ -192,7 +193,8 @@ downLeft        jsr bottomEdgeFunc
                 stx sp0y
                
                 jsr pause
-                jmp main
+                jsr testScreenX0
+                jmp downLeftJmpMain
                 
 downLeftJmpMain jmp main        
 
@@ -217,7 +219,8 @@ upRight        jsr topEdgeFunc
                stx sp0y
         
                jsr pause
-               jmp main
+               jsr testScreenX1
+               jmp upRightJmpMain
                 
 upRightJmpMain jmp main        
 
@@ -242,7 +245,8 @@ upLeft        jsr topEdgeFunc
               stx sp0y
         
               jsr pause
-              jmp main
+              jsr testScreenX0
+              jmp upLeftJmpMain
                 
 upLeftJmpMain jmp main        
         
