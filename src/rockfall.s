@@ -49,67 +49,202 @@ build   lda databoyr,x
         ldy #51
         sty sp0y
         
-main    lda jstick
-        eor #255
-        cmp #8
-        beq right
-        cmp #4
-        beq left
-        cmp #1
-        beq up
-        cmp #2
-        beq down
-        jmp main
+; -------- main --------
         
-right   jsr rightEdgeFunc ; detect if hit right edge
-        lda rightEdge
-        cmp #1
-        beq main
+main         lda jstick
+             eor #255
+             cmp #8
+             beq jmpRight
+             cmp #4
+             beq jmpLeft
+             cmp #1
+             beq jmpUp
+             cmp #2
+             beq jmpDown
+             cmp #10
+             beq jmpDownRight
+             cmp #6
+             beq jmpDownLeft
+             cmp #9
+             beq jmpUpRight
+             cmp #5
+             beq jmpUpLeft
+             jmp main
+        
+jmpRight     jmp right
+jmpLeft      jmp left
+jmpUp        jmp up
+jmpDown      jmp down
+jmpDownRight jmp downRight
+jmpDownLeft  jmp downLeft
+jmpUpRight   jmp upRight
+jmpUpLeft    jmp upLeft
+        
+; -------- move main character right --------
+        
+right        jsr rightEdgeFunc
+             lda rightEdge
+             cmp #1
+             beq rightJmpMain
 
-        ldx sp0x
-        inx
-        stx sp0x
+             ldx sp0x
+             inx
+             stx sp0x
+            
+             jsr pause
+             jsr testScreenX1
+             jmp main
         
-        jsr pause
-        jsr testScreenX1
-        jmp main
+rightJmpMain jmp main
         
-left    jsr leftEdgeFunc ; detect if hit left edge
-        lda leftEdge
-        cmp #1
-        beq main
+; -------- move main character left --------               
         
-        ldx sp0x
-        dex
-        stx sp0x
+left        jsr leftEdgeFunc
+            lda leftEdge
+            cmp #1
+            beq leftJmpMain
+            
+            ldx sp0x
+            dex
+            stx sp0x
+            
+            jsr pause
+            jsr testScreenX0
+            jmp main        
         
-        jsr pause
-        jsr testScreenX0
-        jmp main
+leftJmpMain jmp main
         
-up      jsr topEdgeFunc ; detect if hit top edge
-        lda topEdge
-        cmp #1
-        beq main
+; -------- move main character up --------               
+                
+up        jsr topEdgeFunc
+          lda topEdge
+          cmp #1
+          beq upJmpMain
 
-        ldx sp0y
-        dex
-        stx sp0y
+          ldx sp0y
+          dex
+          stx sp0y
         
-        jsr pause
-        jmp main
+          jsr pause
+          jmp main
         
-down    jsr bottomEdgeFunc ; detect if hit bottom edge
-        lda bottomEdge
-        cmp #1
-        beq main
+upJmpMain jmp main        
+        
+; -------- move main character down --------               
+                
+down        jsr bottomEdgeFunc
+            lda bottomEdge
+            cmp #1
+            beq downJmpMain
 
-        ldx sp0y
-        inx
-        stx sp0y
+            ldx sp0y
+            inx
+            stx sp0y
+
+            jsr pause
+            jmp main
+                
+downJmpMain jmp main        
+
+; -------- move main character down and to the right --------  
+
+downRight        jsr bottomEdgeFunc
+                 lda bottomEdge
+                 cmp #1
+                 beq downRightJmpMain
+                 
+                 jsr rightEdgeFunc
+                 lda rightEdge
+                 cmp #1
+                 beq downRightJmpMain
+                 
+                 ldx sp0x
+                 inx
+                 stx sp0x
+
+                 ldx sp0y
+                 inx
+                 stx sp0y
+               
+                 jsr pause
+                 jmp main
+                
+downRightJmpMain jmp main        
+
+; -------- move main character down and to the left --------  
+
+downLeft        jsr bottomEdgeFunc
+                lda bottomEdge
+                cmp #1
+                beq downLeftJmpMain
+                 
+                jsr leftEdgeFunc
+                lda leftEdge
+                cmp #1
+                beq downLeftJmpMain
+                 
+                ldx sp0x
+                dex
+                stx sp0x
+
+                ldx sp0y
+                inx
+                stx sp0y
+               
+                jsr pause
+                jmp main
+                
+downLeftJmpMain jmp main        
+
+; -------- move main character up and to the left --------  
+
+upRight        jsr topEdgeFunc
+               lda topEdge
+               cmp #1
+               beq upRightJmpMain
+
+               jsr rightEdgeFunc
+               lda rightEdge
+               cmp #1
+               beq upRightJmpMain
+          
+               ldx sp0x
+               inx
+               stx sp0x
+
+               ldx sp0y
+               dex
+               stx sp0y
         
-        jsr pause
-        jmp main
+               jsr pause
+               jmp main
+                
+upRightJmpMain jmp main        
+
+; -------- move main character up and to the left --------  
+
+upLeft        jsr topEdgeFunc
+              lda topEdge
+              cmp #1
+              beq upLeftJmpMain
+
+              jsr leftEdgeFunc
+              lda leftEdge
+              cmp #1
+              beq upLeftJmpMain
+          
+              ldx sp0x
+              dex
+              stx sp0x
+
+              ldx sp0y
+              dex
+              stx sp0y
+        
+              jsr pause
+              jmp main
+                
+upLeftJmpMain jmp main        
         
 ; -------- subroutine to set the high bit to 1 if needed --------
 
