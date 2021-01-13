@@ -61,24 +61,24 @@ main         lda jstick
              beq jmpUp
              cmp #2
              beq jmpDown
-             cmp #10
-             beq jmpDownRight
-             cmp #6
-             beq jmpDownLeft
              cmp #9
              beq jmpUpRight
              cmp #5
              beq jmpUpLeft
+             cmp #10
+             beq jmpDownRight
+             cmp #6
+             beq jmpDownLeft
              jmp main
         
 jmpRight     jmp right
 jmpLeft      jmp left
 jmpUp        jmp up
 jmpDown      jmp down
-jmpDownRight jmp downRight
-jmpDownLeft  jmp downLeft
 jmpUpRight   jmp upRight
 jmpUpLeft    jmp upLeft
+jmpDownRight jmp downRight
+jmpDownLeft  jmp downLeft
         
 ; -------- move main character right --------
         
@@ -113,7 +113,7 @@ left        jsr leftEdgeFunc
             jmp leftJmpMain        
         
 leftJmpMain jmp main
-        
+
 ; -------- move main character up --------               
                 
 up        jsr topEdgeFunc
@@ -144,7 +144,59 @@ down        jsr bottomEdgeFunc
             jsr pause
             jmp downJmpMain
                 
-downJmpMain jmp main        
+downJmpMain jmp main
+
+; -------- move main character up and to the right --------  
+
+upRight        jsr topEdgeFunc
+               lda topEdge
+               cmp #1
+               beq upRightJmpMain
+
+               jsr rightEdgeFunc
+               lda rightEdge
+               cmp #1
+               beq upRightJmpMain
+          
+               ldx sp0x
+               inx
+               stx sp0x
+
+               ldx sp0y
+               dex
+               stx sp0y
+        
+               jsr pause
+               jsr testScreenX1
+               jmp upRightJmpMain
+                
+upRightJmpMain jmp main        
+
+; -------- move main character up and to the left --------  
+
+upLeft        jsr topEdgeFunc
+              lda topEdge
+              cmp #1
+              beq upLeftJmpMain
+
+              jsr leftEdgeFunc
+              lda leftEdge
+              cmp #1
+              beq upLeftJmpMain
+          
+              ldx sp0x
+              dex
+              stx sp0x
+
+              ldx sp0y
+              dex
+              stx sp0y
+        
+              jsr pause
+              jsr testScreenX0
+              jmp upLeftJmpMain
+                
+upLeftJmpMain jmp main     
 
 ; -------- move main character down and to the right --------  
 
@@ -197,58 +249,7 @@ downLeft        jsr bottomEdgeFunc
                 jmp downLeftJmpMain
                 
 downLeftJmpMain jmp main        
-
-; -------- move main character up and to the left --------  
-
-upRight        jsr topEdgeFunc
-               lda topEdge
-               cmp #1
-               beq upRightJmpMain
-
-               jsr rightEdgeFunc
-               lda rightEdge
-               cmp #1
-               beq upRightJmpMain
-          
-               ldx sp0x
-               inx
-               stx sp0x
-
-               ldx sp0y
-               dex
-               stx sp0y
-        
-               jsr pause
-               jsr testScreenX1
-               jmp upRightJmpMain
-                
-upRightJmpMain jmp main        
-
-; -------- move main character up and to the left --------  
-
-upLeft        jsr topEdgeFunc
-              lda topEdge
-              cmp #1
-              beq upLeftJmpMain
-
-              jsr leftEdgeFunc
-              lda leftEdge
-              cmp #1
-              beq upLeftJmpMain
-          
-              ldx sp0x
-              dex
-              stx sp0x
-
-              ldx sp0y
-              dex
-              stx sp0y
-        
-              jsr pause
-              jsr testScreenX0
-              jmp upLeftJmpMain
-                
-upLeftJmpMain jmp main        
+   
         
 ; -------- subroutine to set the high bit to 1 if needed --------
 
