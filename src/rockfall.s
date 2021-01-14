@@ -15,41 +15,57 @@ sp0y        = $d001 ; 53249
 msbx        = $d010 ; 53264 most significant high bit x-coord
 jstick      = $dc01 ; 56321 joystick 1
 
-shouse      = $0340 ; 832
+mainRightImg = $2c0 ; 704 block 11
+mainLeftImg  = $340 ; 832 block 13
 
+; -------- setup --------
 
-setup   jsr clear
-        lda #$00
-        sta 53280
-        lda #$06
-        sta 53281
-        lda #$0d    ; block 13
-        sta sprite0
-        lda #$ff
-        sta enable
-        lda #$ff
-        sta enablem
-        lda #$00     ; black
-        sta color0
-        lda #$02    ; sprite multicolor 1 (red)
-        sta $d025
-        lda #$0f    ; sprite multicolor 2 (light grey)
-        sta $d026
-        ldx #0
+    jsr clear
+    lda #$00
+    sta 53280
+    lda #$06
+    sta 53281
 
-build   lda databoyr,x
-        sta shouse,x
-        inx
-        cpx #63
-        bne build
-        lda #0
-        sta msbx
-        ldx #25
-        stx sp0x
-        ldy #51
-        sty sp0y
+    lda #11    ; block 11
+    sta sprite0
+
+    lda #$ff
+    sta enable
+    lda #$ff
+    sta enablem
+    lda #$00     ; black
+    sta color0
+    lda #$02    ; sprite multicolor 1 (red)
+    sta $d025
+    lda #$0f    ; sprite multicolor 2 (light grey)
+    sta $d026
+
+    lda #0 ; begin high bit
+    sta msbx
+    ldx #25 ; begin x pos
+    stx sp0x
+    ldy #51 ; begin y pos
+    sty sp0y
+
+; -------- build images --------
+
+                  ldx #0
+
+buildMainRightImg lda mainRightImgData,x
+                  sta mainRightImg,x
+                  inx
+                  cpx #63
+                  bne buildMainRightImg
         
-; -------- main --------
+                  ldx #0
+        
+buildMainLeftImg  lda mainLeftImgData,x
+                  sta mainLeftImg,x
+                  inx
+                  cpx #63
+                  bne buildMainLeftImg
+        
+; -------- game loop --------
         
 main         lda jstick
              eor #255
@@ -103,6 +119,8 @@ right        jsr rightEdgeFunc
              cmp #1
              beq rightJmpMain
 
+             jsr mainImgFaceRight
+
              ldx sp0x
              inx
              stx sp0x
@@ -118,6 +136,8 @@ left        jsr leftEdgeFunc
             lda leftEdge
             cmp #1
             beq leftJmpMain
+            
+            jsr mainImgFaceLeft
             
             ldx sp0x
             dex
@@ -170,6 +190,8 @@ upRight        jsr topEdgeFunc
                cmp #1
                beq upRightJmpMain
           
+               jsr mainImgFaceRight
+
                ldx sp0x
                inx
                stx sp0x
@@ -195,6 +217,8 @@ upLeft        jsr topEdgeFunc
               cmp #1
               beq upLeftJmpMain
           
+              jsr mainImgFaceLeft
+
               ldx sp0x
               dex
               stx sp0x
@@ -220,6 +244,8 @@ downRight        jsr bottomEdgeFunc
                  cmp #1
                  beq downRightJmpMain
                  
+                 jsr mainImgFaceRight
+
                  ldx sp0x
                  inx
                  stx sp0x
@@ -244,6 +270,8 @@ downLeft        jsr bottomEdgeFunc
                 lda leftEdge
                 cmp #1
                 beq downLeftJmpMain
+                 
+                jsr mainImgFaceLeft
                  
                 ldx sp0x
                 dex
@@ -279,8 +307,7 @@ testScreenX0 ldx sp0x
              
 moveHighBit0 lda #0
              sta msbx
-             rts
-             
+             rts             
              
 ; -------- long pause --------
         
@@ -300,7 +327,6 @@ longPause jsr pause
 ; -------- medium pause --------
         
 mediumPause jsr pause
-            jsr pause
             jsr pause
             jsr pause
             rts
@@ -381,28 +407,40 @@ bottomEdgeFunc lda #0
                   
 hitBottomEdge  lda #1
                sta bottomEdge
-               rts                      
-        
+               rts     
+               
+; -------- turn main character right --------
+               
+mainImgFaceRight lda #11
+                 sta sprite0
+                 rts
+
+; -------- turn main character left --------
+               
+mainImgFaceLeft lda #13
+                sta sprite0
+                rts
+                                        
 ; -------- end game --------
                 
 end     rts                    
 
 
-databoyr .byte $00,$aa,$00,$02,$be,$80,$0a,$bf
-         .byte $c0,$0b,$be,$c0,$0b,$be,$f0,$0b
-         .byte $ff,$c0,$0b,$ff,$c0,$02,$fa,$00
-         .byte $00,$3f,$00,$01,$be,$40,$01,$69
-         .byte $40,$03,$55,$c0,$03,$55,$c0,$03
-         .byte $55,$c0,$00,$55,$00,$01,$69,$40
-         .byte $01,$41,$40,$05,$41,$50,$0f,$c3
-         .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80
+mainRightImgData .byte $00,$aa,$00,$02,$be,$80,$0a,$bf
+                 .byte $c0,$0b,$be,$c0,$0b,$be,$f0,$0b
+                 .byte $ff,$c0,$0b,$ff,$c0,$02,$fa,$00
+                 .byte $00,$3f,$00,$01,$be,$40,$01,$69
+                 .byte $40,$03,$55,$c0,$03,$55,$c0,$03
+                 .byte $55,$c0,$00,$55,$00,$01,$69,$40
+                 .byte $01,$41,$40,$05,$41,$50,$0f,$c3
+                 .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80
 
-databoyl .byte $00,$aa,$00,$02,$be,$80,$03,$fe
-         .byte $a0,$03,$be,$e0,$0f,$be,$e0,$03
-         .byte $ff,$e0,$03,$ff,$e0,$00,$af,$80
-         .byte $00,$fc,$00,$01,$be,$40,$01,$69
-         .byte $40,$03,$55,$c0,$03,$55,$c0,$03
-         .byte $55,$c0,$00,$55,$00,$01,$69,$40
-         .byte $01,$41,$40,$05,$41,$50,$0f,$c3
-         .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80        
+mainLeftImgData .byte $00,$aa,$00,$02,$be,$80,$03,$fe
+                .byte $a0,$03,$be,$e0,$0f,$be,$e0,$03
+                .byte $ff,$e0,$03,$ff,$e0,$00,$af,$80
+                .byte $00,$fc,$00,$01,$be,$40,$01,$69
+                .byte $40,$03,$55,$c0,$03,$55,$c0,$03
+                .byte $55,$c0,$00,$55,$00,$01,$69,$40
+                .byte $01,$41,$40,$05,$41,$50,$0f,$c3
+                .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80        
 
