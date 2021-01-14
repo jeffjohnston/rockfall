@@ -69,6 +69,7 @@ main         lda jstick
              beq jmpDownRight
              cmp #6
              beq jmpDownLeft
+             jmp floatDown
              jmp main
         
 jmpRight     jmp right
@@ -79,6 +80,21 @@ jmpUpRight   jmp upRight
 jmpUpLeft    jmp upLeft
 jmpDownRight jmp downRight
 jmpDownLeft  jmp downLeft
+
+; -------- main character floats down --------               
+                
+floatDown        jsr bottomEdgeFunc
+                 lda bottomEdge
+                 cmp #1
+                 beq floatDownJmpMain
+
+                 ldx sp0y
+                 inx
+                 stx sp0y
+                 
+                 jsr longPause
+                
+floatDownJmpMain jmp main
         
 ; -------- move main character right --------
         
@@ -91,9 +107,8 @@ right        jsr rightEdgeFunc
              inx
              stx sp0x
             
-             jsr pause
+             jsr shortPause
              jsr testScreenX1
-             jmp rightJmpMain
         
 rightJmpMain jmp main
         
@@ -108,9 +123,8 @@ left        jsr leftEdgeFunc
             dex
             stx sp0x
             
-            jsr pause
+            jsr shortPause
             jsr testScreenX0
-            jmp leftJmpMain        
         
 leftJmpMain jmp main
 
@@ -125,8 +139,7 @@ up        jsr topEdgeFunc
           dex
           stx sp0y
         
-          jsr pause
-          jmp upJmpMain
+          jsr mediumPause
         
 upJmpMain jmp main        
         
@@ -141,8 +154,7 @@ down        jsr bottomEdgeFunc
             inx
             stx sp0y
 
-            jsr pause
-            jmp downJmpMain
+            jsr shortPause
                 
 downJmpMain jmp main
 
@@ -166,9 +178,8 @@ upRight        jsr topEdgeFunc
                dex
                stx sp0y
         
-               jsr pause
+               jsr mediumPause
                jsr testScreenX1
-               jmp upRightJmpMain
                 
 upRightJmpMain jmp main        
 
@@ -192,9 +203,8 @@ upLeft        jsr topEdgeFunc
               dex
               stx sp0y
         
-              jsr pause
+              jsr mediumPause
               jsr testScreenX0
-              jmp upLeftJmpMain
                 
 upLeftJmpMain jmp main     
 
@@ -218,9 +228,8 @@ downRight        jsr bottomEdgeFunc
                  inx
                  stx sp0y
                
-                 jsr pause
+                 jsr shortPause
                  jsr testScreenX1
-                 jmp downRightJmpMain
                 
 downRightJmpMain jmp main        
 
@@ -244,9 +253,8 @@ downLeft        jsr bottomEdgeFunc
                 inx
                 stx sp0y
                
-                jsr pause
+                jsr shortPause
                 jsr testScreenX0
-                jmp downLeftJmpMain
                 
 downLeftJmpMain jmp main        
    
@@ -272,6 +280,36 @@ testScreenX0 ldx sp0x
 moveHighBit0 lda #0
              sta msbx
              rts
+             
+             
+; -------- long pause --------
+        
+longPause jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          jsr pause
+          rts
+
+; -------- medium pause --------
+        
+mediumPause jsr pause
+            jsr pause
+            jsr pause
+            jsr pause
+            rts
+
+; -------- short pause --------
+        
+shortPause jsr pause
+           jsr pause
+           rts
         
 ; -------- subroutine to pause motion --------
         
