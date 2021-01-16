@@ -18,6 +18,16 @@ joyStick1          = $dc01 ; 56321
 hoverRightImg      = $2c0 ; 704 block 11
 hoverLeftImg       = $340 ; 832 block 13
 
+
+chrout             = $ffd2
+plot               = $fff0
+ballX              = $4005
+ballY              = $4006
+ball               = $4007
+space              = $4008
+
+
+
 ; -------- setup --------
 
     jsr clearScreen
@@ -64,6 +74,29 @@ buildHoverLeftImg  lda hoverLeftImgData,x
                    inx
                    cpx #63
                    bne buildHoverLeftImg
+                   
+
+; -------- test ball --------                   
+
+ldx #50
+stx ballX
+ldy #120
+sty ballY
+lda #113
+sta ball
+lda #32
+sta space
+
+ldx ballX
+ldy ballY
+clc
+jsr plot
+lda ball
+jsr chrout
+ldx ballX
+ldy ballY
+
+
         
 ; -------- game loop --------
         
@@ -87,7 +120,8 @@ gameloop         lda joyStick1
                  beq jmpMoveDownLeft
                  jmp floatDown
                  jmp gameloop
-        
+    
+    
 jmpMoveRight     jmp moveRight
 jmpMoveLeft      jmp moveLeft
 jmpMoveUp        jmp moveUp
