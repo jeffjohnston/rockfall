@@ -5,13 +5,21 @@ leftEdge           = $4001 ; detect left edge
 rightEdge          = $4002 ; detect right edge
 topEdge            = $4003 ; detect top edge
 bottomEdge         = $4004 ; detect bottom edge
+bulletX            = $4005
+bulletY            = $4006
+bullet             = $4007
+space              = $4008
+
+chrout             = $ffd2
+textColor          = $0286
+plot               = $fff0
 clearScreen        = $e544 ; clear screen       
 enableSprites      = $d015 ; 53269 enable sprites
 enableMultiSprites = $d01C ; 53276 enable multi-color sprites
 sprite0            = $7f8  ; 2040
 color0             = $d027 ; 53287
-sprite0x           = $d000 ; 53248
-sprite0y           = $d001 ; 53249
+sprite0X           = $d000 ; 53248
+sprite0Y           = $d001 ; 53249
 mostSigBitX        = $d010 ; 53264
 joyStick1          = $dc01 ; 56321
 
@@ -19,22 +27,13 @@ hoverRightImg      = $2c0 ; 704 block 11
 hoverLeftImg       = $340 ; 832 block 13
 
 
-chrout             = $ffd2
-plot               = $fff0
-ballX              = $4005
-ballY              = $4006
-ball               = $4007
-space              = $4008
-
-
-
 ; -------- setup --------
 
     jsr clearScreen
     lda #$00
-    sta 53280
+    sta 53280 ; border color
     lda #$06
-    sta 53281
+    sta 53281 ; background color
 
     lda #11 ; block 11
     sta sprite0
@@ -52,10 +51,10 @@ space              = $4008
 
     lda #0 ; begin high bit
     sta mostSigBitX
-    ldx #25 ; begin x pos
-    stx sprite0x
-    ldy #51 ; begin y pos
-    sty sprite0y
+    ldx #75 ; begin x pos
+    stx sprite0X
+    ldy #100 ; begin y pos
+    sty sprite0Y
 
 ; -------- build images --------
 
@@ -69,57 +68,93 @@ buildHoverRightImg lda hoverRightImgData,x
         
                    ldx #0
         
-buildHoverLeftImg  lda hoverLeftImgData,x
-                   sta hoverLeftImg,x
-                   inx
-                   cpx #63
-                   bne buildHoverLeftImg
+buildHoverLeftImg lda hoverLeftImgData,x
+                  sta hoverLeftImg,x
+                  inx
+                  cpx #63
+                  bne buildHoverLeftImg
                    
 
-; -------- test ball --------                   
+; -------- test bullet --------                   
 
-ldx #50
-stx ballX
-ldy #120
-sty ballY
-lda #113
-sta ball
+lda #62
+sta bullet
 lda #32
 sta space
 
-ldx ballX
-ldy ballY
-clc
-jsr plot
-lda ball
-jsr chrout
-ldx ballX
-ldy ballY
+ldx #$02	
+stx textColor
+
+
+start lda sprite0X
+      sec
+      sbc #24
+      lsr
+      lsr
+      lsr
+      adc #3
+      sta bulletY     
+
+      lda sprite0Y
+      sec
+      sbc #50
+      lsr
+      lsr
+      lsr
+      adc #1
+      sta bulletX     
+
+loop  ldx bulletX
+      ldy bulletY         
+      clc
+      jsr plot  
+      lda bullet     
+      jsr chrout
+      
+      jsr longPause
+      jsr longPause
+      
+      ldx bulletX
+      ldy bulletY         
+      clc
+      jsr plot  
+      lda space     
+      jsr chrout
+      
+      inc bulletY
+      ldy bulletY
+      
+      cpy #38
+      bne loop
+     
+      
+      
+
 
 
         
 ; -------- game loop --------
         
-gameloop         lda joyStick1
-                 eor #255
-                 cmp #8
-                 beq jmpMoveRight
-                 cmp #4
-                 beq jmpMoveLeft
-                 cmp #1
-                 beq jmpMoveUp
-                 cmp #2
-                 beq jmpMoveDown
-                 cmp #9
-                 beq jmpMoveUpRight
-                 cmp #5
-                 beq jmpMoveUpLeft
-                 cmp #10
-                 beq jmpMoveDownRight
-                 cmp #6
-                 beq jmpMoveDownLeft
-                 jmp floatDown
-                 jmp gameloop
+gameloop lda joyStick1
+         eor #255
+         cmp #8
+         beq jmpMoveRight
+         cmp #4
+         beq jmpMoveLeft
+         cmp #1
+         beq jmpMoveUp
+         cmp #2
+         beq jmpMoveDown
+         cmp #9
+         beq jmpMoveUpRight
+         cmp #5
+         beq jmpMoveUpLeft
+         cmp #10
+         beq jmpMoveDownRight
+         cmp #6
+         beq jmpMoveDownLeft
+         ;jmp floatDown
+         jmp gameloop
     
     
 jmpMoveRight     jmp moveRight
@@ -133,197 +168,197 @@ jmpMoveDownLeft  jmp moveDownLeft
 
 ; -------- gameloop character floats down --------               
                 
-floatDown        jsr bottomEdgeFunc
-                 lda bottomEdge
-                 cmp #1
-                 beq floatDownJmpMain
+floatDown jsr bottomEdgeFunc
+          lda bottomEdge
+          cmp #1
+          beq floatDownJmpGameLoop
 
-                 ldx sprite0y
-                 inx
-                 stx sprite0y
-                 
-                 jsr longPause
+          ldx sprite0Y
+          inx
+          stx sprite0Y
+         
+          jsr longPause
                 
-floatDownJmpMain jmp gameloop
+floatDownJmpGameLoop jmp gameloop
         
 ; -------- move gameloop character moveRight --------
         
-moveRight    jsr rightEdgeFunc
-             lda rightEdge
-             cmp #1
-             beq rightJmpMain
+moveRight jsr rightEdgeFunc
+          lda rightEdge
+          cmp #1
+          beq rightJmpGameLoop
 
-             jsr hoverImgFaceRight
+          jsr hoverImgFaceRight
 
-             ldx sprite0x
-             inx
-             stx sprite0x
-            
-             jsr shortPause
-             jsr testScreenX1
+          ldx sprite0X
+          inx
+          stx sprite0X
         
-rightJmpMain jmp gameloop
+          jsr shortPause
+          jsr testScreenX1
+        
+rightJmpGameLoop jmp gameloop
         
 ; -------- move gameloop character left --------               
         
-moveLeft    jsr leftEdgeFunc
-            lda leftEdge
-            cmp #1
-            beq leftJmpMain
-            
-            jsr hoverImgFaceLeft
-            
-            ldx sprite0x
-            dex
-            stx sprite0x
-            
-            jsr shortPause
-            jsr testScreenX0
+moveLeft jsr leftEdgeFunc
+         lda leftEdge
+         cmp #1
+         beq leftJmpGameLoop
         
-leftJmpMain jmp gameloop
+         jsr hoverImgFaceLeft
+        
+         ldx sprite0X
+         dex
+         stx sprite0X
+        
+         jsr shortPause
+         jsr testScreenX0
+        
+leftJmpGameLoop jmp gameloop
 
 ; -------- move gameloop character up --------               
                 
-moveUp    jsr topEdgeFunc
-          lda topEdge
-          cmp #1
-          beq upJmpMain
+moveUp jsr topEdgeFunc
+       lda topEdge
+       cmp #1
+       beq upJmpGameLoop
 
-          ldx sprite0y
-          dex
-          stx sprite0y
+       ldx sprite0Y
+       dex
+       stx sprite0Y
+    
+       jsr mediumPause
         
-          jsr mediumPause
-        
-upJmpMain jmp gameloop        
+upJmpGameLoop jmp gameloop        
         
 ; -------- move gameloop character down --------               
                 
-moveDown    jsr bottomEdgeFunc
-            lda bottomEdge
-            cmp #1
-            beq downJmpMain
+moveDown jsr bottomEdgeFunc
+         lda bottomEdge
+         cmp #1
+         beq downJmpGameLoop
 
-            ldx sprite0y
-            inx
-            stx sprite0y
+         ldx sprite0Y
+         inx
+         stx sprite0Y
 
-            jsr shortPause
+         jsr shortPause
                 
-downJmpMain jmp gameloop
+downJmpGameLoop jmp gameloop
 
 ; -------- move gameloop character up and to the right --------  
 
-moveUpRight    jsr topEdgeFunc
-               lda topEdge
-               cmp #1
-               beq upRightJmpMain
+moveUpRight jsr topEdgeFunc
+            lda topEdge
+            cmp #1
+            beq upRightJmpGameLoop
 
-               jsr rightEdgeFunc
-               lda rightEdge
-               cmp #1
-               beq upRightJmpMain
-          
-               jsr hoverImgFaceRight
+            jsr rightEdgeFunc
+            lda rightEdge
+            cmp #1
+            beq upRightJmpGameLoop
+      
+            jsr hoverImgFaceRight
 
-               ldx sprite0x
-               inx
-               stx sprite0x
+            ldx sprite0X
+            inx
+            stx sprite0X
 
-               ldx sprite0y
-               dex
-               stx sprite0y
-        
-               jsr mediumPause
-               jsr testScreenX1
+            ldx sprite0Y
+            dex
+            stx sprite0Y
+    
+            jsr mediumPause
+            jsr testScreenX1
                 
-upRightJmpMain jmp gameloop        
+upRightJmpGameLoop jmp gameloop        
 
 ; -------- move gameloop character up and to the left --------  
 
-moveUpLeft    jsr topEdgeFunc
-              lda topEdge
-              cmp #1
-              beq upLeftJmpMain
+moveUpLeft jsr topEdgeFunc
+           lda topEdge
+           cmp #1
+           beq upLeftJmpGameLoop
 
-              jsr leftEdgeFunc
-              lda leftEdge
-              cmp #1
-              beq upLeftJmpMain
-          
-              jsr hoverImgFaceLeft
+           jsr leftEdgeFunc
+           lda leftEdge
+           cmp #1
+           beq upLeftJmpGameLoop
+      
+           jsr hoverImgFaceLeft
 
-              ldx sprite0x
-              dex
-              stx sprite0x
+           ldx sprite0X
+           dex
+           stx sprite0X
 
-              ldx sprite0y
-              dex
-              stx sprite0y
-        
-              jsr mediumPause
-              jsr testScreenX0
+           ldx sprite0Y
+           dex
+           stx sprite0Y
+    
+           jsr mediumPause
+           jsr testScreenX0
                 
-upLeftJmpMain jmp gameloop     
+upLeftJmpGameLoop jmp gameloop     
 
 ; -------- move gameloop character down and to the right --------  
 
-moveDownRight    jsr bottomEdgeFunc
-                 lda bottomEdge
-                 cmp #1
-                 beq downRightJmpMain
-                 
-                 jsr rightEdgeFunc
-                 lda rightEdge
-                 cmp #1
-                 beq downRightJmpMain
-                 
-                 jsr hoverImgFaceRight
+moveDownRight jsr bottomEdgeFunc
+              lda bottomEdge
+              cmp #1
+              beq downRightJmpGameLoop
+             
+              jsr rightEdgeFunc
+              lda rightEdge
+              cmp #1
+              beq downRightJmpGameLoop
+             
+              jsr hoverImgFaceRight
 
-                 ldx sprite0x
-                 inx
-                 stx sprite0x
+              ldx sprite0X
+              inx
+              stx sprite0X
 
-                 ldx sprite0y
-                 inx
-                 stx sprite0y
-               
-                 jsr shortPause
-                 jsr testScreenX1
+              ldx sprite0Y
+              inx
+              stx sprite0Y
+           
+              jsr shortPause
+              jsr testScreenX1
                 
-downRightJmpMain jmp gameloop        
+downRightJmpGameLoop jmp gameloop        
 
 ; -------- move gameloop character down and to the left --------  
 
-moveDownLeft    jsr bottomEdgeFunc
-                lda bottomEdge
-                cmp #1
-                beq downLeftJmpMain
-                 
-                jsr leftEdgeFunc
-                lda leftEdge
-                cmp #1
-                beq downLeftJmpMain
-                 
-                jsr hoverImgFaceLeft
-                 
-                ldx sprite0x
-                dex
-                stx sprite0x
+moveDownLeft jsr bottomEdgeFunc
+             lda bottomEdge
+             cmp #1
+             beq downLeftJmpGameLoop
+             
+             jsr leftEdgeFunc
+             lda leftEdge
+             cmp #1
+             beq downLeftJmpGameLoop
+             
+             jsr hoverImgFaceLeft
+             
+             ldx sprite0X
+             dex
+             stx sprite0X
 
-                ldx sprite0y
-                inx
-                stx sprite0y
-               
-                jsr shortPause
-                jsr testScreenX0
+             ldx sprite0Y
+             inx
+             stx sprite0Y
+           
+             jsr shortPause
+             jsr testScreenX0
                 
-downLeftJmpMain jmp gameloop        
+downLeftJmpGameLoop jmp gameloop        
    
         
 ; -------- subroutine to set the high bit to 1 if needed --------
 
-testScreenX1 ldx sprite0x
+testScreenX1 ldx sprite0X
              cpx #255
              beq moveHighBit1
              rts
@@ -334,7 +369,7 @@ moveHighBit1 lda #1
 
 ; -------- subroutine to set the high bit to 0 if needed --------
 
-testScreenX0 ldx sprite0x
+testScreenX0 ldx sprite0X
              cpx #255
              beq moveHighBit0
              rts
@@ -390,7 +425,7 @@ leftEdgeFunc lda #0
              beq leftEdge0
              rts
            
-leftEdge0    ldx sprite0x
+leftEdge0    ldx sprite0X
              cpx #25
              beq hitLeftEdge
              rts
@@ -408,7 +443,7 @@ rightEdgeFunc lda #0
               beq rightEdge1
               rts
            
-rightEdge1    ldx sprite0x
+rightEdge1    ldx sprite0X
               cpx #63
               beq hitRightEdge
               rts
@@ -421,7 +456,7 @@ hitRightEdge  lda #1
         
 topEdgeFunc lda #0
             sta topEdge
-            ldx sprite0y
+            ldx sprite0Y
             cpx #51
             beq hitTopEdge
             rts           
@@ -434,7 +469,7 @@ hitTopEdge  lda #1
         
 bottomEdgeFunc lda #0
                sta bottomEdge
-               ldx sprite0y
+               ldx sprite0Y
                cpx #228
                beq hitBottomEdge
                rts           
