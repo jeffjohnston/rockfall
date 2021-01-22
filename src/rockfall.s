@@ -34,6 +34,13 @@ hoverLeftImg       = $340 ; 832 block 13
     sta 53280 ; border color
     lda #$06
     sta 53281 ; background color
+    
+    lda #62
+    sta bullet
+    lda #32
+    sta space
+    lda #$02	
+    sta textColor
 
     lda #11 ; block 11
     sta sprite0
@@ -73,88 +80,35 @@ buildHoverLeftImg lda hoverLeftImgData,x
                   inx
                   cpx #63
                   bne buildHoverLeftImg
-                   
-
-; -------- test bullet --------                   
-
-lda #62
-sta bullet
-lda #32
-sta space
-
-ldx #$02	
-stx textColor
-
-
-start lda sprite0X
-      sec
-      sbc #24
-      lsr
-      lsr
-      lsr
-      adc #3
-      sta bulletY     
-
-      lda sprite0Y
-      sec
-      sbc #50
-      lsr
-      lsr
-      lsr
-      adc #1
-      sta bulletX     
-
-loop  ldx bulletX
-      ldy bulletY         
-      clc
-      jsr plot  
-      lda bullet     
-      jsr chrout
-      
-      jsr longPause
-      jsr longPause
-      
-      ldx bulletX
-      ldy bulletY         
-      clc
-      jsr plot  
-      lda space     
-      jsr chrout
-      
-      inc bulletY
-      ldy bulletY
-      
-      cpy #38
-      bne loop
-     
-      
-      
-
-
-
         
 ; -------- game loop --------
         
-gameloop lda joyStick1
-         eor #255
-         cmp #8
-         beq jmpMoveRight
-         cmp #4
-         beq jmpMoveLeft
-         cmp #1
-         beq jmpMoveUp
-         cmp #2
-         beq jmpMoveDown
-         cmp #9
-         beq jmpMoveUpRight
-         cmp #5
-         beq jmpMoveUpLeft
-         cmp #10
-         beq jmpMoveDownRight
-         cmp #6
-         beq jmpMoveDownLeft
-         ;jmp floatDown
-         jmp gameloop
+gameloop jsr pause
+         jsr pause
+
+         
+checkJoyStick lda joyStick1
+              eor #255
+              cmp #8
+              beq jmpMoveRight
+              cmp #4
+              beq jmpMoveLeft
+              cmp #1
+              beq jmpMoveUp
+              cmp #2
+              beq jmpMoveDown
+              cmp #9
+              beq jmpMoveUpRight
+              cmp #5
+              beq jmpMoveUpLeft
+              cmp #10
+              beq jmpMoveDownRight
+              cmp #6
+              beq jmpMoveDownLeft
+              cmp #16
+              beq jmpShootBullet
+              jmp jmpFloatDown
+              jmp gameloop       
     
     
 jmpMoveRight     jmp moveRight
@@ -165,6 +119,52 @@ jmpMoveUpRight   jmp moveUpRight
 jmpMoveUpLeft    jmp moveUpLeft
 jmpMoveDownRight jmp moveDownRight
 jmpMoveDownLeft  jmp moveDownLeft
+jmpFloatDown     jmp floatDown
+jmpShootBullet   jmp shootBullet
+
+
+; -------- shoot bullet --------  
+
+shootBullet jmp bulletRight
+                 
+
+bulletRight lda sprite0X
+            sec
+            sbc #24
+            lsr
+            lsr
+            lsr
+            adc #3
+            sta bulletY     
+
+            lda sprite0Y
+            sec
+            sbc #50
+            lsr
+            lsr
+            lsr
+            adc #1
+            sta bulletX     
+
+MoveBulletRight ldx bulletX
+                ldy bulletY         
+                clc
+                jsr plot  
+                lda bullet     
+                jsr chrout
+                 
+                ldx bulletX
+                ldy bulletY         
+                clc
+                jsr plot  
+                lda space     
+                jsr chrout
+                  
+                inc bulletY
+                ldy bulletY
+                  
+                cpy #38
+                bne MoveBulletRight
 
 ; -------- gameloop character floats down --------               
                 
@@ -176,8 +176,6 @@ floatDown jsr bottomEdgeFunc
           ldx sprite0Y
           inx
           stx sprite0Y
-         
-          jsr longPause
                 
 floatDownJmpGameLoop jmp gameloop
         
@@ -194,9 +192,6 @@ moveRight jsr rightEdgeFunc
           inx
           stx sprite0X
         
-          jsr shortPause
-          jsr testScreenX1
-        
 rightJmpGameLoop jmp gameloop
         
 ; -------- move gameloop character left --------               
@@ -212,9 +207,6 @@ moveLeft jsr leftEdgeFunc
          dex
          stx sprite0X
         
-         jsr shortPause
-         jsr testScreenX0
-        
 leftJmpGameLoop jmp gameloop
 
 ; -------- move gameloop character up --------               
@@ -228,8 +220,6 @@ moveUp jsr topEdgeFunc
        dex
        stx sprite0Y
     
-       jsr mediumPause
-        
 upJmpGameLoop jmp gameloop        
         
 ; -------- move gameloop character down --------               
@@ -242,8 +232,6 @@ moveDown jsr bottomEdgeFunc
          ldx sprite0Y
          inx
          stx sprite0Y
-
-         jsr shortPause
                 
 downJmpGameLoop jmp gameloop
 
@@ -268,9 +256,6 @@ moveUpRight jsr topEdgeFunc
             ldx sprite0Y
             dex
             stx sprite0Y
-    
-            jsr mediumPause
-            jsr testScreenX1
                 
 upRightJmpGameLoop jmp gameloop        
 
@@ -295,9 +280,6 @@ moveUpLeft jsr topEdgeFunc
            ldx sprite0Y
            dex
            stx sprite0Y
-    
-           jsr mediumPause
-           jsr testScreenX0
                 
 upLeftJmpGameLoop jmp gameloop     
 
@@ -322,9 +304,6 @@ moveDownRight jsr bottomEdgeFunc
               ldx sprite0Y
               inx
               stx sprite0Y
-           
-              jsr shortPause
-              jsr testScreenX1
                 
 downRightJmpGameLoop jmp gameloop        
 
@@ -349,63 +328,9 @@ moveDownLeft jsr bottomEdgeFunc
              ldx sprite0Y
              inx
              stx sprite0Y
-           
-             jsr shortPause
-             jsr testScreenX0
                 
 downLeftJmpGameLoop jmp gameloop        
    
-        
-; -------- subroutine to set the high bit to 1 if needed --------
-
-testScreenX1 ldx sprite0X
-             cpx #255
-             beq moveHighBit1
-             rts
-             
-moveHighBit1 lda #1
-             sta mostSigBitX
-             rts
-
-; -------- subroutine to set the high bit to 0 if needed --------
-
-testScreenX0 ldx sprite0X
-             cpx #255
-             beq moveHighBit0
-             rts
-             
-moveHighBit0 lda #0
-             sta mostSigBitX
-             rts             
-             
-; -------- long pause --------
-        
-longPause jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          jsr pause
-          rts
-
-; -------- medium pause --------
-        
-mediumPause jsr pause
-            jsr pause
-            jsr pause
-            rts
-
-; -------- short pause --------
-        
-shortPause jsr pause
-           jsr pause
-           rts
-        
 ; -------- subroutine to pause motion --------
         
 pause    ldy #0
@@ -420,16 +345,11 @@ pause255 iny
         
 leftEdgeFunc lda #0
              sta leftEdge
-             lda mostSigBitX
-             cmp #0
-             beq leftEdge0
-             rts
-           
-leftEdge0    ldx sprite0X
+             ldx sprite0X
              cpx #25
              beq hitLeftEdge
              rts
-                  
+           
 hitLeftEdge  lda #1
              sta leftEdge
              rts                      
@@ -438,16 +358,11 @@ hitLeftEdge  lda #1
         
 rightEdgeFunc lda #0
               sta rightEdge
-              lda mostSigBitX
-              cmp #1
-              beq rightEdge1
-              rts
-           
-rightEdge1    ldx sprite0X
-              cpx #63
+              ldx sprite0X
+              cpx #255
               beq hitRightEdge
               rts
-                  
+           
 hitRightEdge  lda #1
               sta rightEdge
               rts                      
