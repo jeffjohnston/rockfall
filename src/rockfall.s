@@ -68,7 +68,7 @@ hoverLeftImg       = $340 ; 832 block 13
     sta mostSigBitX
     ldx #75 ; begin x pos
     stx sprite0X
-    ldy #110 ; begin y pos
+    ldy #126 ; begin y pos
     sty sprite0Y
 
 ; -------- build images --------
