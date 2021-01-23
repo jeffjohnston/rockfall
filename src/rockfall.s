@@ -5,10 +5,12 @@ leftEdge           = $4001 ; detect left edge
 rightEdge          = $4002 ; detect right edge
 topEdge            = $4003 ; detect top edge
 bottomEdge         = $4004 ; detect bottom edge
-bulletX            = $4005
-bulletY            = $4006
-bullet             = $4007
-space              = $4008
+bulletRightX       = $4005
+bulletRightY       = $4006
+bulletLeftX        = $4007
+bulletLeftY        = $4008
+bullet             = $4009
+space              = $4010
 
 chrout             = $ffd2
 textColor          = $0286
@@ -35,7 +37,7 @@ hoverLeftImg       = $340 ; 832 block 13
     lda #$06
     sta 53281 ; background color
     
-    lda #62
+    lda #113
     sta bullet
     lda #32
     sta space
@@ -55,6 +57,12 @@ hoverLeftImg       = $340 ; 832 block 13
     sta $d025
     lda #$0f ; sprite multicolor 2 (light grey)
     sta $d026
+    
+    lda #0 
+    sta bulletRightX
+    sta bulletRightY
+    sta bulletLeftX
+    sta bulletLeftY
 
     lda #0 ; begin high bit
     sta mostSigBitX
@@ -85,7 +93,14 @@ buildHoverLeftImg lda hoverLeftImgData,x
         
 gameloop jsr pause
          jsr pause
-
+         jsr pause
+         jsr pause
+         jsr pause
+         jsr pause
+         jsr pause
+         jsr pause
+         jsr pause
+         jsr moveBullet
          
 checkJoyStick lda joyStick1
               eor #255
@@ -107,7 +122,7 @@ checkJoyStick lda joyStick1
               beq jmpMoveDownLeft
               cmp #16
               beq jmpShootBullet
-              jmp jmpFloatDown
+              ;jmp jmpFloatDown
               jmp gameloop       
     
     
@@ -125,46 +140,131 @@ jmpShootBullet   jmp shootBullet
 
 ; -------- shoot bullet --------  
 
-shootBullet jmp bulletRight
+shootBullet ldx bulletRightX
+            cpx #0
+            beq shootBulletRL
+            jmp shootBulletJmpGameLoop
+            
+            
+shootBulletRL ldx sprite0
+              cpx #11
+              beq shootBulletRight
+              bne shootBulletLeft             
+
+shootBulletRight lda sprite0X
+                 sec
+                 sbc #24
+                 lsr
+                 lsr
+                 lsr
+;                 adc #2
+                 sta bulletRightY     
+
+                 lda sprite0Y
+                 sec
+                 sbc #50
+                 lsr
+                 lsr
+                 lsr
+ ;                adc #1
+                 sta bulletRightX   
                  
+                 jmp shootBulletJmpGameLoop  
 
-bulletRight lda sprite0X
-            sec
-            sbc #24
-            lsr
-            lsr
-            lsr
-            adc #3
-            sta bulletY     
+shootBulletLeft lda sprite0X
+                sec
+                sbc #24
+                lsr
+                lsr
+                lsr
+                sta bulletLeftY     
 
-            lda sprite0Y
-            sec
-            sbc #50
-            lsr
-            lsr
-            lsr
-            adc #1
-            sta bulletX     
+                lda sprite0Y
+                sec
+                sbc #50
+                lsr
+                lsr
+                lsr
+                adc #1
+                sta bulletLeftX  
+           
+shootBulletJmpGameLoop jmp gameloop   
 
-MoveBulletRight ldx bulletX
-                ldy bulletY         
-                clc
-                jsr plot  
-                lda bullet     
-                jsr chrout
-                 
-                ldx bulletX
-                ldy bulletY         
+; -------- move bullet --------     
+
+moveBullet ldx bulletRightX
+           cpx #0
+           bne moveBulletRight
+           ldx bulletLeftX
+           cpx #0
+           bne moveBulletLeft
+           rts
+
+moveBulletRight ldx bulletRightX
+                ldy bulletRightY         
                 clc
                 jsr plot  
                 lda space     
                 jsr chrout
-                  
-                inc bulletY
-                ldy bulletY
+
+                ldy bulletRightY         
+                inc bulletRightY
+                ldy bulletRightY
+
+                ldx bulletRightX
+                ldy bulletRightY         
+                clc
+                jsr plot  
+                lda bullet     
+                jsr chrout
                   
                 cpy #38
-                bne MoveBulletRight
+                beq stopBullet
+                rts
+
+moveBulletLeft ldx bulletLeftX
+               ldy bulletLeftY         
+               clc
+               jsr plot  
+               lda space     
+               jsr chrout
+
+               ldy bulletLeftY         
+               dec bulletLeftY
+               ldy bulletLeftY
+                  
+               ldx bulletLeftX
+               ldy bulletLeftY         
+               clc
+               jsr plot  
+               lda bullet     
+               jsr chrout
+                 
+               cpy #0
+               beq stopBullet
+               rts
+                
+stopBullet ldx bulletRightX
+           ldy bulletRightY         
+           clc
+           jsr plot  
+           lda space     
+           jsr chrout   
+
+           ldx bulletLeftX
+           ldy bulletLeftY         
+           clc
+           jsr plot  
+           lda space     
+           jsr chrout
+
+           ldx #0
+           stx bulletRightX
+           stx bulletRightY
+           stx bulletLeftX
+           stx bulletLeftY
+                                    
+           rts
 
 ; -------- gameloop character floats down --------               
                 
