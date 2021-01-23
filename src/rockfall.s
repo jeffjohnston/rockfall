@@ -37,7 +37,7 @@ hoverLeftImg       = $340 ; 832 block 13
     lda #$06
     sta 53281 ; background color
     
-    lda #113
+    lda #99
     sta bullet
     lda #32
     sta space
@@ -68,7 +68,7 @@ hoverLeftImg       = $340 ; 832 block 13
     sta mostSigBitX
     ldx #75 ; begin x pos
     stx sprite0X
-    ldy #100 ; begin y pos
+    ldy #110 ; begin y pos
     sty sprite0Y
 
 ; -------- build images --------
@@ -143,8 +143,7 @@ jmpShootBullet   jmp shootBullet
 shootBullet ldx bulletRightX
             cpx #0
             beq shootBulletRL
-            jmp shootBulletJmpGameLoop
-            
+            jmp gameloop            
             
 shootBulletRL ldx sprite0
               cpx #11
@@ -153,11 +152,11 @@ shootBulletRL ldx sprite0
 
 shootBulletRight lda sprite0X
                  sec
-                 sbc #15
+                 sbc #24
                  lsr
                  lsr
                  lsr
-;                 adc #2
+                 adc #2
                  sta bulletRightY     
 
                  lda sprite0Y
@@ -166,10 +165,10 @@ shootBulletRight lda sprite0X
                  lsr
                  lsr
                  lsr
- ;                adc #1
+                 adc #1
                  sta bulletRightX   
                  
-                 jmp shootBulletJmpGameLoop  
+                 jmp gameloop  
 
 shootBulletLeft lda sprite0X
                 sec
@@ -188,7 +187,7 @@ shootBulletLeft lda sprite0X
                 adc #1
                 sta bulletLeftX  
            
-shootBulletJmpGameLoop jmp gameloop   
+                jmp gameloop   
 
 ; -------- move bullet --------     
 
