@@ -153,7 +153,7 @@ shootBulletRL ldx sprite0
 
 shootBulletRight lda sprite0X
                  sec
-                 sbc #24
+                 sbc #15
                  lsr
                  lsr
                  lsr
