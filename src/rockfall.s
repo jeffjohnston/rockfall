@@ -11,6 +11,7 @@ bulletLeftX        = $4007
 bulletLeftY        = $4008
 bullet             = $4009
 space              = $4010
+hexValueStore      = $4011
 
 chrout             = $ffd2
 textColor          = $0286
@@ -96,34 +97,67 @@ gameloop jsr pause
          jsr pause
          jsr pause
          jsr pause
-         jsr pause
-         jsr pause
-         jsr pause
-         jsr pause
          jsr moveBullet
+
+checkFireButton lda joyStick1
+                eor #255
+                cmp #16
+                beq jmpShootBullet
+                cmp #24 ; with fire button
+                beq jmpShootBullet
+                cmp #20 ; with fire button
+                beq jmpShootBullet
+                cmp #17 ; with fire button
+                beq jmpShootBullet
+                cmp #18 ; with fire button
+                beq jmpShootBullet
+                cmp #25 ; with fire button
+                beq jmpShootBullet
+                cmp #21 ; with fire button
+                beq jmpShootBullet
+                cmp #26 ; with fire button
+                beq jmpShootBullet
+                cmp #22 ; with fire button
+                beq jmpShootBullet
+                jmp checkMovement
          
-checkJoyStick lda joyStick1
+jmpShootBullet   jmp shootBullet
+         
+checkMovement lda joyStick1
               eor #255
               cmp #8
               beq jmpMoveRight
+              cmp #24 ; with fire button
+              beq jmpMoveRight
               cmp #4
+              beq jmpMoveLeft
+              cmp #20 ; with fire button
               beq jmpMoveLeft
               cmp #1
               beq jmpMoveUp
+              cmp #17 ; with fire button
+              beq jmpMoveUp
               cmp #2
+              beq jmpMoveDown
+              cmp #18 ; with fire button
               beq jmpMoveDown
               cmp #9
               beq jmpMoveUpRight
+              cmp #25 ; with fire button
+              beq jmpMoveUpRight
               cmp #5
+              beq jmpMoveUpLeft
+              cmp #21 ; with fire button
               beq jmpMoveUpLeft
               cmp #10
               beq jmpMoveDownRight
+              cmp #26 ; with fire button
+              beq jmpMoveDownRight
               cmp #6
               beq jmpMoveDownLeft
-              cmp #16
-              beq jmpShootBullet
-              ;jmp jmpFloatDown
-              jmp gameloop       
+              cmp #22 ; with fire button
+              beq jmpMoveDownLeft
+              jmp floatDown
     
     
 jmpMoveRight     jmp moveRight
@@ -135,15 +169,13 @@ jmpMoveUpLeft    jmp moveUpLeft
 jmpMoveDownRight jmp moveDownRight
 jmpMoveDownLeft  jmp moveDownLeft
 jmpFloatDown     jmp floatDown
-jmpShootBullet   jmp shootBullet
-
 
 ; -------- shoot bullet --------  
 
 shootBullet ldx bulletRightX
             cpx #0
             beq shootBulletRL
-            jmp gameloop            
+            jmp checkMovement            
             
 shootBulletRL ldx sprite0
               cpx #11
@@ -157,7 +189,7 @@ shootBulletRight lda sprite0X
                  lsr
                  lsr
                  adc #2
-                 sta bulletRightY     
+                 sta bulletRightY
 
                  lda sprite0Y
                  sec
@@ -168,7 +200,7 @@ shootBulletRight lda sprite0X
                  adc #1
                  sta bulletRightX   
                  
-                 jmp gameloop  
+                 jmp checkMovement  
 
 shootBulletLeft lda sprite0X
                 sec
@@ -187,7 +219,7 @@ shootBulletLeft lda sprite0X
                 adc #1
                 sta bulletLeftX  
            
-                jmp gameloop   
+                jmp checkMovement   
 
 ; -------- move bullet --------     
 
@@ -503,6 +535,25 @@ hoverImgFaceRight lda #11
 hoverImgFaceLeft lda #13
                  sta sprite0
                  rts
+                 
+; -------- print hex value --------          
+                 
+printHexValue  pha
+               lsr
+               lsr
+               lsr
+               lsr
+               jsr printHexNybble
+               pla
+               and #$0f
+printHexNybble cmp #$0a
+               bcs phnIsLetter
+phnIsDigit     ora #$30
+               bne phnPrint
+phnIsLetter    sbc #$09
+phnPrint       sta $0400, x
+               inx               
+               rts                 
                                         
 ; -------- end game --------
                 
