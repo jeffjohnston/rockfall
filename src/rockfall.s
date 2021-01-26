@@ -19,16 +19,23 @@ plot               = $fff0
 clearScreen        = $e544 ; clear screen       
 enableSprites      = $d015 ; 53269 enable sprites
 enableMultiSprites = $d01C ; 53276 enable multi-color sprites
-sprite0            = $7f8  ; 2040
-color0             = $d027 ; 53287
-sprite0X           = $d000 ; 53248
-sprite0Y           = $d001 ; 53249
+
+hoverSprite        = $7f8  ; 2040
+hoverColor         = $d027 ; 53287
+hoverSpriteX       = $d000 ; 53248
+hoverSpriteY       = $d001 ; 53249
+hoverRightImg      = $2c0  ; 704 block 11
+hoverLeftImg       = $340  ; 832 block 13
+
+rocketSprite       = $7f9  ; 2041
+rocketColor        = $d028 ; 53288
+rocketSpriteX      = $d002 ; 53250
+rocketSpriteY      = $d003 ; 53251
+rocketRightImg     = $380  ; 869 block 14
+rocketLeftImg      = $3c0  ; 960 block 15
+
 mostSigBitX        = $d010 ; 53264
 joyStick1          = $dc01 ; 56321
-
-hoverRightImg      = $2c0 ; 704 block 11
-hoverLeftImg       = $340 ; 832 block 13
-
 
 ; -------- setup --------
 
@@ -46,14 +53,17 @@ hoverLeftImg       = $340 ; 832 block 13
     sta textColor
 
     lda #11 ; block 11
-    sta sprite0
+    sta hoverSprite
+    lda #14 ; block 14
+    sta rocketSprite
 
     lda #$ff
     sta enableSprites
     lda #$ff
     sta enableMultiSprites
     lda #$00 ; black
-    sta color0
+    sta hoverColor
+    sta rocketColor
     lda #$02 ; sprite multicolor 1 (red)
     sta $d025
     lda #$0f ; sprite multicolor 2 (light grey)
@@ -68,9 +78,9 @@ hoverLeftImg       = $340 ; 832 block 13
     lda #0 ; begin high bit
     sta mostSigBitX
     ldx #75 ; begin x pos
-    stx sprite0X
+    stx hoverSpriteX
     ldy #126 ; begin y pos
-    sty sprite0Y
+    sty hoverSpriteY
 
 ; -------- build images --------
 
@@ -89,6 +99,22 @@ buildHoverLeftImg lda hoverLeftImgData,x
                   inx
                   cpx #63
                   bne buildHoverLeftImg
+
+                    ldx #0
+
+buildRocketRightImg lda rocketRightImgData,x
+                    sta rocketRightImg,x
+                    inx
+                    cpx #63
+                    bne buildRocketRightImg
+        
+                    ldx #0
+        
+buildRocketLeftImg lda rocketLeftImgData,x
+                   sta rocketLeftImg,x
+                   inx
+                   cpx #63
+                   bne buildRocketLeftImg
         
 ; -------- game loop --------
         
@@ -177,12 +203,12 @@ shootBullet ldx bulletRightX
             beq shootBulletRL
             jmp checkMovement            
             
-shootBulletRL ldx sprite0
+shootBulletRL ldx hoverSprite
               cpx #11
               beq shootBulletRight
               bne shootBulletLeft             
 
-shootBulletRight lda sprite0X
+shootBulletRight lda hoverSpriteX
                  sec
                  sbc #24
                  lsr
@@ -191,7 +217,7 @@ shootBulletRight lda sprite0X
                  adc #2
                  sta bulletRightY
 
-                 lda sprite0Y
+                 lda hoverSpriteY
                  sec
                  sbc #50
                  lsr
@@ -202,7 +228,7 @@ shootBulletRight lda sprite0X
                  
                  jmp checkMovement  
 
-shootBulletLeft lda sprite0X
+shootBulletLeft lda hoverSpriteX
                 sec
                 sbc #24
                 lsr
@@ -210,7 +236,7 @@ shootBulletLeft lda sprite0X
                 lsr
                 sta bulletLeftY     
 
-                lda sprite0Y
+                lda hoverSpriteY
                 sec
                 sbc #50
                 lsr
@@ -304,9 +330,9 @@ floatDown jsr bottomEdgeFunc
           cmp #1
           beq floatDownJmpGameLoop
 
-          ldx sprite0Y
+          ldx hoverSpriteY
           inx
-          stx sprite0Y
+          stx hoverSpriteY
                 
 floatDownJmpGameLoop jmp gameloop
         
@@ -319,9 +345,9 @@ moveRight jsr rightEdgeFunc
 
           jsr hoverImgFaceRight
 
-          ldx sprite0X
+          ldx hoverSpriteX
           inx
-          stx sprite0X
+          stx hoverSpriteX
         
 rightJmpGameLoop jmp gameloop
         
@@ -334,9 +360,9 @@ moveLeft jsr leftEdgeFunc
         
          jsr hoverImgFaceLeft
         
-         ldx sprite0X
+         ldx hoverSpriteX
          dex
-         stx sprite0X
+         stx hoverSpriteX
         
 leftJmpGameLoop jmp gameloop
 
@@ -347,9 +373,9 @@ moveUp jsr topEdgeFunc
        cmp #1
        beq upJmpGameLoop
 
-       ldx sprite0Y
+       ldx hoverSpriteY
        dex
-       stx sprite0Y
+       stx hoverSpriteY
     
 upJmpGameLoop jmp gameloop        
         
@@ -360,9 +386,9 @@ moveDown jsr bottomEdgeFunc
          cmp #1
          beq downJmpGameLoop
 
-         ldx sprite0Y
+         ldx hoverSpriteY
          inx
-         stx sprite0Y
+         stx hoverSpriteY
                 
 downJmpGameLoop jmp gameloop
 
@@ -380,13 +406,13 @@ moveUpRight jsr topEdgeFunc
       
             jsr hoverImgFaceRight
 
-            ldx sprite0X
+            ldx hoverSpriteX
             inx
-            stx sprite0X
+            stx hoverSpriteX
 
-            ldx sprite0Y
+            ldx hoverSpriteY
             dex
-            stx sprite0Y
+            stx hoverSpriteY
                 
 upRightJmpGameLoop jmp gameloop        
 
@@ -404,13 +430,13 @@ moveUpLeft jsr topEdgeFunc
       
            jsr hoverImgFaceLeft
 
-           ldx sprite0X
+           ldx hoverSpriteX
            dex
-           stx sprite0X
+           stx hoverSpriteX
 
-           ldx sprite0Y
+           ldx hoverSpriteY
            dex
-           stx sprite0Y
+           stx hoverSpriteY
                 
 upLeftJmpGameLoop jmp gameloop     
 
@@ -428,13 +454,13 @@ moveDownRight jsr bottomEdgeFunc
              
               jsr hoverImgFaceRight
 
-              ldx sprite0X
+              ldx hoverSpriteX
               inx
-              stx sprite0X
+              stx hoverSpriteX
 
-              ldx sprite0Y
+              ldx hoverSpriteY
               inx
-              stx sprite0Y
+              stx hoverSpriteY
                 
 downRightJmpGameLoop jmp gameloop        
 
@@ -452,13 +478,13 @@ moveDownLeft jsr bottomEdgeFunc
              
              jsr hoverImgFaceLeft
              
-             ldx sprite0X
+             ldx hoverSpriteX
              dex
-             stx sprite0X
+             stx hoverSpriteX
 
-             ldx sprite0Y
+             ldx hoverSpriteY
              inx
-             stx sprite0Y
+             stx hoverSpriteY
                 
 downLeftJmpGameLoop jmp gameloop        
    
@@ -476,7 +502,7 @@ pause255 iny
         
 leftEdgeFunc lda #0
              sta leftEdge
-             ldx sprite0X
+             ldx hoverSpriteX
              cpx #25
              beq hitLeftEdge
              rts
@@ -489,7 +515,7 @@ hitLeftEdge  lda #1
         
 rightEdgeFunc lda #0
               sta rightEdge
-              ldx sprite0X
+              ldx hoverSpriteX
               cpx #255
               beq hitRightEdge
               rts
@@ -502,7 +528,7 @@ hitRightEdge  lda #1
         
 topEdgeFunc lda #0
             sta topEdge
-            ldx sprite0Y
+            ldx hoverSpriteY
             cpx #51
             beq hitTopEdge
             rts           
@@ -515,7 +541,7 @@ hitTopEdge  lda #1
         
 bottomEdgeFunc lda #0
                sta bottomEdge
-               ldx sprite0Y
+               ldx hoverSpriteY
                cpx #228
                beq hitBottomEdge
                rts           
@@ -527,13 +553,13 @@ hitBottomEdge  lda #1
 ; -------- turn gameloop character right --------
                
 hoverImgFaceRight lda #11
-                  sta sprite0
+                  sta hoverSprite
                   rts
 
 ; -------- turn gameloop character left --------
                
 hoverImgFaceLeft lda #13
-                 sta sprite0
+                 sta hoverSprite
                  rts
                  
 ; -------- print hex value --------          
@@ -577,4 +603,22 @@ hoverLeftImgData .byte $00,$aa,$00,$02,$be,$80,$03,$fe
                  .byte $55,$c0,$00,$55,$00,$01,$69,$40
                  .byte $01,$41,$40,$05,$41,$50,$0f,$c3
                  .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80        
+
+rocketRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$0e,$00,$00
+                   .byte $02,$80,$00,$06,$aa,$b0,$1a,$aa
+                   .byte $ac,$06,$aa,$b0,$02,$80,$00,$0e
+                   .byte $00,$00,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$00,$00,$80
+
+rocketLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
+                  .byte $00,$00,$00,$00,$00,$00,$00,$00
+                  .byte $00,$00,$00,$00,$00,$00,$00,$b0
+                  .byte $00,$02,$80,$0e,$aa,$90,$3a,$aa
+                  .byte $a4,$0e,$aa,$90,$00,$02,$80,$00
+                  .byte $00,$b0,$00,$00,$00,$00,$00,$00
+                  .byte $00,$00,$00,$00,$00,$00,$00,$00
+                  .byte $00,$00,$00,$00,$00,$00,$00,$80
 
