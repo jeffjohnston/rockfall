@@ -5,13 +5,6 @@ leftEdge           = $4001 ; detect left edge
 rightEdge          = $4002 ; detect right edge
 topEdge            = $4003 ; detect top edge
 bottomEdge         = $4004 ; detect bottom edge
-bulletRightX       = $4005
-bulletRightY       = $4006
-bulletLeftX        = $4007
-bulletLeftY        = $4008
-bullet             = $4009
-space              = $4010
-hexValueStore      = $4011
 
 chrout             = $ffd2
 textColor          = $0286
@@ -45,19 +38,12 @@ joyStick1          = $dc01 ; 56321
     lda #$06
     sta 53281 ; background color
     
-    lda #99
-    sta bullet
-    lda #32
-    sta space
-    lda #$02	
-    sta textColor
-
     lda #11 ; block 11
     sta hoverSprite
     lda #14 ; block 14
     sta rocketSprite
 
-    lda #$ff
+    lda #1
     sta enableSprites
     lda #$ff
     sta enableMultiSprites
@@ -69,12 +55,6 @@ joyStick1          = $dc01 ; 56321
     lda #$0f ; sprite multicolor 2 (light grey)
     sta $d026
     
-    lda #0 
-    sta bulletRightX
-    sta bulletRightY
-    sta bulletLeftX
-    sta bulletLeftY
-
     lda #0 ; begin high bit
     sta mostSigBitX
     ldx #75 ; begin x pos
@@ -119,35 +99,31 @@ buildRocketLeftImg lda rocketLeftImgData,x
 ; -------- game loop --------
         
 gameloop jsr pause
-         jsr pause
-         jsr pause
-         jsr pause
-         jsr pause
-         jsr moveBullet
+         jsr moveRocket
 
 checkFireButton lda joyStick1
                 eor #255
                 cmp #16
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #24 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #20 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #17 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #18 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #25 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #21 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #26 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 cmp #22 ; with fire button
-                beq jmpShootBullet
+                beq jmpShootRocket
                 jmp checkMovement
          
-jmpShootBullet   jmp shootBullet
+jmpShootRocket   jmp shootRocket
          
 checkMovement lda joyStick1
               eor #255
@@ -183,7 +159,7 @@ checkMovement lda joyStick1
               beq jmpMoveDownLeft
               cmp #22 ; with fire button
               beq jmpMoveDownLeft
-              jmp floatDown
+              jmp gameloop
     
     
 jmpMoveRight     jmp moveRight
@@ -196,131 +172,81 @@ jmpMoveDownRight jmp moveDownRight
 jmpMoveDownLeft  jmp moveDownLeft
 jmpFloatDown     jmp floatDown
 
-; -------- shoot bullet --------  
+; -------- shoot rocket --------  
 
-shootBullet ldx bulletRightX
-            cpx #0
-            beq shootBulletRL
-            jmp checkMovement            
-            
-shootBulletRL ldx hoverSprite
-              cpx #11
-              beq shootBulletRight
-              bne shootBulletLeft             
+shootRocket ldx hoverSprite
+            cpx #11
+            beq shootRocketRight
+            bne shootRocketLeft             
 
-shootBulletRight lda hoverSpriteX
-                 sec
-                 sbc #24
-                 lsr
-                 lsr
-                 lsr
-                 adc #2
-                 sta bulletRightY
+shootRocketRight jsr rocketImgFaceRight
+
+                 lda hoverSpriteX
+                 cmp #234
+                 bcs shootRocketJmpCheckMovement
+                 
+                 adc #21
+                 sta rocketSpriteX
 
                  lda hoverSpriteY
-                 sec
-                 sbc #50
-                 lsr
-                 lsr
-                 lsr
-                 adc #1
-                 sta bulletRightX   
+                 sta rocketSpriteY
                  
                  jmp checkMovement  
 
-shootBulletLeft lda hoverSpriteX
-                sec
-                sbc #24
-                lsr
-                lsr
-                lsr
-                sta bulletLeftY     
+shootRocketLeft jsr rocketImgFaceLeft
+
+                lda hoverSpriteX
+                cmp #47
+                bcc shootRocketJmpCheckMovement
+                
+                sbc #22
+                sta rocketSpriteX
 
                 lda hoverSpriteY
-                sec
-                sbc #50
-                lsr
-                lsr
-                lsr
-                adc #1
-                sta bulletLeftX  
-           
-                jmp checkMovement   
+                sta rocketSpriteY
+                 
+                jmp checkMovement
+                
+shootRocketJmpCheckMovement jmp checkMovement                
 
-; -------- move bullet --------     
+; -------- move rocket --------     
 
-moveBullet ldx bulletRightX
-           cpx #0
-           bne moveBulletRight
-           ldx bulletLeftX
-           cpx #0
-           bne moveBulletLeft
+moveRocket ldx rocketSprite
+           cpx #14
+           beq moveRocketRight
+           bne moveRocketLeft     
            rts
 
-moveBulletRight ldx bulletRightX
-                ldy bulletRightY         
-                clc
-                jsr plot  
-                lda space     
-                jsr chrout
+moveRocketRight lda #3
+                sta enableSprites
+                
+                ldx rocketSpriteX
+                inx
+                stx rocketSpriteX                
 
-                ldy bulletRightY         
-                inc bulletRightY
-                ldy bulletRightY
-
-                ldx bulletRightX
-                ldy bulletRightY         
-                clc
-                jsr plot  
-                lda bullet     
-                jsr chrout
-                  
-                cpy #38
-                beq stopBullet
+                lda rocketSpriteX
+                cmp #255
+                beq stopRocket                
                 rts
 
-moveBulletLeft ldx bulletLeftX
-               ldy bulletLeftY         
-               clc
-               jsr plot  
-               lda space     
-               jsr chrout
+moveRocketLeft lda #3
+               sta enableSprites
 
-               ldy bulletLeftY         
-               dec bulletLeftY
-               ldy bulletLeftY
-                  
-               ldx bulletLeftX
-               ldy bulletLeftY         
-               clc
-               jsr plot  
-               lda bullet     
-               jsr chrout
-                 
-               cpy #0
-               beq stopBullet
+               ldx rocketSpriteX
+               dex
+               stx rocketSpriteX                
+
+               lda rocketSpriteX
+               cmp #25
+               beq stopRocket                
                rts
                 
-stopBullet ldx bulletRightX
-           ldy bulletRightY         
-           clc
-           jsr plot  
-           lda space     
-           jsr chrout   
+stopRocket lda #1
+           sta enableSprites
 
-           ldx bulletLeftX
-           ldy bulletLeftY         
-           clc
-           jsr plot  
-           lda space     
-           jsr chrout
-
-           ldx #0
-           stx bulletRightX
-           stx bulletRightY
-           stx bulletLeftX
-           stx bulletLeftY
-                                    
+           lda #0
+           sta rocketSpriteX
+           sta rocketSpriteY
            rts
 
 ; -------- gameloop character floats down --------               
@@ -561,6 +487,18 @@ hoverImgFaceRight lda #11
 hoverImgFaceLeft lda #13
                  sta hoverSprite
                  rts
+
+; -------- turn gameloop character right --------
+               
+rocketImgFaceRight lda #14
+                   sta rocketSprite
+                   rts
+
+; -------- turn gameloop character left --------
+               
+rocketImgFaceLeft lda #15
+                  sta rocketSprite
+                  rts
                  
 ; -------- print hex value --------          
                  
