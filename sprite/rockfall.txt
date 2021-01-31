@@ -1,0 +1,64 @@
+
+; 5 sprites generated with spritemate on 1/30/2021, 7:22:46 PM
+; Byte 64 of each sprite contains multicolor (high nibble) & color (low nibble) information
+
+LDA #$00 ; sprite multicolor 1
+STA $D025
+LDA #$0f ; sprite multicolor 2
+STA $D026
+
+
+; sprite 0 / multicolor / color: $02
+sprite_0
+!byte $00,$55,$00,$01,$7d,$40,$05,$7f
+!byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
+!byte $ff,$c0,$07,$ff,$c0,$01,$f5,$00
+!byte $00,$3f,$00,$02,$7d,$80,$02,$96
+!byte $80,$03,$aa,$c0,$03,$aa,$c0,$03
+!byte $aa,$c0,$00,$aa,$00,$02,$96,$80
+!byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
+!byte $f0,$55,$55,$55,$14,$00,$14,$82
+
+; sprite 1 / multicolor / color: $02
+sprite_1
+!byte $00,$55,$00,$01,$7d,$40,$03,$fd
+!byte $50,$03,$7d,$d0,$0f,$7d,$d0,$03
+!byte $ff,$d0,$03,$ff,$d0,$00,$5f,$40
+!byte $00,$fc,$00,$02,$7d,$80,$02,$96
+!byte $80,$03,$aa,$c0,$03,$aa,$c0,$03
+!byte $aa,$c0,$00,$aa,$00,$02,$96,$80
+!byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
+!byte $f0,$55,$55,$55,$14,$00,$14,$82
+
+; sprite 2 / multicolor / color: $02
+sprite_2
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$0d,$00,$00
+!byte $01,$40,$00,$09,$55,$70,$25,$55
+!byte $5c,$09,$55,$70,$01,$40,$00,$0d
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$82
+
+; sprite 3 / multicolor / color: $02
+sprite_3
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$70
+!byte $00,$01,$40,$0d,$55,$60,$35,$55
+!byte $58,$0d,$55,$60,$00,$01,$40,$00
+!byte $00,$70,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$00
+!byte $00,$00,$00,$00,$00,$00,$00,$82
+
+; sprite 4 / multicolor / color: $08
+sprite_1
+!byte $00,$00,$00,$00,$55,$00,$01,$aa
+!byte $40,$01,$aa,$40,$06,$aa,$90,$1a
+!byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
+!byte $6a,$aa,$a9,$6a,$aa,$a9,$6a,$aa
+!byte $a9,$6a,$aa,$a9,$6a,$aa,$a9,$1a
+!byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
+!byte $06,$aa,$90,$01,$aa,$40,$01,$aa
+!byte $40,$00,$55,$00,$00,$00,$00,$88

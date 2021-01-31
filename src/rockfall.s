@@ -17,15 +17,15 @@ hoverSprite        = $7f8  ; 2040
 hoverColor         = $d027 ; 53287
 hoverSpriteX       = $d000 ; 53248
 hoverSpriteY       = $d001 ; 53249
-hoverRightImg      = $2c0  ; 704 block 11
-hoverLeftImg       = $340  ; 832 block 13
+hoverRightImg      = $3000 ; 12288 block 192 (64*192=12288)
+hoverLeftImg       = $3040 ; 12352 block 193
 
 rocketSprite       = $7f9  ; 2041
 rocketColor        = $d028 ; 53288
 rocketSpriteX      = $d002 ; 53250
 rocketSpriteY      = $d003 ; 53251
-rocketRightImg     = $380  ; 869 block 14
-rocketLeftImg      = $3c0  ; 960 block 15
+rocketRightImg     = $3080 ; 12416 block 194
+rocketLeftImg      = $30C0 ; 12480 block 195
 
 mostSigBitX        = $d010 ; 53264
 joyStick1          = $dc01 ; 56321
@@ -38,19 +38,19 @@ joyStick1          = $dc01 ; 56321
     lda #$06
     sta 53281 ; background color
     
-    lda #11 ; block 11
+    lda #192 ; block 192
     sta hoverSprite
-    lda #14 ; block 14
+    lda #194 ; block 194
     sta rocketSprite
 
     lda #1
     sta enableSprites
     lda #$ff
     sta enableMultiSprites
-    lda #$00 ; black
+    lda #$02 ; red
     sta hoverColor
     sta rocketColor
-    lda #$02 ; sprite multicolor 1 (red)
+    lda #$00 ; sprite multicolor 1 (black)
     sta $d025
     lda #$0f ; sprite multicolor 2 (light grey)
     sta $d026
@@ -175,7 +175,7 @@ jmpFloatDown     jmp floatDown
 ; -------- shoot rocket --------  
 
 shootRocket ldx hoverSprite
-            cpx #11
+            cpx #192
             beq shootRocketRight
             bne shootRocketLeft             
 
@@ -212,7 +212,7 @@ shootRocketJmpCheckMovement jmp checkMovement
 ; -------- move rocket --------     
 
 moveRocket ldx rocketSprite
-           cpx #14
+           cpx #194
            beq moveRocketRight
            bne moveRocketLeft     
            rts
@@ -478,25 +478,25 @@ hitBottomEdge  lda #1
                
 ; -------- turn gameloop character right --------
                
-hoverImgFaceRight lda #11
+hoverImgFaceRight lda #192
                   sta hoverSprite
                   rts
 
 ; -------- turn gameloop character left --------
                
-hoverImgFaceLeft lda #13
+hoverImgFaceLeft lda #193
                  sta hoverSprite
                  rts
 
 ; -------- turn gameloop character right --------
                
-rocketImgFaceRight lda #14
+rocketImgFaceRight lda #194
                    sta rocketSprite
                    rts
 
 ; -------- turn gameloop character left --------
                
-rocketImgFaceLeft lda #15
+rocketImgFaceLeft lda #195
                   sta rocketSprite
                   rts
                  
@@ -524,39 +524,49 @@ phnPrint       sta $0400, x
 end     rts                    
 
 
-hoverRightImgData .byte $00,$aa,$00,$02,$be,$80,$0a,$bf
-                  .byte $c0,$0b,$be,$c0,$0b,$be,$f0,$0b
-                  .byte $ff,$c0,$0b,$ff,$c0,$02,$fa,$00
-                  .byte $00,$3f,$00,$01,$be,$40,$01,$69
-                  .byte $40,$03,$55,$c0,$03,$55,$c0,$03
-                  .byte $55,$c0,$00,$55,$00,$01,$69,$40
-                  .byte $01,$41,$40,$05,$41,$50,$0f,$c3
-                  .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80
+hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
+                  .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
+                  .byte $ff,$c0,$07,$ff,$c0,$01,$f5,$00
+                  .byte $00,$3f,$00,$02,$7d,$80,$02,$96
+                  .byte $80,$03,$aa,$c0,$03,$aa,$c0,$03
+                  .byte $aa,$c0,$00,$aa,$00,$02,$96,$80
+                  .byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
+                  .byte $f0,$55,$55,$55,$14,$00,$14,$82
 
-hoverLeftImgData .byte $00,$aa,$00,$02,$be,$80,$03,$fe
-                 .byte $a0,$03,$be,$e0,$0f,$be,$e0,$03
-                 .byte $ff,$e0,$03,$ff,$e0,$00,$af,$80
-                 .byte $00,$fc,$00,$01,$be,$40,$01,$69
-                 .byte $40,$03,$55,$c0,$03,$55,$c0,$03
-                 .byte $55,$c0,$00,$55,$00,$01,$69,$40
-                 .byte $01,$41,$40,$05,$41,$50,$0f,$c3
-                 .byte $f0,$aa,$aa,$aa,$28,$00,$28,$80        
+hoverLeftImgData .byte $00,$55,$00,$01,$7d,$40,$03,$fd
+                 .byte $50,$03,$7d,$d0,$0f,$7d,$d0,$03
+                 .byte $ff,$d0,$03,$ff,$d0,$00,$5f,$40
+                 .byte $00,$fc,$00,$02,$7d,$80,$02,$96
+                 .byte $80,$03,$aa,$c0,$03,$aa,$c0,$03
+                 .byte $aa,$c0,$00,$aa,$00,$02,$96,$80
+                 .byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
+                 .byte $f0,$55,$55,$55,$14,$00,$14,$82   
 
 rocketRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
-                   .byte $00,$00,$00,$00,$00,$0e,$00,$00
-                   .byte $02,$80,$00,$06,$aa,$b0,$1a,$aa
-                   .byte $ac,$06,$aa,$b0,$02,$80,$00,$0e
+                   .byte $00,$00,$00,$00,$00,$0d,$00,$00
+                   .byte $01,$40,$00,$09,$55,$70,$25,$55
+                   .byte $5c,$09,$55,$70,$01,$40,$00,$0d
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
-                   .byte $00,$00,$00,$00,$00,$00,$00,$80
+                   .byte $00,$00,$00,$00,$00,$00,$00,$82
 
 rocketLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
-                  .byte $00,$00,$00,$00,$00,$00,$00,$00
-                  .byte $00,$00,$00,$00,$00,$00,$00,$b0
-                  .byte $00,$02,$80,$0e,$aa,$90,$3a,$aa
-                  .byte $a4,$0e,$aa,$90,$00,$02,$80,$00
-                  .byte $00,$b0,$00,$00,$00,$00,$00,$00
-                  .byte $00,$00,$00,$00,$00,$00,$00,$00
-                  .byte $00,$00,$00,$00,$00,$00,$00,$80
+                   .byte $00,$00,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$00,$00,$70
+                   .byte $00,$01,$40,$0d,$55,$60,$35,$55
+                   .byte $58,$0d,$55,$60,$00,$01,$40,$00
+                   .byte $00,$70,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$00,$00,$00
+                   .byte $00,$00,$00,$00,$00,$00,$00,$82
+                  
+brownRockImgData .byte $00,$00,$00,$00,$55,$00,$01,$aa
+                 .byte $40,$01,$aa,$40,$06,$aa,$90,$1a
+                 .byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
+                 .byte $6a,$aa,$a9,$6a,$aa,$a9,$6a,$aa
+                 .byte $a9,$6a,$aa,$a9,$6a,$aa,$a9,$1a
+                 .byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
+                 .byte $06,$aa,$90,$01,$aa,$40,$01,$aa
+                 .byte $40,$00,$55,$00,$00,$00,$00,$88
+
 
