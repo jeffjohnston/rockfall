@@ -4,11 +4,6 @@ v                  = 53248
 irqvec             = $314 ; 788
 irqnor             = $ea31 ; 59953 standard irq routine
 
-leftEdge           = $4001 ; detect left edge
-rightEdge          = $4002 ; detect right edge
-topEdge            = $4003 ; detect top edge
-bottomEdge         = $4004 ; detect bottom edge
-
 chrout             = $ffd2
 textColor          = $0286
 plot               = $fff0
@@ -568,7 +563,7 @@ setupCustomIrq ldx #0
 customIrq ldx hoverDelayTimer
           inx
           stx hoverDelayTimer
-          cpx #60
+          cpx #1
           beq setHoverCanMove
           jmp standardIrq
          
@@ -582,6 +577,14 @@ standardIrq jmp irqnor
                 
 end     rts                    
 
+; -------- custom variables --------
+
+leftEdge        .byte 0 ; detect left edge
+rightEdge       .byte 0 ; detect right edge
+topEdge         .byte 0 ; detect top edge
+bottomEdge      .byte 0 ; detect bottom edge
+hoverDelayTimer .byte 0 ; the current countdown timer
+hoverCanMove    .byte 0 ; check to see if hover can move
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
