@@ -222,6 +222,13 @@ moveRocket ldx rocketSprite
 moveRocketRight lda #3
                 sta enableSprites
                 
+                ldx rocketCanMove
+                cpx #0
+                beq moveRocketRight
+          
+                ldx #0
+                stx rocketCanMove
+                
                 ldx rocketSpriteX
                 inx
                 stx rocketSpriteX                
@@ -233,6 +240,13 @@ moveRocketRight lda #3
 
 moveRocketLeft lda #3
                sta enableSprites
+
+               ldx rocketCanMove
+               cpx #0
+               beq moveRocketLeft
+          
+               ldx #0
+               stx rocketCanMove
 
                ldx rocketSpriteX
                dex
@@ -272,7 +286,7 @@ moveRight jsr rightEdgeFunc
           beq rightJmpGameLoop
 
           jsr hoverImgFaceRight
-          jsr checkBeforeMoveHover
+          jsr checkIfHoverCanMove
 
           ldx hoverSpriteX
           inx
@@ -288,7 +302,7 @@ moveLeft jsr leftEdgeFunc
          beq leftJmpGameLoop
         
          jsr hoverImgFaceLeft
-         jsr checkBeforeMoveHover
+         jsr checkIfHoverCanMove
         
          ldx hoverSpriteX
          dex
@@ -303,7 +317,7 @@ moveUp jsr topEdgeFunc
        cmp #1
        beq upJmpGameLoop
 
-       jsr checkBeforeMoveHover
+       jsr checkIfHoverCanMove
 
        ldx hoverSpriteY
        dex
@@ -318,7 +332,7 @@ moveDown jsr bottomEdgeFunc
          cmp #1
          beq downJmpGameLoop
 
-         jsr checkBeforeMoveHover
+         jsr checkIfHoverCanMove
 
          ldx hoverSpriteY
          inx
@@ -339,7 +353,7 @@ moveUpRight jsr topEdgeFunc
             beq upRightJmpGameLoop
       
             jsr hoverImgFaceRight
-            jsr checkBeforeMoveHover
+            jsr checkIfHoverCanMove
 
             ldx hoverSpriteX
             inx
@@ -364,7 +378,7 @@ moveUpLeft jsr topEdgeFunc
            beq upLeftJmpGameLoop
       
            jsr hoverImgFaceLeft
-           jsr checkBeforeMoveHover
+           jsr checkIfHoverCanMove
 
            ldx hoverSpriteX
            dex
@@ -389,7 +403,7 @@ moveDownRight jsr bottomEdgeFunc
               beq downRightJmpGameLoop
              
               jsr hoverImgFaceRight
-              jsr checkBeforeMoveHover
+              jsr checkIfHoverCanMove
 
               ldx hoverSpriteX
               inx
@@ -414,7 +428,7 @@ moveDownLeft jsr bottomEdgeFunc
              beq downLeftJmpGameLoop
              
              jsr hoverImgFaceLeft
-             jsr checkBeforeMoveHover
+             jsr checkIfHoverCanMove
              
              ldx hoverSpriteX
              dex
@@ -533,22 +547,21 @@ phnPrint       sta $0400, x
              
 ; -------- check to see if can move hover --------
              
-checkBeforeMoveHover ldx hoverCanMove
-                     cpx #0
-                     beq checkBeforeMoveHoverJmpGameLoop
+checkIfHoverCanMove ldx hoverCanMove
+                    cpx #0
+                    beq checkIfHoverCanMoveJmpGameLoop
           
-                     ldx #0
-                     stx hoverDelayTimer
-                     stx hoverCanMove
-                     rts
+                    ldx #0
+                    stx hoverCanMove
+                    rts
 
-checkBeforeMoveHoverJmpGameLoop jmp gameloop
+checkIfHoverCanMoveJmpGameLoop jmp gameloop
              
 ; -------- setup irq delay --------
 
 setupCustomIrq ldx #0
-               stx hoverDelayTimer
                stx hoverCanMove
+               stx rocketCanMove
 
                sei
                lda #<customIrq
@@ -560,17 +573,11 @@ setupCustomIrq ldx #0
            
 ; -------- irq delay --------
         
-customIrq ldx hoverDelayTimer
-          inx
-          stx hoverDelayTimer
-          cpx #1
-          beq setHoverCanMove
+customIrq ldx #1
+          stx hoverCanMove
+          stx rocketCanMove
           jmp standardIrq
          
-setHoverCanMove ldx #1
-                stx hoverCanMove
-                jmp standardIrq
-                
 standardIrq jmp irqnor             
                                         
 ; -------- end game --------
@@ -583,8 +590,8 @@ leftEdge        .byte 0 ; detect left edge
 rightEdge       .byte 0 ; detect right edge
 topEdge         .byte 0 ; detect top edge
 bottomEdge      .byte 0 ; detect bottom edge
-hoverDelayTimer .byte 0 ; the current countdown timer
 hoverCanMove    .byte 0 ; check to see if hover can move
+rocketCanMove   .byte 0 ; check to see if rocket can move
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
