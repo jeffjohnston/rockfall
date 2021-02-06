@@ -1,6 +1,9 @@
                    *= $4000
 
-v                  = 53248 ;
+v                  = 53248
+irqvec             = $314 ; 788
+irqnor             = $ea31 ; 59953 standard irq routine
+
 leftEdge           = $4001 ; detect left edge
 rightEdge          = $4002 ; detect right edge
 topEdge            = $4003 ; detect top edge
@@ -19,7 +22,7 @@ hoverSpriteX       = $d000 ; 53248
 hoverSpriteY       = $d001 ; 53249
 hoverRightImg      = $3000 ; 12288 block 192 (64*192=12288)
 hoverLeftImg       = $3040 ; 12352 block 193
-
+ 
 rocketSprite       = $7f9  ; 2041
 rocketColor        = $d028 ; 53288
 rocketSpriteX      = $d002 ; 53250
@@ -33,6 +36,8 @@ joyStick1          = $dc01 ; 56321
 ; -------- setup --------
 
     jsr clearScreen
+    jsr setupCustomIrq
+    
     lda #$00
     sta 53280 ; border color
     lda #$06
@@ -47,9 +52,11 @@ joyStick1          = $dc01 ; 56321
     sta enableSprites
     lda #$ff
     sta enableMultiSprites
-    lda #$02 ; red
+    
+    lda #$02 ; red (individual color)
     sta hoverColor
     sta rocketColor
+    
     lda #$00 ; sprite multicolor 1 (black)
     sta $d025
     lda #$0f ; sprite multicolor 2 (light grey)
@@ -57,11 +64,12 @@ joyStick1          = $dc01 ; 56321
     
     lda #0 ; begin high bit
     sta mostSigBitX
+    
     ldx #75 ; begin x pos
     stx hoverSpriteX
     ldy #126 ; begin y pos
     sty hoverSpriteY
-
+    
 ; -------- build images --------
 
                    ldx #0
@@ -98,8 +106,7 @@ buildRocketLeftImg lda rocketLeftImgData,x
         
 ; -------- game loop --------
         
-gameloop jsr pause
-         jsr moveRocket
+gameloop jsr moveRocket
 
 checkFireButton lda joyStick1
                 eor #255
@@ -121,11 +128,11 @@ checkFireButton lda joyStick1
                 beq jmpShootRocket
                 cmp #22 ; with fire button
                 beq jmpShootRocket
-                jmp checkMovement
+                jmp checkJoystick
          
-jmpShootRocket   jmp shootRocket
+jmpShootRocket  jmp shootRocket
          
-checkMovement lda joyStick1
+checkJoystick lda joyStick1
               eor #255
               cmp #8
               beq jmpMoveRight
@@ -183,7 +190,7 @@ shootRocketRight jsr rocketImgFaceRight
 
                  lda hoverSpriteX
                  cmp #234
-                 bcs shootRocketJmpCheckMovement
+                 bcs shootRocketJmpCheckJoystick
                  
                  adc #21
                  sta rocketSpriteX
@@ -191,13 +198,13 @@ shootRocketRight jsr rocketImgFaceRight
                  lda hoverSpriteY
                  sta rocketSpriteY
                  
-                 jmp checkMovement  
+                 jmp checkJoystick  
 
 shootRocketLeft jsr rocketImgFaceLeft
 
                 lda hoverSpriteX
                 cmp #47
-                bcc shootRocketJmpCheckMovement
+                bcc shootRocketJmpCheckJoystick
                 
                 sbc #22
                 sta rocketSpriteX
@@ -205,9 +212,9 @@ shootRocketLeft jsr rocketImgFaceLeft
                 lda hoverSpriteY
                 sta rocketSpriteY
                  
-                jmp checkMovement
+                jmp checkJoystick
                 
-shootRocketJmpCheckMovement jmp checkMovement                
+shootRocketJmpCheckJoystick jmp checkJoystick                
 
 ; -------- move rocket --------     
 
@@ -270,6 +277,7 @@ moveRight jsr rightEdgeFunc
           beq rightJmpGameLoop
 
           jsr hoverImgFaceRight
+          jsr checkBeforeMoveHover
 
           ldx hoverSpriteX
           inx
@@ -285,6 +293,7 @@ moveLeft jsr leftEdgeFunc
          beq leftJmpGameLoop
         
          jsr hoverImgFaceLeft
+         jsr checkBeforeMoveHover
         
          ldx hoverSpriteX
          dex
@@ -299,6 +308,8 @@ moveUp jsr topEdgeFunc
        cmp #1
        beq upJmpGameLoop
 
+       jsr checkBeforeMoveHover
+
        ldx hoverSpriteY
        dex
        stx hoverSpriteY
@@ -311,6 +322,8 @@ moveDown jsr bottomEdgeFunc
          lda bottomEdge
          cmp #1
          beq downJmpGameLoop
+
+         jsr checkBeforeMoveHover
 
          ldx hoverSpriteY
          inx
@@ -331,6 +344,7 @@ moveUpRight jsr topEdgeFunc
             beq upRightJmpGameLoop
       
             jsr hoverImgFaceRight
+            jsr checkBeforeMoveHover
 
             ldx hoverSpriteX
             inx
@@ -355,6 +369,7 @@ moveUpLeft jsr topEdgeFunc
            beq upLeftJmpGameLoop
       
            jsr hoverImgFaceLeft
+           jsr checkBeforeMoveHover
 
            ldx hoverSpriteX
            dex
@@ -379,6 +394,7 @@ moveDownRight jsr bottomEdgeFunc
               beq downRightJmpGameLoop
              
               jsr hoverImgFaceRight
+              jsr checkBeforeMoveHover
 
               ldx hoverSpriteX
               inx
@@ -403,6 +419,7 @@ moveDownLeft jsr bottomEdgeFunc
              beq downLeftJmpGameLoop
              
              jsr hoverImgFaceLeft
+             jsr checkBeforeMoveHover
              
              ldx hoverSpriteX
              dex
@@ -518,6 +535,48 @@ phnIsLetter    sbc #$09
 phnPrint       sta $0400, x
                inx               
                rts                 
+             
+; -------- check to see if can move hover --------
+             
+checkBeforeMoveHover ldx hoverCanMove
+                     cpx #0
+                     beq checkBeforeMoveHoverJmpGameLoop
+          
+                     ldx #0
+                     stx hoverDelayTimer
+                     stx hoverCanMove
+                     rts
+
+checkBeforeMoveHoverJmpGameLoop jmp gameloop
+             
+; -------- setup irq delay --------
+
+setupCustomIrq ldx #0
+               stx hoverDelayTimer
+               stx hoverCanMove
+
+               sei
+               lda #<customIrq
+               sta irqvec
+               lda #>customIrq
+               sta irqvec+1
+               cli
+               rts
+           
+; -------- irq delay --------
+        
+customIrq ldx hoverDelayTimer
+          inx
+          stx hoverDelayTimer
+          cpx #60
+          beq setHoverCanMove
+          jmp standardIrq
+         
+setHoverCanMove ldx #1
+                stx hoverCanMove
+                jmp standardIrq
+                
+standardIrq jmp irqnor             
                                         
 ; -------- end game --------
                 
