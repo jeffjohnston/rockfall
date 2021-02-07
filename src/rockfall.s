@@ -25,6 +25,12 @@ rocketSpriteY      = $d003 ; 53251
 rocketRightImg     = $3080 ; 12416 block 194
 rocketLeftImg      = $30C0 ; 12480 block 195
 
+rockSprite         = $7fa  ; 2042
+rockColor          = $d029 ; 53289
+rockSpriteX        = $d004 ; 53252
+rockSpriteY        = $d005 ; 53253
+rockImg            = $3100 ; 12544 block 196
+
 mostSigBitX        = $d010 ; 53264
 joyStick1          = $dc01 ; 56321
 
@@ -42,6 +48,8 @@ joyStick1          = $dc01 ; 56321
     sta hoverSprite
     lda #194 ; block 194
     sta rocketSprite
+    lda #196 ; block 196
+    sta rockSprite
 
     lda #1
     sta enableSprites
@@ -51,6 +59,9 @@ joyStick1          = $dc01 ; 56321
     lda #$02 ; red (individual color)
     sta hoverColor
     sta rocketColor
+    
+    lda #$08 ; brown (individual color)
+    sta rockColor
     
     lda #$00 ; sprite multicolor 1 (black)
     sta $d025
@@ -65,6 +76,10 @@ joyStick1          = $dc01 ; 56321
     ldy #126 ; begin y pos
     sty hoverSpriteY
     
+;    lda enableSprites
+;    eor #4
+;    sta enableSprites
+
 ; -------- build images --------
 
                    ldx #0
@@ -75,7 +90,7 @@ buildHoverRightImg lda hoverRightImgData,x
                    cpx #63
                    bne buildHoverRightImg
         
-                   ldx #0
+                  ldx #0
         
 buildHoverLeftImg lda hoverLeftImgData,x
                   sta hoverLeftImg,x
@@ -91,13 +106,21 @@ buildRocketRightImg lda rocketRightImgData,x
                     cpx #63
                     bne buildRocketRightImg
         
-                    ldx #0
+                   ldx #0
         
 buildRocketLeftImg lda rocketLeftImgData,x
                    sta rocketLeftImg,x
                    inx
                    cpx #63
                    bne buildRocketLeftImg
+                    
+             ldx #0
+        
+buildRockImg lda rockImgData,x
+             sta rockImg,x
+             inx
+             cpx #63
+             bne buildRockImg
         
 ; -------- game loop --------
         
@@ -176,7 +199,12 @@ jmpFloatDown     jmp floatDown
 
 ; -------- shoot rocket --------  
 
-shootRocket ldx hoverSprite
+shootRocket lda enableSprites
+            and #2
+            cmp #2 
+            beq shootRocketJmpCheckJoystick
+
+            ldx hoverSprite
             cpx #192
             beq shootRocketRight
             bne shootRocketLeft             
@@ -193,6 +221,10 @@ shootRocketRight jsr rocketImgFaceRight
                  lda hoverSpriteY
                  sta rocketSpriteY
                  
+                 lda enableSprites
+                 eor #2
+                 sta enableSprites               
+                 
                  jmp checkJoystick  
 
 shootRocketLeft jsr rocketImgFaceLeft
@@ -207,6 +239,10 @@ shootRocketLeft jsr rocketImgFaceLeft
                 lda hoverSpriteY
                 sta rocketSpriteY
                  
+                lda enableSprites
+                eor #2
+                sta enableSprites               
+                 
                 jmp checkJoystick
                 
 shootRocketJmpCheckJoystick jmp checkJoystick                
@@ -219,10 +255,7 @@ moveRocket ldx rocketSprite
            bne moveRocketLeft     
            rts
 
-moveRocketRight lda #3
-                sta enableSprites
-                
-                ldx rocketCanMove
+moveRocketRight ldx rocketCanMove
                 cpx #0
                 beq moveRocketRight
           
@@ -231,17 +264,15 @@ moveRocketRight lda #3
                 
                 ldx rocketSpriteX
                 inx
+                inx
                 stx rocketSpriteX                
 
                 lda rocketSpriteX
-                cmp #255
-                beq stopRocket                
+                cmp #254
+                bcs stopRocket                
                 rts
 
-moveRocketLeft lda #3
-               sta enableSprites
-
-               ldx rocketCanMove
+moveRocketLeft ldx rocketCanMove
                cpx #0
                beq moveRocketLeft
           
@@ -250,14 +281,16 @@ moveRocketLeft lda #3
 
                ldx rocketSpriteX
                dex
+               dex
                stx rocketSpriteX                
 
                lda rocketSpriteX
-               cmp #25
-               beq stopRocket                
+               cmp #24
+               bcc stopRocket                
                rts
                 
-stopRocket lda #1
+stopRocket lda enableSprites
+           eor #2
            sta enableSprites
 
            lda #0
@@ -568,6 +601,18 @@ setupCustomIrq ldx #0
                sta irqvec
                lda #>customIrq
                sta irqvec+1
+               
+;               lda #$00
+;               sta $d012
+;               lda #$36
+;               sta $d012
+;               lda #$7f
+;               sta $dc0d
+;               lda #$1b
+;               sta $d011
+;               lda #7
+;               sta $d01a
+
                cli
                rts
            
@@ -629,13 +674,12 @@ rocketLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$82
                   
-brownRockImgData .byte $00,$00,$00,$00,$55,$00,$01,$aa
-                 .byte $40,$01,$aa,$40,$06,$aa,$90,$1a
-                 .byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
-                 .byte $6a,$aa,$a9,$6a,$aa,$a9,$6a,$aa
-                 .byte $a9,$6a,$aa,$a9,$6a,$aa,$a9,$1a
-                 .byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
-                 .byte $06,$aa,$90,$01,$aa,$40,$01,$aa
-                 .byte $40,$00,$55,$00,$00,$00,$00,$88
-
+rockImgData .byte $00,$00,$00,$00,$55,$00,$01,$aa
+            .byte $40,$01,$aa,$40,$06,$aa,$90,$1a
+            .byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
+            .byte $6a,$aa,$a9,$6a,$aa,$a9,$6a,$aa
+            .byte $a9,$6a,$aa,$a9,$6a,$aa,$a9,$1a
+            .byte $aa,$a4,$1a,$aa,$a4,$1a,$aa,$a4
+            .byte $06,$aa,$90,$01,$aa,$40,$01,$aa
+            .byte $40,$00,$55,$00,$00,$00,$00,$88
 
