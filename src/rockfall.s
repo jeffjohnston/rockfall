@@ -76,22 +76,28 @@ joyStick1          = $dc01 ; 56321
     ldy #126 ; begin y pos
     sty hoverSpriteY
     
-;    lda enableSprites
-;    eor #4
-;    sta enableSprites
+    ; temporary code for falling rocks
+    
+    lda enableSprites
+    eor #4
+    sta enableSprites
+
+    ldx #36 ; begin x pos
+    stx rockSpriteX
+    ldy #50 ; begin y pos
+    sty rockSpriteY
+
 
 ; -------- build images --------
 
                    ldx #0
-
 buildHoverRightImg lda hoverRightImgData,x
                    sta hoverRightImg,x
                    inx
                    cpx #63
                    bne buildHoverRightImg
         
-                  ldx #0
-        
+                  ldx #0        
 buildHoverLeftImg lda hoverLeftImgData,x
                   sta hoverLeftImg,x
                   inx
@@ -99,23 +105,20 @@ buildHoverLeftImg lda hoverLeftImgData,x
                   bne buildHoverLeftImg
 
                     ldx #0
-
 buildRocketRightImg lda rocketRightImgData,x
                     sta rocketRightImg,x
                     inx
                     cpx #63
                     bne buildRocketRightImg
         
-                   ldx #0
-        
+                   ldx #0        
 buildRocketLeftImg lda rocketLeftImgData,x
                    sta rocketLeftImg,x
                    inx
                    cpx #63
                    bne buildRocketLeftImg
                     
-             ldx #0
-        
+             ldx #0        
 buildRockImg lda rockImgData,x
              sta rockImg,x
              inx
@@ -125,6 +128,7 @@ buildRockImg lda rockImgData,x
 ; -------- game loop --------
         
 gameloop jsr moveRocket
+         jsr moveRock
 
 checkFireButton lda joyStick1
                 eor #255
@@ -225,7 +229,7 @@ shootRocketRight jsr rocketImgFaceRight
                  eor #2
                  sta enableSprites               
                  
-                 jmp checkJoystick  
+                 jmp shootRocketJmpCheckJoystick  
 
 shootRocketLeft jsr rocketImgFaceLeft
 
@@ -243,18 +247,24 @@ shootRocketLeft jsr rocketImgFaceLeft
                 eor #2
                 sta enableSprites               
                  
-                jmp checkJoystick
+                jmp shootRocketJmpCheckJoystick
                 
 shootRocketJmpCheckJoystick jmp checkJoystick                
 
 ; -------- move rocket --------     
 
-moveRocket ldx rocketSprite
-           cpx #194
-           beq moveRocketRight
-           bne moveRocketLeft     
+moveRocket lda enableSprites
+           and #2
+           cmp #2 
+           beq moveRocketLR
            rts
 
+moveRocketLR ldx rocketSprite
+             cpx #194
+             beq moveRocketRight
+             bne moveRocketLeft     
+             rts
+           
 moveRocketRight ldx rocketCanMove
                 cpx #0
                 beq moveRocketRight
@@ -297,6 +307,20 @@ stopRocket lda enableSprites
            sta rocketSpriteX
            sta rocketSpriteY
            rts
+
+; -------- move rock --------               
+
+moveRock ldx rockCanMove
+         cpx #0
+         beq moveRock
+         
+         ldx #0
+         stx rockCanMove
+
+         ldx rockSpriteY
+         inx
+         stx rockSpriteY
+         rts
 
 ; -------- gameloop character floats down --------               
                 
@@ -621,6 +645,7 @@ setupCustomIrq ldx #0
 customIrq ldx #1
           stx hoverCanMove
           stx rocketCanMove
+          stx rockCanMove
           jmp standardIrq
          
 standardIrq jmp irqnor             
@@ -637,6 +662,7 @@ topEdge         .byte 0 ; detect top edge
 bottomEdge      .byte 0 ; detect bottom edge
 hoverCanMove    .byte 0 ; check to see if hover can move
 rocketCanMove   .byte 0 ; check to see if rocket can move
+rockCanMove     .byte 0 ; check to see if rock can move
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
