@@ -18,12 +18,12 @@ hoverSpriteY       = $d001 ; 53249
 hoverRightImg      = $3000 ; 12288 block 192 (64*192=12288)
 hoverLeftImg       = $3040 ; 12352 block 193
  
-rocketSprite       = $7f9  ; 2041
-rocketColor        = $d028 ; 53288
-rocketSpriteX      = $d002 ; 53250
-rocketSpriteY      = $d003 ; 53251
-rocketRightImg     = $3080 ; 12416 block 194
-rocketLeftImg      = $30C0 ; 12480 block 195
+missleSprite       = $7f9  ; 2041
+missleColor        = $d028 ; 53288
+missleSpriteX      = $d002 ; 53250
+missleSpriteY      = $d003 ; 53251
+missleRightImg     = $3080 ; 12416 block 194
+missleLeftImg      = $30C0 ; 12480 block 195
 
 rockSprite         = $7fa  ; 2042
 rockColor          = $d029 ; 53289
@@ -47,7 +47,7 @@ joyStick1          = $dc01 ; 56321
     lda #192 ; block 192
     sta hoverSprite
     lda #194 ; block 194
-    sta rocketSprite
+    sta missleSprite
     lda #196 ; block 196
     sta rockSprite
 
@@ -58,7 +58,7 @@ joyStick1          = $dc01 ; 56321
     
     lda #$02 ; red (individual color)
     sta hoverColor
-    sta rocketColor
+    sta missleColor
     
     lda #$08 ; brown (individual color)
     sta rockColor
@@ -105,18 +105,18 @@ buildHoverLeftImg lda hoverLeftImgData,x
                   bne buildHoverLeftImg
 
                     ldx #0
-buildRocketRightImg lda rocketRightImgData,x
-                    sta rocketRightImg,x
+buildMissleRightImg lda missleRightImgData,x
+                    sta missleRightImg,x
                     inx
                     cpx #63
-                    bne buildRocketRightImg
+                    bne buildMissleRightImg
         
                    ldx #0        
-buildRocketLeftImg lda rocketLeftImgData,x
-                   sta rocketLeftImg,x
+buildMissleLeftImg lda missleLeftImgData,x
+                   sta missleLeftImg,x
                    inx
                    cpx #63
-                   bne buildRocketLeftImg
+                   bne buildMissleLeftImg
                     
              ldx #0        
 buildRockImg lda rockImgData,x
@@ -127,32 +127,32 @@ buildRockImg lda rockImgData,x
         
 ; -------- game loop --------
         
-gameloop jsr moveRocket
+gameloop jsr moveMissle
          jsr moveRock
 
 checkFireButton lda joyStick1
                 eor #255
                 cmp #16
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #24 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #20 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #17 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #18 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #25 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #21 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #26 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 cmp #22 ; with fire button
-                beq jmpShootRocket
+                beq jmpShootMissle
                 jmp checkJoystick
          
-jmpShootRocket  jmp shootRocket
+jmpShootMissle  jmp shootMissle
          
 checkJoystick lda joyStick1
               eor #255
@@ -201,111 +201,111 @@ jmpMoveDownRight jmp moveDownRight
 jmpMoveDownLeft  jmp moveDownLeft
 jmpFloatDown     jmp floatDown
 
-; -------- shoot rocket --------  
+; -------- shoot missle --------  
 
-shootRocket lda enableSprites
+shootMissle lda enableSprites
             and #2
             cmp #2 
-            beq shootRocketJmpCheckJoystick
+            beq shootMissleJmpCheckJoystick
 
             ldx hoverSprite
             cpx #192
-            beq shootRocketRight
-            bne shootRocketLeft             
+            beq shootMissleRight
+            bne shootMissleLeft             
 
-shootRocketRight jsr rocketImgFaceRight
+shootMissleRight jsr missleImgFaceRight
 
                  lda hoverSpriteX
                  cmp #234
-                 bcs shootRocketJmpCheckJoystick
+                 bcs shootMissleJmpCheckJoystick
                  
                  adc #21
-                 sta rocketSpriteX
+                 sta missleSpriteX
 
                  lda hoverSpriteY
-                 sta rocketSpriteY
+                 sta missleSpriteY
                  
                  lda enableSprites
                  eor #2
                  sta enableSprites               
                  
-                 jmp shootRocketJmpCheckJoystick  
+                 jmp shootMissleJmpCheckJoystick  
 
-shootRocketLeft jsr rocketImgFaceLeft
+shootMissleLeft jsr missleImgFaceLeft
 
                 lda hoverSpriteX
                 cmp #47
-                bcc shootRocketJmpCheckJoystick
+                bcc shootMissleJmpCheckJoystick
                 
                 sbc #22
-                sta rocketSpriteX
+                sta missleSpriteX
 
                 lda hoverSpriteY
-                sta rocketSpriteY
+                sta missleSpriteY
                  
                 lda enableSprites
                 eor #2
                 sta enableSprites               
                  
-                jmp shootRocketJmpCheckJoystick
+                jmp shootMissleJmpCheckJoystick
                 
-shootRocketJmpCheckJoystick jmp checkJoystick                
+shootMissleJmpCheckJoystick jmp checkJoystick                
 
-; -------- move rocket --------     
+; -------- move missle --------     
 
-moveRocket lda enableSprites
+moveMissle lda enableSprites
            and #2
            cmp #2 
-           beq moveRocketLR
+           beq moveMissleLR
            rts
 
-moveRocketLR ldx rocketSprite
+moveMissleLR ldx missleSprite
              cpx #194
-             beq moveRocketRight
-             bne moveRocketLeft     
+             beq moveMissleRight
+             bne moveMissleLeft     
              rts
            
-moveRocketRight ldx rocketCanMove
+moveMissleRight ldx missleCanMove
                 cpx #0
-                beq moveRocketRight
+                beq moveMissleRight
           
                 ldx #0
-                stx rocketCanMove
+                stx missleCanMove
                 
-                ldx rocketSpriteX
+                ldx missleSpriteX
                 inx
                 inx
-                stx rocketSpriteX                
+                stx missleSpriteX                
 
-                lda rocketSpriteX
+                lda missleSpriteX
                 cmp #254
-                bcs stopRocket                
+                bcs stopMissle                
                 rts
 
-moveRocketLeft ldx rocketCanMove
+moveMissleLeft ldx missleCanMove
                cpx #0
-               beq moveRocketLeft
+               beq moveMissleLeft
           
                ldx #0
-               stx rocketCanMove
+               stx missleCanMove
 
-               ldx rocketSpriteX
+               ldx missleSpriteX
                dex
                dex
-               stx rocketSpriteX                
+               stx missleSpriteX                
 
-               lda rocketSpriteX
+               lda missleSpriteX
                cmp #24
-               bcc stopRocket                
+               bcc stopMissle                
                rts
                 
-stopRocket lda enableSprites
+stopMissle lda enableSprites
            eor #2
            sta enableSprites
 
            lda #0
-           sta rocketSpriteX
-           sta rocketSpriteY
+           sta missleSpriteX
+           sta missleSpriteY
            rts
 
 ; -------- move rock --------               
@@ -573,14 +573,14 @@ hoverImgFaceLeft lda #193
 
 ; -------- turn gameloop character right --------
                
-rocketImgFaceRight lda #194
-                   sta rocketSprite
+missleImgFaceRight lda #194
+                   sta missleSprite
                    rts
 
 ; -------- turn gameloop character left --------
                
-rocketImgFaceLeft lda #195
-                  sta rocketSprite
+missleImgFaceLeft lda #195
+                  sta missleSprite
                   rts
                  
 ; -------- print hex value --------          
@@ -618,7 +618,7 @@ checkIfHoverCanMoveJmpGameLoop jmp gameloop
 
 setupCustomIrq ldx #0
                stx hoverCanMove
-               stx rocketCanMove
+               stx missleCanMove
 
                sei
                lda #<customIrq
@@ -644,7 +644,7 @@ setupCustomIrq ldx #0
         
 customIrq ldx #1
           stx hoverCanMove
-          stx rocketCanMove
+          stx missleCanMove
           stx rockCanMove
           jmp standardIrq
          
@@ -661,7 +661,7 @@ rightEdge       .byte 0 ; detect right edge
 topEdge         .byte 0 ; detect top edge
 bottomEdge      .byte 0 ; detect bottom edge
 hoverCanMove    .byte 0 ; check to see if hover can move
-rocketCanMove   .byte 0 ; check to see if rocket can move
+missleCanMove   .byte 0 ; check to see if missle can move
 rockCanMove     .byte 0 ; check to see if rock can move
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
@@ -682,7 +682,7 @@ hoverLeftImgData .byte $00,$55,$00,$01,$7d,$40,$03,$fd
                  .byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
                  .byte $f0,$55,$55,$55,$14,$00,$14,$82   
 
-rocketRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
+missleRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$0d,$00,$00
                    .byte $01,$40,$00,$09,$55,$70,$25,$55
@@ -691,7 +691,7 @@ rocketRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$82
 
-rocketLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
+missleLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$70
                    .byte $00,$01,$40,$0d,$55,$60,$35,$55
