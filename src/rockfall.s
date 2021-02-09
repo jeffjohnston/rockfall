@@ -10,6 +10,7 @@ plot               = $fff0
 clearScreen        = $e544 ; clear screen       
 enableSprites      = $d015 ; 53269 enable sprites
 enableMultiSprites = $d01C ; 53276 enable multi-color sprites
+spriteCollision    = $d01e ; 53278
 
 hoverSprite        = $7f8  ; 2040
 hoverColor         = $d027 ; 53287
@@ -75,18 +76,6 @@ joyStick1          = $dc01 ; 56321
     stx hoverSpriteX
     ldy #126 ; begin y pos
     sty hoverSpriteY
-    
-    ; temporary code for falling rocks
-    
-    lda enableSprites
-    eor #4
-    sta enableSprites
-
-    ldx #36 ; begin x pos
-    stx rockSpriteX
-    ldy #50 ; begin y pos
-    sty rockSpriteY
-
 
 ; -------- build images --------
 
@@ -311,16 +300,68 @@ stopMissle lda enableSprites
 ; -------- move rock --------               
 
 moveRock ldx rockCanMove
-         cpx #0
-         beq moveRock
-         
-         ldx #0
+         cpx #1
+         beq moveRockYN
+
+         ldx #0 ; set that rock can move again
          stx rockCanMove
 
-         ldx rockSpriteY
-         inx
-         stx rockSpriteY
          rts
+         
+moveRockYN lda enableSprites ; see if rock is moving
+           and #4
+           cmp #4
+           beq checkRockForCollision ; rock is moving
+           
+           lda enableSprites
+           eor #4
+           sta enableSprites
+           
+           ldx #36 ; begin x pos
+           stx rockSpriteX
+           ldy #50 ; begin y pos
+           sty rockSpriteY           
+           
+           ldx #0 ; set that rock can move again
+           stx rockCanMove
+
+           rts
+  
+moveRockDown ldx rockSpriteY
+             inx
+             stx rockSpriteY
+             
+             lda rockSpriteY
+             cmp #228
+             beq rockHitBottom
+
+             ldx #0 ; set that rock can move again
+             stx rockCanMove
+             
+             rts
+             
+rockHitBottom lda enableSprites ; remove rock
+              eor #4
+              sta enableSprites
+
+              ldx #0 ; set that rock can move again
+              stx rockCanMove
+              
+              rts
+                        
+checkRockForCollision lda spriteCollision
+                      and #4
+                      cmp #4
+                      bne moveRockDown
+                      
+                      lda enableSprites ; remove rock and missle
+                      eor #6
+                      sta enableSprites
+
+                      ldx #0 ; set that rock can move again
+                      stx rockCanMove
+
+                      rts
 
 ; -------- gameloop character floats down --------               
                 
