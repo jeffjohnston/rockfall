@@ -7,6 +7,7 @@ irqnor             = $ea31 ; 59953 standard irq routine
 chrout             = $ffd2
 textColor          = $0286
 plot               = $fff0
+random             = $d41b ; 53299
 clearScreen        = $e544 ; clear screen       
 enableSprites      = $d015 ; 53269 enable sprites
 enableMultiSprites = $d01C ; 53276 enable multi-color sprites
@@ -76,6 +77,13 @@ joyStick1          = $dc01 ; 56321
     stx hoverSpriteX
     ldy #126 ; begin y pos
     sty hoverSpriteY
+    
+    ; turn on the randomizer
+    lda #$ff  ; maximum frequency value
+    sta $d40e ; voice 3 frequency low byte
+    sta $d40f ; voice 3 frequency high byte
+    lda #$80  ; noise waveform, gate bit off
+    sta $d412 ; voice 3 control register
 
 ; -------- build images --------
 
@@ -308,18 +316,23 @@ moveRock lda rockCanMove
 moveRockYN lda enableSprites ; see if rock is moving
            and #4
            cmp #4
-           beq checkRockForCollision ; rock is moving
+           beq checkRockForCollision ; rock is already moving
            
-           lda enableSprites
-           eor #4
-           sta enableSprites
-           
-           lda #36 ; begin x pos
-           sta rockSpriteX
-           lda #50 ; begin y pos
-           sta rockSpriteY           
-           
-           jmp finishRock
+startRockMove lda random
+              and #127
+              cmp #7
+              bne finishRock
+
+              lda enableSprites
+              eor #4
+              sta enableSprites
+               
+              lda #36 ; begin x pos
+              sta rockSpriteX
+              lda #50 ; begin y pos
+              sta rockSpriteY           
+               
+              jmp finishRock
   
 moveRockDown ldy rockSpriteY
              iny
