@@ -297,10 +297,10 @@ stopMissle lda enableSprites
            sta missleSpriteY
            rts
 
-; -------- move first rock --------               
+; -------- move rock --------               
 
-moveRock ldx rockCanMove
-         cpx #1
+moveRock lda rockCanMove
+         cmp #1
          beq moveRockYN
 
          jmp finishRock
@@ -314,16 +314,16 @@ moveRockYN lda enableSprites ; see if rock is moving
            eor #4
            sta enableSprites
            
-           ldx #36 ; begin x pos
-           stx rockSpriteX
-           ldy #50 ; begin y pos
-           sty rockSpriteY           
+           lda #36 ; begin x pos
+           sta rockSpriteX
+           lda #50 ; begin y pos
+           sta rockSpriteY           
            
            jmp finishRock
   
-moveRockDown ldx rockSpriteY
-             inx
-             stx rockSpriteY
+moveRockDown ldy rockSpriteY
+             iny
+             sty rockSpriteY
              
              lda rockSpriteY
              cmp #228
@@ -348,8 +348,8 @@ checkRockForCollision lda spriteCollision
                       
                       jmp finishRock
 
-finishRock ldx #0 ; set that rock can move again
-           stx rockCanMove
+finishRock lda #0 ; set that rock can move again
+           sta rockCanMove
            rts                      
 
 ; -------- gameloop character floats down --------               
