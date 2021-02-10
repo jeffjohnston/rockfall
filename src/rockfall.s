@@ -313,13 +313,17 @@ moveRock lda rockCanMove
 
          jmp finishRock
          
-moveRockYN lda enableSprites ; see if rock is moving
+moveRockYN lda #0 ; reset timer
+           sta rockDelayTimer
+           sta rockCanMove
+
+           lda enableSprites ; see if rock is moving
            and #4
            cmp #4
            beq checkRockForCollision ; rock is already moving
            
 startRockMove lda random
-              and #127
+              and #63
               cmp #7
               bne finishRock
 
@@ -361,9 +365,7 @@ checkRockForCollision lda spriteCollision
                       
                       jmp finishRock
 
-finishRock lda #0 ; set that rock can move again
-           sta rockCanMove
-           rts                      
+finishRock rts                      
 
 ; -------- gameloop character floats down --------               
                 
@@ -662,6 +664,8 @@ checkIfHoverCanMoveJmpGameLoop jmp gameloop
 setupCustomIrq ldx #0
                stx hoverCanMove
                stx missleCanMove
+               stx rockCanMove
+               stx rockDelayTimer
 
                sei
                lda #<customIrq
@@ -685,11 +689,20 @@ setupCustomIrq ldx #0
            
 ; -------- irq delay --------
         
-customIrq ldx #1
-          stx hoverCanMove
-          stx missleCanMove
-          stx rockCanMove
+customIrq lda #1
+          sta hoverCanMove
+          sta missleCanMove
+
+          ldx rockDelayTimer
+          inx
+          stx rockDelayTimer
+          cpx #2
+          beq setRockCanMove
           jmp standardIrq
+          
+setRockCanMove lda #1
+               sta rockCanMove
+               jmp standardIrq          
          
 standardIrq jmp irqnor             
                                         
@@ -706,6 +719,7 @@ bottomEdge      .byte 0 ; detect bottom edge
 hoverCanMove    .byte 0 ; check to see if hover can move
 missleCanMove   .byte 0 ; check to see if missle can move
 rockCanMove     .byte 0 ; check to see if rock can move
+rockDelayTimer  .byte 0 ; check to see if rock can move
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
