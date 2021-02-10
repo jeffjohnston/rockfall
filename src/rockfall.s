@@ -323,7 +323,7 @@ moveRockYN lda #0 ; reset timer
            beq checkRockForCollision ; rock is already moving
            
 startRockMove lda random
-              and #63
+              and #127
               cmp #7
               bne finishRock
 
