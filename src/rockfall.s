@@ -20,12 +20,12 @@ hoverSpriteY       = $d001 ; 53249
 hoverRightImg      = $3000 ; 12288 block 192 (64*192=12288)
 hoverLeftImg       = $3040 ; 12352 block 193
  
-missleSprite       = $7f9  ; 2041
-missleColor        = $d028 ; 53288
-missleSpriteX      = $d002 ; 53250
-missleSpriteY      = $d003 ; 53251
-missleRightImg     = $3080 ; 12416 block 194
-missleLeftImg      = $30C0 ; 12480 block 195
+missileSprite       = $7f9  ; 2041
+missileColor        = $d028 ; 53288
+missileSpriteX      = $d002 ; 53250
+missileSpriteY      = $d003 ; 53251
+missileRightImg     = $3080 ; 12416 block 194
+missileLeftImg      = $30C0 ; 12480 block 195
 
 rockSprite1        = $7fa  ; 2042
 rockSprite1X       = $d004 ; 53252
@@ -70,7 +70,7 @@ joyStick1          = $dc01 ; 56321
     lda #192 ; block 192
     sta hoverSprite
     lda #194 ; block 194
-    sta missleSprite
+    sta missileSprite
     lda #196 ; block 196
     sta rockSprite1
     sta rockSprite2
@@ -85,7 +85,7 @@ joyStick1          = $dc01 ; 56321
     
     lda #$02 ; red (individual color)
     sta hoverColor
-    sta missleColor
+    sta missileColor
     
     lda #$08 ; brown (individual color)
     sta rockColor1
@@ -131,18 +131,18 @@ buildHoverLeftImg lda hoverLeftImgData,x
                   bne buildHoverLeftImg
 
                     ldx #0
-buildMissleRightImg lda missleRightImgData,x
-                    sta missleRightImg,x
+buildMissileRightImg lda missileRightImgData,x
+                    sta missileRightImg,x
                     inx
                     cpx #63
-                    bne buildMissleRightImg
+                    bne buildMissileRightImg
         
                    ldx #0        
-buildMissleLeftImg lda missleLeftImgData,x
-                   sta missleLeftImg,x
+buildMissileLeftImg lda missileLeftImgData,x
+                   sta missileLeftImg,x
                    inx
                    cpx #63
-                   bne buildMissleLeftImg
+                   bne buildMissileLeftImg
                     
              ldx #0        
 buildRockImg lda rockImgData,x
@@ -163,32 +163,32 @@ gameloop lda refreshScreen
          lda spriteCollision 
          sta spriteCollisionCopy ; copy collision
 
-         jsr moveMissle
+         jsr moveMissile
          jsr moveRocks
 
 checkFireButton lda joyStick1
                 eor #255
                 cmp #16
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #24 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #20 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #17 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #18 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #25 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #21 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #26 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 cmp #22 ; with fire button
-                beq jmpShootMissle
+                beq jmpShootMissile
                 jmp checkJoystick
 
-jmpShootMissle  jmp shootMissle
+jmpShootMissile  jmp shootMissile
          
 checkJoystick lda joyStick1
               eor #255
@@ -235,98 +235,98 @@ jmpMoveUpLeft    jmp moveHoverUpLeft
 jmpMoveDownRight jmp moveHoverDownRight
 jmpMoveDownLeft  jmp moveHoverDownLeft
 
-; -------- shoot missle --------  
+; -------- shoot missile --------  
 
-shootMissle lda enableSprites
-            and #2
-            cmp #2 
-            beq shootMissleJmpCheckJoystick
+shootMissile lda enableSprites
+             and #2
+             cmp #2 
+             beq shootMissileJmpCheckJoystick
 
-            ldx hoverSprite
-            cpx #192
-            beq shootMissleRight
-            bne shootMissleLeft
+             ldx hoverSprite
+             cpx #192
+             beq shootMissileRight
+             bne shootMissileLeft
 
-shootMissleRight jsr missleImgFaceRight
+shootMissileRight jsr missileImgFaceRight
+
+                  lda hoverSpriteX
+                  cmp #234
+                  bcs shootMissileJmpCheckJoystick
+                 
+                  adc #21
+                  sta missileSpriteX
+
+                  lda hoverSpriteY
+                  sta missileSpriteY
+                 
+                  lda enableSprites
+                  eor #2
+                  sta enableSprites
+                 
+                  jmp shootMissileJmpCheckJoystick
+
+shootMissileLeft jsr missileImgFaceLeft
 
                  lda hoverSpriteX
-                 cmp #234
-                 bcs shootMissleJmpCheckJoystick
-                 
-                 adc #21
-                 sta missleSpriteX
+                 cmp #47
+                 bcc shootMissileJmpCheckJoystick
+                
+                 sbc #22
+                 sta missileSpriteX
 
                  lda hoverSpriteY
-                 sta missleSpriteY
+                 sta missileSpriteY
                  
                  lda enableSprites
                  eor #2
                  sta enableSprites
                  
-                 jmp shootMissleJmpCheckJoystick
-
-shootMissleLeft jsr missleImgFaceLeft
-
-                lda hoverSpriteX
-                cmp #47
-                bcc shootMissleJmpCheckJoystick
+                 jmp shootMissileJmpCheckJoystick
                 
-                sbc #22
-                sta missleSpriteX
+shootMissileJmpCheckJoystick jmp checkJoystick
 
-                lda hoverSpriteY
-                sta missleSpriteY
-                 
-                lda enableSprites
-                eor #2
-                sta enableSprites
-                 
-                jmp shootMissleJmpCheckJoystick
-                
-shootMissleJmpCheckJoystick jmp checkJoystick
+; -------- move missile --------
 
-; -------- move missle --------
+moveMissile lda enableSprites
+            and #2
+            cmp #2 
+            beq moveMissileLR
+            rts
 
-moveMissle lda enableSprites
-           and #2
-           cmp #2 
-           beq moveMissleLR
-           rts
-
-moveMissleLR ldx missleSprite
-             cpx #194
-             beq moveMissleRight
-             bne moveMissleLeft
-             rts
+moveMissileLR ldx missileSprite
+              cpx #194
+              beq moveMissileRight
+              bne moveMissileLeft
+              rts
            
-moveMissleRight ldx missleSpriteX
-                inx
-                inx
-                stx missleSpriteX
+moveMissileRight ldx missileSpriteX
+                 inx
+                 inx
+                 stx missileSpriteX
 
-                lda missleSpriteX
-                cmp #254
-                bcs stopMissle
+                 lda missileSpriteX
+                 cmp #254
+                 bcs stopMissile
+                 rts
+
+moveMissileLeft ldx missileSpriteX
+                dex
+                dex
+                stx missileSpriteX
+
+                lda missileSpriteX
+                cmp #24
+                bcc stopMissile
                 rts
-
-moveMissleLeft ldx missleSpriteX
-               dex
-               dex
-               stx missleSpriteX
-
-               lda missleSpriteX
-               cmp #24
-               bcc stopMissle
-               rts
                 
-stopMissle lda enableSprites
-           eor #2
-           sta enableSprites
+stopMissile lda enableSprites
+            eor #2
+            sta enableSprites
 
-           lda #0
-           sta missleSpriteX
-           sta missleSpriteY
-           rts
+            lda #0
+            sta missileSpriteX
+            sta missileSpriteY
+            rts
 
 ; -------- move rocks --------
 
@@ -381,7 +381,7 @@ checkRock1ForCollision lda spriteCollisionCopy
                        cmp #6
                        bne moveRock1Down
                       
-                       lda enableSprites ; remove rock and missle
+                       lda enableSprites ; remove rock and missile
                        eor #6
                        sta enableSprites
                       
@@ -433,7 +433,7 @@ checkRock2ForCollision lda spriteCollisionCopy
                        cmp #10
                        bne moveRock2Down
                       
-                       lda enableSprites ; remove rock and missle
+                       lda enableSprites ; remove rock and missile
                        eor #10
                        sta enableSprites
                       
@@ -485,7 +485,7 @@ checkRock3ForCollision lda spriteCollisionCopy
                        cmp #18
                        bne moveRock3Down
                       
-                       lda enableSprites ; remove rock and missle
+                       lda enableSprites ; remove rock and missile
                        eor #18
                        sta enableSprites
                       
@@ -538,7 +538,7 @@ checkRock4ForCollision lda spriteCollisionCopy
                        cmp #34
                        bne moveRock4Down
                       
-                       lda enableSprites ; remove rock and missle
+                       lda enableSprites ; remove rock and missile
                        eor #34
                        sta enableSprites
                       
@@ -590,7 +590,7 @@ checkRock5ForCollision lda spriteCollisionCopy
                        cmp #66
                        bne moveRock5Down
                       
-                       lda enableSprites ; remove rock and missle
+                       lda enableSprites ; remove rock and missile
                        eor #66
                        sta enableSprites
                       
@@ -827,16 +827,16 @@ hoverImgFaceLeft lda #193
                  sta hoverSprite
                  rts
 
-; -------- turn missle right --------
+; -------- turn missile right --------
                
-missleImgFaceRight lda #194
-                   sta missleSprite
+missileImgFaceRight lda #194
+                   sta missileSprite
                    rts
 
-; -------- turn missle left --------
+; -------- turn missile left --------
                
-missleImgFaceLeft lda #195
-                  sta missleSprite
+missileImgFaceLeft lda #195
+                  sta missileSprite
                   rts
       
 ; -------- subroutine to pause motion --------
@@ -948,7 +948,7 @@ hoverLeftUpsideDownImgData .byte $14,$00,$14,$55,$55,$55,$0f,$c3
                            .byte $0f,$7d,$d0,$03,$7d,$d0,$03,$fd
                            .byte $50,$01,$7d,$40,$00,$55,$00,$82
 
-missleRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
+missileRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$0d,$00,$00
                    .byte $01,$40,$00,$09,$55,$70,$25,$55
@@ -957,7 +957,7 @@ missleRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$82
 
-missleLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
+missileLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$70
                    .byte $00,$01,$40,$0d,$55,$60,$35,$55
