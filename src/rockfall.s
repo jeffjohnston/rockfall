@@ -123,7 +123,7 @@ buildHoverRightImg lda hoverRightImgData,x
                    cpx #63
                    bne buildHoverRightImg
         
-                  ldx #0        
+                  ldx #0
 buildHoverLeftImg lda hoverLeftImgData,x
                   sta hoverLeftImg,x
                   inx
@@ -160,8 +160,8 @@ gameloop lda refreshScreen
          lda #0
          sta refreshScreen
 
-         lda spriteCollision
-         sta spriteCollisionCopy
+         lda spriteCollision 
+         sta spriteCollisionCopy ; copy collision
 
          jsr moveMissle
          jsr moveRocks
@@ -187,7 +187,7 @@ checkFireButton lda joyStick1
                 cmp #22 ; with fire button
                 beq jmpShootMissle
                 jmp checkJoystick
-         
+
 jmpShootMissle  jmp shootMissle
          
 checkJoystick lda joyStick1
@@ -224,17 +224,16 @@ checkJoystick lda joyStick1
               beq jmpMoveDownLeft
               cmp #22 ; with fire button
               beq jmpMoveDownLeft
-              jmp floatDown
+              jmp floatHoverDown
     
-    
-jmpMoveRight     jmp moveRight
-jmpMoveLeft      jmp moveLeft
-jmpMoveUp        jmp moveUp
-jmpMoveDown      jmp moveDown
-jmpMoveUpRight   jmp moveUpRight
-jmpMoveUpLeft    jmp moveUpLeft
-jmpMoveDownRight jmp moveDownRight
-jmpMoveDownLeft  jmp moveDownLeft
+jmpMoveRight     jmp moveHoverRight
+jmpMoveLeft      jmp moveHoverLeft
+jmpMoveUp        jmp moveHoverUp
+jmpMoveDown      jmp moveHoverDown
+jmpMoveUpRight   jmp moveHoverUpRight
+jmpMoveUpLeft    jmp moveHoverUpLeft
+jmpMoveDownRight jmp moveHoverDownRight
+jmpMoveDownLeft  jmp moveHoverDownLeft
 
 ; -------- shoot missle --------  
 
@@ -246,7 +245,7 @@ shootMissle lda enableSprites
             ldx hoverSprite
             cpx #192
             beq shootMissleRight
-            bne shootMissleLeft             
+            bne shootMissleLeft
 
 shootMissleRight jsr missleImgFaceRight
 
@@ -262,9 +261,9 @@ shootMissleRight jsr missleImgFaceRight
                  
                  lda enableSprites
                  eor #2
-                 sta enableSprites               
+                 sta enableSprites
                  
-                 jmp shootMissleJmpCheckJoystick  
+                 jmp shootMissleJmpCheckJoystick
 
 shootMissleLeft jsr missleImgFaceLeft
 
@@ -280,13 +279,13 @@ shootMissleLeft jsr missleImgFaceLeft
                  
                 lda enableSprites
                 eor #2
-                sta enableSprites               
+                sta enableSprites
                  
                 jmp shootMissleJmpCheckJoystick
                 
-shootMissleJmpCheckJoystick jmp checkJoystick                
+shootMissleJmpCheckJoystick jmp checkJoystick
 
-; -------- move missle --------     
+; -------- move missle --------
 
 moveMissle lda enableSprites
            and #2
@@ -297,27 +296,27 @@ moveMissle lda enableSprites
 moveMissleLR ldx missleSprite
              cpx #194
              beq moveMissleRight
-             bne moveMissleLeft     
+             bne moveMissleLeft
              rts
            
 moveMissleRight ldx missleSpriteX
                 inx
                 inx
-                stx missleSpriteX                
+                stx missleSpriteX
 
                 lda missleSpriteX
                 cmp #254
-                bcs stopMissle                
+                bcs stopMissle
                 rts
 
 moveMissleLeft ldx missleSpriteX
                dex
                dex
-               stx missleSpriteX                
+               stx missleSpriteX
 
                lda missleSpriteX
                cmp #24
-               bcc stopMissle                
+               bcc stopMissle
                rts
                 
 stopMissle lda enableSprites
@@ -329,7 +328,7 @@ stopMissle lda enableSprites
            sta missleSpriteY
            rts
 
-; -------- move rocks --------               
+; -------- move rocks --------
 
 moveRocks jsr moveRock1
           jsr moveRock2
@@ -338,7 +337,7 @@ moveRocks jsr moveRock1
           jsr moveRock5
           rts
 
-; -------- move rock1 --------               
+; -------- move rock1 --------
 
 moveRock1 lda enableSprites ; see if rock is moving
           and #4
@@ -357,7 +356,7 @@ startRock1Move lda random
                lda #36 ; begin x pos
                sta rockSprite1X
                lda #50 ; begin y pos
-               sta rockSprite1Y           
+               sta rockSprite1Y
                
                jmp finishRock1
   
@@ -388,9 +387,9 @@ checkRock1ForCollision lda spriteCollisionCopy
                       
                        jmp finishRock1
 
-finishRock1 rts                      
+finishRock1 rts
 
-; -------- move rock2 --------               
+; -------- move rock2 --------
 
 moveRock2 lda enableSprites ; see if rock is moving
           and #8
@@ -409,7 +408,7 @@ startRock2Move lda random
                lda #82 ; begin x pos
                sta rockSprite2X
                lda #50 ; begin y pos
-               sta rockSprite2Y           
+               sta rockSprite2Y
                
                jmp finishRock2
   
@@ -442,7 +441,7 @@ checkRock2ForCollision lda spriteCollisionCopy
 
 finishRock2 rts        
 
-; -------- move rock3 --------               
+; -------- move rock3 --------
 
 moveRock3 lda enableSprites ; see if rock is moving
           and #16
@@ -461,7 +460,7 @@ startRock3Move lda random
                lda #128 ; begin x pos
                sta rockSprite3X
                lda #50 ; begin y pos
-               sta rockSprite3Y           
+               sta rockSprite3Y
                
                jmp finishRock3
   
@@ -495,7 +494,7 @@ checkRock3ForCollision lda spriteCollisionCopy
 finishRock3 rts      
 
 
-; -------- move rock4 --------               
+; -------- move rock4 --------
 
 moveRock4 lda enableSprites ; see if rock is moving
           and #32
@@ -514,7 +513,7 @@ startRock4Move lda random
                lda #174 ; begin x pos
                sta rockSprite4X
                lda #50 ; begin y pos
-               sta rockSprite4Y           
+               sta rockSprite4Y
                
                jmp finishRock4
   
@@ -547,7 +546,7 @@ checkRock4ForCollision lda spriteCollisionCopy
 
 finishRock4 rts      
 
-; -------- move rock5 --------               
+; -------- move rock5 --------
 
 moveRock5 lda enableSprites ; see if rock is moving
           and #64
@@ -566,7 +565,7 @@ startRock5Move lda random
                lda #220 ; begin x pos
                sta rockSprite5X
                lda #50 ; begin y pos
-               sta rockSprite5Y           
+               sta rockSprite5Y
                
                jmp finishRock5
   
@@ -599,171 +598,247 @@ checkRock5ForCollision lda spriteCollisionCopy
 
 finishRock5 rts      
 
-; -------- gameloop character floats down --------               
+; -------- hover floats down --------
                 
-floatDown jsr bottomEdgeFunc
-          lda bottomEdge
-          cmp #1
-          beq floatDownJmpGameLoop
+floatHoverDown jsr detectHoverHitBottomEdge
+               lda hoverHitBottomEdge
+               cmp #1
+               beq floatHoverDownJmpGameLoop
 
-          ldx hoverSpriteY
-          inx
-          stx hoverSpriteY
+               ldx hoverSpriteY
+               inx
+               stx hoverSpriteY
                 
-floatDownJmpGameLoop jmp gameloop
+floatHoverDownJmpGameLoop jmp gameloop
         
-; -------- move gameloop character moveRight --------
+; -------- move hover moveHoverRight --------
         
-moveRight jsr rightEdgeFunc
-          lda rightEdge
-          cmp #1
-          beq rightJmpGameLoop
+moveHoverRight jsr detectHoverHitRightEdge
+               lda hoverHitRightEdge
+               cmp #1
+               beq rightJmpGameLoop
 
-          jsr hoverImgFaceRight
+               jsr hoverImgFaceRight
 
-          ldx hoverSpriteX
-          inx
-          stx hoverSpriteX
+               ldx hoverSpriteX
+               inx
+               stx hoverSpriteX
         
 rightJmpGameLoop jmp gameloop
         
-; -------- move gameloop character left --------               
+; -------- move hover left --------
         
-moveLeft jsr leftEdgeFunc
-         lda leftEdge
-         cmp #1
-         beq leftJmpGameLoop
-        
-         jsr hoverImgFaceLeft
-        
-         ldx hoverSpriteX
-         dex
-         stx hoverSpriteX
+moveHoverLeft jsr detectHoverHitLeftEdge
+              lda hoverHitLeftEdge
+              cmp #1
+              beq leftJmpGameLoop
+            
+              jsr hoverImgFaceLeft
+            
+              ldx hoverSpriteX
+              dex
+              stx hoverSpriteX
         
 leftJmpGameLoop jmp gameloop
 
-; -------- move gameloop character up --------               
+; -------- move hover up --------
                 
-moveUp jsr topEdgeFunc
-       lda topEdge
-       cmp #1
-       beq upJmpGameLoop
-
-       ldx hoverSpriteY
-       dex
-       stx hoverSpriteY
-    
-upJmpGameLoop jmp gameloop        
-        
-; -------- move gameloop character down --------               
-                
-moveDown jsr bottomEdgeFunc
-         lda bottomEdge
-         cmp #1
-         beq downJmpGameLoop
-
-         ldx hoverSpriteY
-         inx
-         stx hoverSpriteY
-                
-downJmpGameLoop jmp gameloop
-
-; -------- move gameloop character up and to the right --------  
-
-moveUpRight jsr topEdgeFunc
-            lda topEdge
+moveHoverUp jsr detectHoverHitTopEdge
+            lda hoverHitTopEdge
             cmp #1
-            beq upRightJmpGameLoop
-
-            jsr rightEdgeFunc
-            lda rightEdge
-            cmp #1
-            beq upRightJmpGameLoop
-      
-            jsr hoverImgFaceRight
-            
-            ldx hoverSpriteX
-            inx
-            stx hoverSpriteX
+            beq upJmpGameLoop
 
             ldx hoverSpriteY
             dex
             stx hoverSpriteY
+    
+upJmpGameLoop jmp gameloop
+        
+; -------- move hover down --------
                 
-upRightJmpGameLoop jmp gameloop        
-
-; -------- move gameloop character up and to the left --------  
-
-moveUpLeft jsr topEdgeFunc
-           lda topEdge
-           cmp #1
-           beq upLeftJmpGameLoop
-
-           jsr leftEdgeFunc
-           lda leftEdge
-           cmp #1
-           beq upLeftJmpGameLoop
-      
-           jsr hoverImgFaceLeft
-           
-           ldx hoverSpriteX
-           dex
-           stx hoverSpriteX
-
-           ldx hoverSpriteY
-           dex
-           stx hoverSpriteY
-                
-upLeftJmpGameLoop jmp gameloop     
-
-; -------- move gameloop character down and to the right --------  
-
-moveDownRight jsr bottomEdgeFunc
-              lda bottomEdge
+moveHoverDown jsr detectHoverHitBottomEdge
+              lda hoverHitBottomEdge
               cmp #1
-              beq downRightJmpGameLoop
-             
-              jsr rightEdgeFunc
-              lda rightEdge
-              cmp #1
-              beq downRightJmpGameLoop
-             
-              jsr hoverImgFaceRight
-
-              ldx hoverSpriteX
-              inx
-              stx hoverSpriteX
+              beq downJmpGameLoop
 
               ldx hoverSpriteY
               inx
               stx hoverSpriteY
                 
-downRightJmpGameLoop jmp gameloop        
+downJmpGameLoop jmp gameloop
 
-; -------- move gameloop character down and to the left --------  
+; -------- move hover up and to the right --------
 
-moveDownLeft jsr bottomEdgeFunc
-             lda bottomEdge
-             cmp #1
-             beq downLeftJmpGameLoop
-             
-             jsr leftEdgeFunc
-             lda leftEdge
-             cmp #1
-             beq downLeftJmpGameLoop
-             
-             jsr hoverImgFaceLeft
-             
-             ldx hoverSpriteX
-             dex
-             stx hoverSpriteX
+moveHoverUpRight jsr detectHoverHitTopEdge
+                 lda hoverHitTopEdge
+                 cmp #1
+                 beq upRightJmpGameLoop
 
-             ldx hoverSpriteY
-             inx
-             stx hoverSpriteY
+                 jsr detectHoverHitRightEdge
+                 lda hoverHitRightEdge
+                 cmp #1
+                 beq upRightJmpGameLoop
+          
+                 jsr hoverImgFaceRight
+                 
+                 ldx hoverSpriteX
+                 inx
+                 stx hoverSpriteX
+
+                 ldx hoverSpriteY
+                 dex
+                 stx hoverSpriteY
                 
-downLeftJmpGameLoop jmp gameloop        
+upRightJmpGameLoop jmp gameloop
+
+; -------- move hover up and to the left --------
+
+moveHoverUpLeft jsr detectHoverHitTopEdge
+                lda hoverHitTopEdge
+                cmp #1
+                beq upLeftJmpGameLoop
+
+                jsr detectHoverHitLeftEdge
+                lda hoverHitLeftEdge
+                cmp #1
+                beq upLeftJmpGameLoop
+          
+                jsr hoverImgFaceLeft
+               
+                ldx hoverSpriteX
+                dex
+                stx hoverSpriteX
+
+                ldx hoverSpriteY
+                dex
+                stx hoverSpriteY
+                
+upLeftJmpGameLoop jmp gameloop
+
+; -------- move hover down and to the right --------
+
+moveHoverDownRight jsr detectHoverHitBottomEdge
+                   lda hoverHitBottomEdge
+                   cmp #1
+                   beq downRightJmpGameLoop
+                 
+                   jsr detectHoverHitRightEdge
+                   lda hoverHitRightEdge
+                   cmp #1
+                   beq downRightJmpGameLoop
+                 
+                   jsr hoverImgFaceRight
+
+                   ldx hoverSpriteX
+                   inx
+                   stx hoverSpriteX
+
+                   ldx hoverSpriteY
+                   inx
+                   stx hoverSpriteY
+                
+downRightJmpGameLoop jmp gameloop
+
+; -------- move hover down and to the left --------
+
+moveHoverDownLeft jsr detectHoverHitBottomEdge
+                  lda hoverHitBottomEdge
+                  cmp #1
+                  beq downLeftJmpGameLoop
+                 
+                  jsr detectHoverHitLeftEdge
+                  lda hoverHitLeftEdge
+                  cmp #1
+                  beq downLeftJmpGameLoop
+                 
+                  jsr hoverImgFaceLeft
+                 
+                  ldx hoverSpriteX
+                  dex
+                  stx hoverSpriteX
+
+                  ldx hoverSpriteY
+                  inx
+                  stx hoverSpriteY
+                
+downLeftJmpGameLoop jmp gameloop
    
+; -------- function to detect hover hit left edge --------
+        
+detectHoverHitLeftEdge lda #0
+                       sta hoverHitLeftEdge
+                       ldx hoverSpriteX
+                       cpx #25
+                       beq setHoverHitLeftEdge
+                       rts
+           
+setHoverHitLeftEdge lda #1
+                    sta hoverHitLeftEdge
+                    rts 
+        
+; -------- function to detect hover hit right edge --------
+        
+detectHoverHitRightEdge lda #0
+                        sta hoverHitRightEdge
+                        ldx hoverSpriteX
+                        cpx #255
+                        beq setHoverHitRightEdge
+                        rts
+           
+setHoverHitRightEdge lda #1
+                     sta hoverHitRightEdge
+                     rts
+        
+; -------- function to detect hover hit top edge --------
+        
+detectHoverHitTopEdge lda #0
+                      sta hoverHitTopEdge
+                      ldx hoverSpriteY
+                      cpx #51
+                      beq setHoverHitTopEdge
+                      rts
+                  
+setHoverHitTopEdge lda #1
+                   sta hoverHitTopEdge
+                   rts
+
+; -------- function to detect hover hit bottom edge --------
+        
+detectHoverHitBottomEdge lda #0
+                         sta hoverHitBottomEdge
+                         ldx hoverSpriteY
+                         cpx #228
+                         beq setHoverHitBottomEdge
+                         rts
+                  
+setHoverHitBottomEdge lda #1
+                      sta hoverHitBottomEdge
+                      rts
+               
+; -------- turn hover right --------
+               
+hoverImgFaceRight lda #192
+                  sta hoverSprite
+                  rts
+
+; -------- turn hover left --------
+               
+hoverImgFaceLeft lda #193
+                 sta hoverSprite
+                 rts
+
+; -------- turn missle right --------
+               
+missleImgFaceRight lda #194
+                   sta missleSprite
+                   rts
+
+; -------- turn missle left --------
+               
+missleImgFaceLeft lda #195
+                  sta missleSprite
+                  rts
+      
 ; -------- subroutine to pause motion --------
         
 pause    ldy #0
@@ -773,84 +848,8 @@ pause255 iny
          cpy #255
          bne pause255
          rts
-        
-; -------- function to detect left edge --------
-        
-leftEdgeFunc lda #0
-             sta leftEdge
-             ldx hoverSpriteX
-             cpx #25
-             beq hitLeftEdge
-             rts
-           
-hitLeftEdge  lda #1
-             sta leftEdge
-             rts                      
-        
-; -------- function to detect right edge --------
-        
-rightEdgeFunc lda #0
-              sta rightEdge
-              ldx hoverSpriteX
-              cpx #255
-              beq hitRightEdge
-              rts
-           
-hitRightEdge  lda #1
-              sta rightEdge
-              rts                      
-        
-; -------- function to detect top edge --------
-        
-topEdgeFunc lda #0
-            sta topEdge
-            ldx hoverSpriteY
-            cpx #51
-            beq hitTopEdge
-            rts           
-                  
-hitTopEdge  lda #1
-            sta topEdge
-            rts                      
-
-; -------- function to detect bottom edge --------
-        
-bottomEdgeFunc lda #0
-               sta bottomEdge
-               ldx hoverSpriteY
-               cpx #228
-               beq hitBottomEdge
-               rts           
-                  
-hitBottomEdge  lda #1
-               sta bottomEdge
-               rts     
-               
-; -------- turn gameloop character right --------
-               
-hoverImgFaceRight lda #192
-                  sta hoverSprite
-                  rts
-
-; -------- turn gameloop character left --------
-               
-hoverImgFaceLeft lda #193
-                 sta hoverSprite
-                 rts
-
-; -------- turn gameloop character right --------
-               
-missleImgFaceRight lda #194
-                   sta missleSprite
-                   rts
-
-; -------- turn gameloop character left --------
-               
-missleImgFaceLeft lda #195
-                  sta missleSprite
-                  rts
-                 
-; -------- print hex value --------          
+                         
+; -------- print hex value --------
                  
 printHexValue  pha
                lsr
@@ -866,8 +865,8 @@ phnIsDigit     ora #$30
                bne phnPrint
 phnIsLetter    sbc #$09
 phnPrint       sta $0400, x
-               inx               
-               rts                 
+               inx
+               rts
              
 ; -------- setup irq delay --------
 
@@ -902,16 +901,16 @@ customIrq lda #1
                                         
 ; -------- end game --------
                 
-end     rts                    
+end     rts
 
 ; -------- custom variables --------
 
-leftEdge            .byte 0 ; detect left edge
-rightEdge           .byte 0 ; detect right edge
-topEdge             .byte 0 ; detect top edge
-bottomEdge          .byte 0 ; detect bottom edge
-refreshScreen      .byte 0 ; check to see if hover can move
-spriteCollisionCopy .byte 0 ; check to see if rock can move
+hoverHitLeftEdge    .byte 0
+hoverHitRightEdge   .byte 0
+hoverHitTopEdge     .byte 0
+hoverHitBottomEdge  .byte 0
+refreshScreen       .byte 0
+spriteCollisionCopy .byte 0
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
@@ -947,7 +946,7 @@ hoverLeftUpsideDownImgData .byte $14,$00,$14,$55,$55,$55,$0f,$c3
                            .byte $80,$02,$7d,$80,$00,$fc,$00,$00
                            .byte $5f,$40,$03,$ff,$d0,$03,$ff,$d0
                            .byte $0f,$7d,$d0,$03,$7d,$d0,$03,$fd
-                           .byte $50,$01,$7d,$40,$00,$55,$00,$82                   
+                           .byte $50,$01,$7d,$40,$00,$55,$00,$82
 
 missleRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
