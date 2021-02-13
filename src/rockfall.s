@@ -153,7 +153,14 @@ buildRockImg lda rockImgData,x
         
 ; -------- game loop --------
         
-gameloop lda spriteCollision
+gameloop lda refreshScreen
+         cmp #1
+         bne gameloop
+         
+         lda #0
+         sta refreshScreen
+
+         lda spriteCollision
          sta spriteCollisionCopy
 
          jsr moveMissle
@@ -293,14 +300,7 @@ moveMissleLR ldx missleSprite
              bne moveMissleLeft     
              rts
            
-moveMissleRight ldx missleCanMove
-                cpx #0
-                beq moveMissleRight
-          
-                ldx #0
-                stx missleCanMove
-                
-                ldx missleSpriteX
+moveMissleRight ldx missleSpriteX
                 inx
                 inx
                 stx missleSpriteX                
@@ -310,14 +310,7 @@ moveMissleRight ldx missleCanMove
                 bcs stopMissle                
                 rts
 
-moveMissleLeft ldx missleCanMove
-               cpx #0
-               beq moveMissleLeft
-          
-               ldx #0
-               stx missleCanMove
-
-               ldx missleSpriteX
+moveMissleLeft ldx missleSpriteX
                dex
                dex
                stx missleSpriteX                
@@ -338,20 +331,12 @@ stopMissle lda enableSprites
 
 ; -------- move rocks --------               
 
-moveRocks lda rocksCanMove
-          cmp #1
-          bne finishRocks
-          jsr moveRock1
+moveRocks jsr moveRock1
           jsr moveRock2
           jsr moveRock3
           jsr moveRock4
           jsr moveRock5
-          
-          lda #0 ; reset timer
-          sta rocksDelayTimer
-          sta rocksCanMove
-          
-finishRocks rts                      
+          rts
 
 ; -------- move rock1 --------               
 
@@ -620,8 +605,6 @@ floatDown jsr bottomEdgeFunc
           lda bottomEdge
           cmp #1
           beq floatDownJmpGameLoop
-          
-          jsr checkIfHoverCanMove
 
           ldx hoverSpriteY
           inx
@@ -637,7 +620,6 @@ moveRight jsr rightEdgeFunc
           beq rightJmpGameLoop
 
           jsr hoverImgFaceRight
-          jsr checkIfHoverCanMove
 
           ldx hoverSpriteX
           inx
@@ -653,7 +635,6 @@ moveLeft jsr leftEdgeFunc
          beq leftJmpGameLoop
         
          jsr hoverImgFaceLeft
-         jsr checkIfHoverCanMove
         
          ldx hoverSpriteX
          dex
@@ -668,8 +649,6 @@ moveUp jsr topEdgeFunc
        cmp #1
        beq upJmpGameLoop
 
-       jsr checkIfHoverCanMove
-
        ldx hoverSpriteY
        dex
        stx hoverSpriteY
@@ -682,8 +661,6 @@ moveDown jsr bottomEdgeFunc
          lda bottomEdge
          cmp #1
          beq downJmpGameLoop
-
-         jsr checkIfHoverCanMove
 
          ldx hoverSpriteY
          inx
@@ -704,8 +681,7 @@ moveUpRight jsr topEdgeFunc
             beq upRightJmpGameLoop
       
             jsr hoverImgFaceRight
-            jsr checkIfHoverCanMove
-
+            
             ldx hoverSpriteX
             inx
             stx hoverSpriteX
@@ -729,8 +705,7 @@ moveUpLeft jsr topEdgeFunc
            beq upLeftJmpGameLoop
       
            jsr hoverImgFaceLeft
-           jsr checkIfHoverCanMove
-
+           
            ldx hoverSpriteX
            dex
            stx hoverSpriteX
@@ -754,7 +729,6 @@ moveDownRight jsr bottomEdgeFunc
               beq downRightJmpGameLoop
              
               jsr hoverImgFaceRight
-              jsr checkIfHoverCanMove
 
               ldx hoverSpriteX
               inx
@@ -779,7 +753,6 @@ moveDownLeft jsr bottomEdgeFunc
              beq downLeftJmpGameLoop
              
              jsr hoverImgFaceLeft
-             jsr checkIfHoverCanMove
              
              ldx hoverSpriteX
              dex
@@ -896,25 +869,10 @@ phnPrint       sta $0400, x
                inx               
                rts                 
              
-; -------- check to see if can move hover --------
-             
-checkIfHoverCanMove ldx hoverCanMove
-                    cpx #0
-                    beq checkIfHoverCanMoveJmpGameLoop
-          
-                    ldx #0
-                    stx hoverCanMove
-                    rts
-
-checkIfHoverCanMoveJmpGameLoop jmp gameloop
-             
 ; -------- setup irq delay --------
 
 setupCustomIrq ldx #0
-               stx hoverCanMove
-               stx missleCanMove
-               stx rocksCanMove
-               stx rocksDelayTimer
+               stx refreshScreen
 
                sei
                lda #<customIrq
@@ -939,21 +897,8 @@ setupCustomIrq ldx #0
 ; -------- irq delay --------
         
 customIrq lda #1
-          sta hoverCanMove
-          sta missleCanMove
-
-          ldx rocksDelayTimer
-          inx
-          stx rocksDelayTimer
-          cpx #1
-          beq setRocksCanMove
-          jmp standardIrq
-          
-setRocksCanMove lda #1
-                sta rocksCanMove
-                jmp standardIrq          
-         
-standardIrq jmp irqnor             
+          sta refreshScreen
+          jmp irqnor
                                         
 ; -------- end game --------
                 
@@ -965,10 +910,7 @@ leftEdge            .byte 0 ; detect left edge
 rightEdge           .byte 0 ; detect right edge
 topEdge             .byte 0 ; detect top edge
 bottomEdge          .byte 0 ; detect bottom edge
-hoverCanMove        .byte 0 ; check to see if hover can move
-missleCanMove       .byte 0 ; check to see if missle can move
-rocksCanMove        .byte 0 ; check to see if rock can move
-rocksDelayTimer     .byte 0 ; check to see if rock can move
+refreshScreen      .byte 0 ; check to see if hover can move
 spriteCollisionCopy .byte 0 ; check to see if rock can move
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
