@@ -37,6 +37,11 @@ rockSprite2X       = $d006 ; 53254
 rockSprite2Y       = $d007 ; 53255
 rockColor2         = $d02a ; 53290
 
+rockSprite3        = $7fc  ; 2044
+rockSprite3X       = $d008 ; 53256
+rockSprite3Y       = $d009 ; 53257
+rockColor3         = $d02b ; 53291
+
 rockImg            = $3100 ; 12544 block 196
 
 mostSigBitX        = $d010 ; 53264
@@ -59,6 +64,7 @@ joyStick1          = $dc01 ; 56321
     lda #196 ; block 196
     sta rockSprite1
     sta rockSprite2
+    sta rockSprite3
 
     lda #1
     sta enableSprites
@@ -72,6 +78,7 @@ joyStick1          = $dc01 ; 56321
     lda #$08 ; brown (individual color)
     sta rockColor1
     sta rockColor2
+    sta rockColor3
     
     lda #$00 ; sprite multicolor 1 (black)
     sta $d025
@@ -321,8 +328,9 @@ stopMissle lda enableSprites
 moveRocks lda rocksCanMove
           cmp #1
           bne finishRocks
-          jsr moveRock1YN
-          jsr moveRock2YN
+          jsr moveRock1
+          jsr moveRock2
+          jsr moveRock3
           
           lda #0 ; reset timer
           sta rocksDelayTimer
@@ -332,10 +340,10 @@ finishRocks rts
 
 ; -------- move rock1 --------               
 
-moveRock1YN lda enableSprites ; see if rock is moving
-            and #4
-            cmp #4
-            beq checkRock1ForCollision
+moveRock1 lda enableSprites ; see if rock is moving
+          and #4
+          cmp #4
+          beq checkRock1ForCollision
            
 startRock1Move lda random
                and #63
@@ -384,10 +392,10 @@ finishRock1 rts
 
 ; -------- move rock2 --------               
 
-moveRock2YN lda enableSprites ; see if rock is moving
-            and #8
-            cmp #8
-            beq checkRock2ForCollision
+moveRock2 lda enableSprites ; see if rock is moving
+          and #8
+          cmp #8
+          beq checkRock2ForCollision
            
 startRock2Move lda random
                and #63
@@ -432,7 +440,59 @@ checkRock2ForCollision lda spriteCollisionCopy
                       
                        jmp finishRock2
 
-finishRock2 rts           
+finishRock2 rts        
+
+; -------- move rock3 --------               
+
+moveRock3 lda enableSprites ; see if rock is moving
+          and #16
+          cmp #16
+          beq checkRock3ForCollision
+           
+startRock3Move lda random
+               and #63
+               cmp #7
+               bne finishRock3
+
+               lda enableSprites
+               eor #16
+               sta enableSprites
+               
+               lda #128 ; begin x pos
+               sta rockSprite3X
+               lda #50 ; begin y pos
+               sta rockSprite3Y           
+               
+               jmp finishRock3
+  
+moveRock3Down ldy rockSprite3Y
+              iny
+              sty rockSprite3Y
+            
+              lda rockSprite3Y
+              cmp #228
+              beq rock3HitBottom
+
+              jmp finishRock3
+             
+rock3HitBottom lda enableSprites ; remove rock
+               eor #16
+               sta enableSprites
+
+               jmp finishRock3
+                        
+checkRock3ForCollision lda spriteCollisionCopy
+                       and #16
+                       cmp #16
+                       bne moveRock3Down
+                      
+                       lda enableSprites ; remove rock and missle
+                       eor #18
+                       sta enableSprites
+                      
+                       jmp finishRock3
+
+finishRock3 rts      
 
 ; -------- gameloop character floats down --------               
                 
