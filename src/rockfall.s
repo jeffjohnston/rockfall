@@ -42,6 +42,11 @@ rockSprite3X       = $d008 ; 53256
 rockSprite3Y       = $d009 ; 53257
 rockColor3         = $d02b ; 53291
 
+rockSprite4        = $7fd  ; 2045
+rockSprite4X       = $d00a ; 53258
+rockSprite4Y       = $d00b ; 53259
+rockColor4         = $d02c ; 53292
+
 rockImg            = $3100 ; 12544 block 196
 
 mostSigBitX        = $d010 ; 53264
@@ -65,6 +70,7 @@ joyStick1          = $dc01 ; 56321
     sta rockSprite1
     sta rockSprite2
     sta rockSprite3
+    sta rockSprite4
 
     lda #1
     sta enableSprites
@@ -79,6 +85,7 @@ joyStick1          = $dc01 ; 56321
     sta rockColor1
     sta rockColor2
     sta rockColor3
+    sta rockColor4
     
     lda #$00 ; sprite multicolor 1 (black)
     sta $d025
@@ -331,6 +338,7 @@ moveRocks lda rocksCanMove
           jsr moveRock1
           jsr moveRock2
           jsr moveRock3
+          jsr moveRock4
           
           lda #0 ; reset timer
           sta rocksDelayTimer
@@ -493,6 +501,59 @@ checkRock3ForCollision lda spriteCollisionCopy
                        jmp finishRock3
 
 finishRock3 rts      
+
+
+; -------- move rock4 --------               
+
+moveRock4 lda enableSprites ; see if rock is moving
+          and #32
+          cmp #32
+          beq checkRock4ForCollision
+           
+startRock4Move lda random
+               and #63
+               cmp #7
+               bne finishRock4
+
+               lda enableSprites
+               eor #32
+               sta enableSprites
+               
+               lda #174 ; begin x pos
+               sta rockSprite4X
+               lda #50 ; begin y pos
+               sta rockSprite4Y           
+               
+               jmp finishRock4
+  
+moveRock4Down ldy rockSprite4Y
+              iny
+              sty rockSprite4Y
+            
+              lda rockSprite4Y
+              cmp #228
+              beq rock4HitBottom
+
+              jmp finishRock4
+             
+rock4HitBottom lda enableSprites ; remove rock
+               eor #32
+               sta enableSprites
+
+               jmp finishRock4
+                        
+checkRock4ForCollision lda spriteCollisionCopy
+                       and #32
+                       cmp #32
+                       bne moveRock4Down
+                      
+                       lda enableSprites ; remove rock and missle
+                       eor #34
+                       sta enableSprites
+                      
+                       jmp finishRock4
+
+finishRock4 rts      
 
 ; -------- gameloop character floats down --------               
                 
