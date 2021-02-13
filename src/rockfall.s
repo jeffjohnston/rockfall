@@ -394,8 +394,8 @@ rock1HitBottom lda enableSprites ; remove rock
                jmp finishRock1
                         
 checkRock1ForCollision lda spriteCollisionCopy
-                       and #4
-                       cmp #4
+                       and #6
+                       cmp #6
                        bne moveRock1Down
                       
                        lda enableSprites ; remove rock and missle
@@ -446,8 +446,8 @@ rock2HitBottom lda enableSprites ; remove rock
                jmp finishRock2
                         
 checkRock2ForCollision lda spriteCollisionCopy
-                       and #8
-                       cmp #8
+                       and #10
+                       cmp #10
                        bne moveRock2Down
                       
                        lda enableSprites ; remove rock and missle
@@ -498,8 +498,8 @@ rock3HitBottom lda enableSprites ; remove rock
                jmp finishRock3
                         
 checkRock3ForCollision lda spriteCollisionCopy
-                       and #16
-                       cmp #16
+                       and #18
+                       cmp #18
                        bne moveRock3Down
                       
                        lda enableSprites ; remove rock and missle
@@ -551,8 +551,8 @@ rock4HitBottom lda enableSprites ; remove rock
                jmp finishRock4
                         
 checkRock4ForCollision lda spriteCollisionCopy
-                       and #32
-                       cmp #32
+                       and #34
+                       cmp #34
                        bne moveRock4Down
                       
                        lda enableSprites ; remove rock and missle
@@ -603,8 +603,8 @@ rock5HitBottom lda enableSprites ; remove rock
                jmp finishRock5
                         
 checkRock5ForCollision lda spriteCollisionCopy
-                       and #64
-                       cmp #64
+                       and #66
+                       cmp #66
                        bne moveRock5Down
                       
                        lda enableSprites ; remove rock and missle
@@ -978,6 +978,15 @@ hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $aa,$c0,$00,$aa,$00,$02,$96,$80
                   .byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
                   .byte $f0,$55,$55,$55,$14,$00,$14,$82
+                                    
+hoverRightUpsideDownImgData .byte $14,$00,$14,$55,$55,$55,$0f,$c3
+                            .byte $f0,$0a,$82,$a0,$02,$82,$80,$02
+                            .byte $96,$80,$00,$aa,$00,$03,$aa,$c0
+                            .byte $03,$aa,$c0,$03,$aa,$c0,$02,$96
+                            .byte $80,$02,$7d,$80,$00,$3f,$00,$01
+                            .byte $f5,$00,$07,$ff,$c0,$07,$ff,$c0
+                            .byte $07,$7d,$f0,$07,$7d,$c0,$05,$7f
+                            .byte $c0,$01,$7d,$40,$00,$55,$00,$82
 
 hoverLeftImgData .byte $00,$55,$00,$01,$7d,$40,$03,$fd
                  .byte $50,$03,$7d,$d0,$0f,$7d,$d0,$03
@@ -986,7 +995,16 @@ hoverLeftImgData .byte $00,$55,$00,$01,$7d,$40,$03,$fd
                  .byte $80,$03,$aa,$c0,$03,$aa,$c0,$03
                  .byte $aa,$c0,$00,$aa,$00,$02,$96,$80
                  .byte $02,$82,$80,$0a,$82,$a0,$0f,$c3
-                 .byte $f0,$55,$55,$55,$14,$00,$14,$82   
+                 .byte $f0,$55,$55,$55,$14,$00,$14,$82 
+                 
+hoverLeftUpsideDownImgData .byte $14,$00,$14,$55,$55,$55,$0f,$c3
+                           .byte $f0,$0a,$82,$a0,$02,$82,$80,$02
+                           .byte $96,$80,$00,$aa,$00,$03,$aa,$c0
+                           .byte $03,$aa,$c0,$03,$aa,$c0,$02,$96
+                           .byte $80,$02,$7d,$80,$00,$fc,$00,$00
+                           .byte $5f,$40,$03,$ff,$d0,$03,$ff,$d0
+                           .byte $0f,$7d,$d0,$03,$7d,$d0,$03,$fd
+                           .byte $50,$01,$7d,$40,$00,$55,$00,$82                   
 
 missleRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
