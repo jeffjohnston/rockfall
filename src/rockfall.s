@@ -217,7 +217,7 @@ checkJoystick lda joyStick1
               beq jmpMoveDownLeft
               cmp #22 ; with fire button
               beq jmpMoveDownLeft
-              jmp gameloop
+              jmp floatDown
     
     
 jmpMoveRight     jmp moveRight
@@ -228,7 +228,6 @@ jmpMoveUpRight   jmp moveUpRight
 jmpMoveUpLeft    jmp moveUpLeft
 jmpMoveDownRight jmp moveDownRight
 jmpMoveDownLeft  jmp moveDownLeft
-jmpFloatDown     jmp floatDown
 
 ; -------- shoot missle --------  
 
@@ -621,6 +620,8 @@ floatDown jsr bottomEdgeFunc
           lda bottomEdge
           cmp #1
           beq floatDownJmpGameLoop
+          
+          jsr checkIfHoverCanMove
 
           ldx hoverSpriteY
           inx
@@ -944,7 +945,7 @@ customIrq lda #1
           ldx rocksDelayTimer
           inx
           stx rocksDelayTimer
-          cpx #2
+          cpx #1
           beq setRocksCanMove
           jmp standardIrq
           
