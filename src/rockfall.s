@@ -165,30 +165,9 @@ gameloop lda refreshScreen
 
          jsr moveMissile
          jsr moveRocks
-
-checkFireButton lda joyStick1
-                eor #255
-                cmp #16
-                beq jmpShootMissile
-                cmp #24 ; with fire button
-                beq jmpShootMissile
-                cmp #20 ; with fire button
-                beq jmpShootMissile
-                cmp #17 ; with fire button
-                beq jmpShootMissile
-                cmp #18 ; with fire button
-                beq jmpShootMissile
-                cmp #25 ; with fire button
-                beq jmpShootMissile
-                cmp #21 ; with fire button
-                beq jmpShootMissile
-                cmp #26 ; with fire button
-                beq jmpShootMissile
-                cmp #22 ; with fire button
-                beq jmpShootMissile
-                jmp checkJoystick
-
-jmpShootMissile  jmp shootMissile
+         jsr checkFireButton
+         
+; -------- check joystick --------
          
 checkJoystick lda joyStick1
               eor #255
@@ -235,12 +214,36 @@ jmpMoveUpLeft    jmp moveHoverUpLeft
 jmpMoveDownRight jmp moveHoverDownRight
 jmpMoveDownLeft  jmp moveHoverDownLeft
 
+; -------- check fire button --------         
+
+checkFireButton lda joyStick1
+                eor #255
+                cmp #16
+                beq shootMissile
+                cmp #24 ; with fire button
+                beq shootMissile
+                cmp #20 ; with fire button
+                beq shootMissile
+                cmp #17 ; with fire button
+                beq shootMissile
+                cmp #18 ; with fire button
+                beq shootMissile
+                cmp #25 ; with fire button
+                beq shootMissile
+                cmp #21 ; with fire button
+                beq shootMissile
+                cmp #26 ; with fire button
+                beq shootMissile
+                cmp #22 ; with fire button
+                beq shootMissile
+                rts
+
 ; -------- shoot missile --------  
 
 shootMissile lda enableSprites
              and #2
              cmp #2 
-             beq shootMissileJmpCheckJoystick
+             beq finishShootMissile
 
              ldx hoverSprite
              cpx #192
@@ -251,7 +254,7 @@ shootMissileRight jsr missileImgFaceRight
 
                   lda hoverSpriteX
                   cmp #234
-                  bcs shootMissileJmpCheckJoystick
+                  bcs finishShootMissile
                  
                   adc #21
                   sta missileSpriteX
@@ -263,13 +266,13 @@ shootMissileRight jsr missileImgFaceRight
                   eor #2
                   sta enableSprites
                  
-                  jmp shootMissileJmpCheckJoystick
+                  rts
 
 shootMissileLeft jsr missileImgFaceLeft
 
                  lda hoverSpriteX
                  cmp #47
-                 bcc shootMissileJmpCheckJoystick
+                 bcc finishShootMissile
                 
                  sbc #22
                  sta missileSpriteX
@@ -280,10 +283,8 @@ shootMissileLeft jsr missileImgFaceLeft
                  lda enableSprites
                  eor #2
                  sta enableSprites
-                 
-                 jmp shootMissileJmpCheckJoystick
                 
-shootMissileJmpCheckJoystick jmp checkJoystick
+finishShootMissile rts
 
 ; -------- move missile --------
 
