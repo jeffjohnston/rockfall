@@ -166,53 +166,7 @@ gameloop lda refreshScreen
          jsr moveMissile
          jsr moveRocks
          jsr checkFireButton
-         
-; -------- check joystick --------
-         
-checkJoystick lda joyStick1
-              eor #255
-              cmp #8
-              beq jmpMoveRight
-              cmp #24 ; with fire button
-              beq jmpMoveRight
-              cmp #4
-              beq jmpMoveLeft
-              cmp #20 ; with fire button
-              beq jmpMoveLeft
-              cmp #1
-              beq jmpMoveUp
-              cmp #17 ; with fire button
-              beq jmpMoveUp
-              cmp #2
-              beq jmpMoveDown
-              cmp #18 ; with fire button
-              beq jmpMoveDown
-              cmp #9
-              beq jmpMoveUpRight
-              cmp #25 ; with fire button
-              beq jmpMoveUpRight
-              cmp #5
-              beq jmpMoveUpLeft
-              cmp #21 ; with fire button
-              beq jmpMoveUpLeft
-              cmp #10
-              beq jmpMoveDownRight
-              cmp #26 ; with fire button
-              beq jmpMoveDownRight
-              cmp #6
-              beq jmpMoveDownLeft
-              cmp #22 ; with fire button
-              beq jmpMoveDownLeft
-              jmp floatHoverDown
-    
-jmpMoveRight     jmp moveHoverRight
-jmpMoveLeft      jmp moveHoverLeft
-jmpMoveUp        jmp moveHoverUp
-jmpMoveDown      jmp moveHoverDown
-jmpMoveUpRight   jmp moveHoverUpRight
-jmpMoveUpLeft    jmp moveHoverUpLeft
-jmpMoveDownRight jmp moveHoverDownRight
-jmpMoveDownLeft  jmp moveHoverDownLeft
+         jmp checkJoystick
 
 ; -------- check fire button --------         
 
@@ -597,27 +551,74 @@ checkRock5ForCollision lda spriteCollisionCopy
                       
                        jmp finishRock5
 
-finishRock5 rts      
+finishRock5 rts
+
+; -------- check joystick --------
+         
+checkJoystick lda joyStick1
+              eor #255
+              cmp #8
+              beq jmpMoveRight
+              cmp #24 ; with fire button
+              beq jmpMoveRight
+              cmp #4
+              beq jmpMoveLeft
+              cmp #20 ; with fire button
+              beq jmpMoveLeft
+              cmp #1
+              beq jmpMoveUp
+              cmp #17 ; with fire button
+              beq jmpMoveUp
+              cmp #2
+              beq jmpMoveDown
+              cmp #18 ; with fire button
+              beq jmpMoveDown
+              cmp #9
+              beq jmpMoveUpRight
+              cmp #25 ; with fire button
+              beq jmpMoveUpRight
+              cmp #5
+              beq jmpMoveUpLeft
+              cmp #21 ; with fire button
+              beq jmpMoveUpLeft
+              cmp #10
+              beq jmpMoveDownRight
+              cmp #26 ; with fire button
+              beq jmpMoveDownRight
+              cmp #6
+              beq jmpMoveDownLeft
+              cmp #22 ; with fire button
+              beq jmpMoveDownLeft
+              jmp floatHoverDown
+    
+jmpMoveRight     jmp moveHoverRight
+jmpMoveLeft      jmp moveHoverLeft
+jmpMoveUp        jmp moveHoverUp
+jmpMoveDown      jmp moveHoverDown
+jmpMoveUpRight   jmp moveHoverUpRight
+jmpMoveUpLeft    jmp moveHoverUpLeft
+jmpMoveDownRight jmp moveHoverDownRight
+jmpMoveDownLeft  jmp moveHoverDownLeft   
 
 ; -------- hover floats down --------
                 
 floatHoverDown jsr detectHoverHitBottomEdge
                lda hoverHitBottomEdge
                cmp #1
-               beq floatHoverDownJmpGameLoop
+               beq finishFloatHoverDown
 
                ldx hoverSpriteY
                inx
                stx hoverSpriteY
                 
-floatHoverDownJmpGameLoop jmp gameloop
+finishFloatHoverDown jmp gameloop
         
 ; -------- move hover moveHoverRight --------
         
 moveHoverRight jsr detectHoverHitRightEdge
                lda hoverHitRightEdge
                cmp #1
-               beq rightJmpGameLoop
+               beq finishMoveHoverRight
 
                jsr hoverImgFaceRight
 
@@ -625,14 +626,14 @@ moveHoverRight jsr detectHoverHitRightEdge
                inx
                stx hoverSpriteX
         
-rightJmpGameLoop jmp gameloop
+finishMoveHoverRight jmp gameloop
         
 ; -------- move hover left --------
         
 moveHoverLeft jsr detectHoverHitLeftEdge
               lda hoverHitLeftEdge
               cmp #1
-              beq leftJmpGameLoop
+              beq finishHoveHoverLeft
             
               jsr hoverImgFaceLeft
             
@@ -640,45 +641,45 @@ moveHoverLeft jsr detectHoverHitLeftEdge
               dex
               stx hoverSpriteX
         
-leftJmpGameLoop jmp gameloop
+finishHoveHoverLeft jmp gameloop
 
 ; -------- move hover up --------
                 
 moveHoverUp jsr detectHoverHitTopEdge
             lda hoverHitTopEdge
             cmp #1
-            beq upJmpGameLoop
+            beq finishMoveHoverUp
 
             ldx hoverSpriteY
             dex
             stx hoverSpriteY
     
-upJmpGameLoop jmp gameloop
+finishMoveHoverUp jmp gameloop
         
 ; -------- move hover down --------
                 
 moveHoverDown jsr detectHoverHitBottomEdge
               lda hoverHitBottomEdge
               cmp #1
-              beq downJmpGameLoop
+              beq finishMoveHoverDown
 
               ldx hoverSpriteY
               inx
               stx hoverSpriteY
                 
-downJmpGameLoop jmp gameloop
+finishMoveHoverDown jmp gameloop
 
 ; -------- move hover up and to the right --------
 
 moveHoverUpRight jsr detectHoverHitTopEdge
                  lda hoverHitTopEdge
                  cmp #1
-                 beq upRightJmpGameLoop
+                 beq finishMoveHoverUpRight
 
                  jsr detectHoverHitRightEdge
                  lda hoverHitRightEdge
                  cmp #1
-                 beq upRightJmpGameLoop
+                 beq finishMoveHoverUpRight
           
                  jsr hoverImgFaceRight
                  
@@ -690,19 +691,19 @@ moveHoverUpRight jsr detectHoverHitTopEdge
                  dex
                  stx hoverSpriteY
                 
-upRightJmpGameLoop jmp gameloop
+finishMoveHoverUpRight jmp gameloop
 
 ; -------- move hover up and to the left --------
 
 moveHoverUpLeft jsr detectHoverHitTopEdge
                 lda hoverHitTopEdge
                 cmp #1
-                beq upLeftJmpGameLoop
+                beq finishMoveHoverUpLeft
 
                 jsr detectHoverHitLeftEdge
                 lda hoverHitLeftEdge
                 cmp #1
-                beq upLeftJmpGameLoop
+                beq finishMoveHoverUpLeft
           
                 jsr hoverImgFaceLeft
                
@@ -714,19 +715,19 @@ moveHoverUpLeft jsr detectHoverHitTopEdge
                 dex
                 stx hoverSpriteY
                 
-upLeftJmpGameLoop jmp gameloop
+finishMoveHoverUpLeft jmp gameloop
 
 ; -------- move hover down and to the right --------
 
 moveHoverDownRight jsr detectHoverHitBottomEdge
                    lda hoverHitBottomEdge
                    cmp #1
-                   beq downRightJmpGameLoop
+                   beq finishMoveHoverDownRight
                  
                    jsr detectHoverHitRightEdge
                    lda hoverHitRightEdge
                    cmp #1
-                   beq downRightJmpGameLoop
+                   beq finishMoveHoverDownRight
                  
                    jsr hoverImgFaceRight
 
@@ -738,19 +739,19 @@ moveHoverDownRight jsr detectHoverHitBottomEdge
                    inx
                    stx hoverSpriteY
                 
-downRightJmpGameLoop jmp gameloop
+finishMoveHoverDownRight jmp gameloop
 
 ; -------- move hover down and to the left --------
 
 moveHoverDownLeft jsr detectHoverHitBottomEdge
                   lda hoverHitBottomEdge
                   cmp #1
-                  beq downLeftJmpGameLoop
+                  beq finishMoveHoverDownLeft
                  
                   jsr detectHoverHitLeftEdge
                   lda hoverHitLeftEdge
                   cmp #1
-                  beq downLeftJmpGameLoop
+                  beq finishMoveHoverDownLeft
                  
                   jsr hoverImgFaceLeft
                  
@@ -762,7 +763,7 @@ moveHoverDownLeft jsr detectHoverHitBottomEdge
                   inx
                   stx hoverSpriteY
                 
-downLeftJmpGameLoop jmp gameloop
+finishMoveHoverDownLeft jmp gameloop
    
 ; -------- function to detect hover hit left edge --------
         
