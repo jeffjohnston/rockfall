@@ -59,60 +59,60 @@ joyStick1          = $dc01 ; 56321
 
 ; -------- setup --------
 
-    jsr clearScreen
-    jsr setupCustomIrq
+setup jsr clearScreen
+      jsr setupCustomIrq
     
-    lda #$00
-    sta 53280 ; border color
-    lda #$06
-    sta 53281 ; background color
+      lda #$00
+      sta 53280 ; border color
+      lda #$06
+      sta 53281 ; background color
     
-    lda #192 ; block 192
-    sta hoverSprite
-    lda #194 ; block 194
-    sta missileSprite
-    lda #196 ; block 196
-    sta rockSprite1
-    sta rockSprite2
-    sta rockSprite3
-    sta rockSprite4
-    sta rockSprite5
+      lda #192 ; block 192
+      sta hoverSprite
+      lda #194 ; block 194
+      sta missileSprite
+      lda #196 ; block 196
+      sta rockSprite1
+      sta rockSprite2
+      sta rockSprite3
+      sta rockSprite4
+      sta rockSprite5
 
-    lda #1
-    sta enableSprites
-    lda #$ff
-    sta enableMultiSprites
+      lda #1
+      sta enableSprites
+      lda #$ff
+      sta enableMultiSprites
     
-    lda #$02 ; red (individual color)
-    sta hoverColor
-    sta missileColor
+      lda #$02 ; red (individual color)
+      sta hoverColor
+      sta missileColor
     
-    lda #$08 ; brown (individual color)
-    sta rockColor1
-    sta rockColor2
-    sta rockColor3
-    sta rockColor4
-    sta rockColor5
+      lda #$08 ; brown (individual color)
+      sta rockColor1
+      sta rockColor2
+      sta rockColor3
+      sta rockColor4
+      sta rockColor5
     
-    lda #$00 ; sprite multicolor 1 (black)
-    sta $d025
-    lda #$0f ; sprite multicolor 2 (light grey)
-    sta $d026
+      lda #$00 ; sprite multicolor 1 (black)
+      sta $d025
+      lda #$0f ; sprite multicolor 2 (light grey)
+      sta $d026
     
-    lda #0 ; begin high bit
-    sta mostSigBitX
+      lda #0 ; begin high bit
+      sta mostSigBitX
     
-    ldx #75 ; begin x pos
-    stx hoverSpriteX
-    ldy #126 ; begin y pos
-    sty hoverSpriteY
+      ldx #75 ; begin x pos
+      stx hoverSpriteX
+      ldy #126 ; begin y pos
+      sty hoverSpriteY
     
-    ; turn on the randomizer
-    lda #$ff  ; maximum frequency value
-    sta $d40e ; voice 3 frequency low byte
-    sta $d40f ; voice 3 frequency high byte
-    lda #$80  ; noise waveform, gate bit off
-    sta $d412 ; voice 3 control register
+      ; turn on the randomizer
+      lda #$ff  ; maximum frequency value
+      sta $d40e ; voice 3 frequency low byte
+      sta $d40f ; voice 3 frequency high byte
+      lda #$80  ; noise waveform, gate bit off
+      sta $d412 ; voice 3 control register
 
 ; -------- build images --------
 
@@ -166,7 +166,8 @@ gameloop lda refreshScreen
          jsr moveMissile
          jsr moveRocks
          jsr checkFireButton
-         jmp checkJoystick
+         jsr checkJoystick
+         jmp gameloop
 
 ; -------- check fire button --------         
 
@@ -313,7 +314,7 @@ startRock1Move lda random
                lda #50 ; begin y pos
                sta rockSprite1Y
                
-               jmp finishRock1
+               rts
   
 moveRock1Down ldy rockSprite1Y
               iny
@@ -323,13 +324,13 @@ moveRock1Down ldy rockSprite1Y
               cmp #228
               beq rock1HitBottom
 
-              jmp finishRock1
+              rts
              
 rock1HitBottom lda enableSprites ; remove rock
                eor #4
                sta enableSprites
 
-               jmp finishRock1
+               rts
                         
 checkRock1ForCollision lda spriteCollisionCopy
                        and #6
@@ -339,8 +340,6 @@ checkRock1ForCollision lda spriteCollisionCopy
                        lda enableSprites ; remove rock and missile
                        eor #6
                        sta enableSprites
-                      
-                       jmp finishRock1
 
 finishRock1 rts
 
@@ -365,7 +364,7 @@ startRock2Move lda random
                lda #50 ; begin y pos
                sta rockSprite2Y
                
-               jmp finishRock2
+               rts
   
 moveRock2Down ldy rockSprite2Y
               iny
@@ -375,13 +374,13 @@ moveRock2Down ldy rockSprite2Y
               cmp #228
               beq rock2HitBottom
 
-              jmp finishRock2
+              rts
              
 rock2HitBottom lda enableSprites ; remove rock
                eor #8
                sta enableSprites
 
-               jmp finishRock2
+               rts
                         
 checkRock2ForCollision lda spriteCollisionCopy
                        and #10
@@ -391,8 +390,6 @@ checkRock2ForCollision lda spriteCollisionCopy
                        lda enableSprites ; remove rock and missile
                        eor #10
                        sta enableSprites
-                      
-                       jmp finishRock2
 
 finishRock2 rts        
 
@@ -417,7 +414,7 @@ startRock3Move lda random
                lda #50 ; begin y pos
                sta rockSprite3Y
                
-               jmp finishRock3
+               rts
   
 moveRock3Down ldy rockSprite3Y
               iny
@@ -427,13 +424,13 @@ moveRock3Down ldy rockSprite3Y
               cmp #228
               beq rock3HitBottom
 
-              jmp finishRock3
+              rts
              
 rock3HitBottom lda enableSprites ; remove rock
                eor #16
                sta enableSprites
 
-               jmp finishRock3
+               rts
                         
 checkRock3ForCollision lda spriteCollisionCopy
                        and #18
@@ -443,8 +440,6 @@ checkRock3ForCollision lda spriteCollisionCopy
                        lda enableSprites ; remove rock and missile
                        eor #18
                        sta enableSprites
-                      
-                       jmp finishRock3
 
 finishRock3 rts      
 
@@ -470,7 +465,7 @@ startRock4Move lda random
                lda #50 ; begin y pos
                sta rockSprite4Y
                
-               jmp finishRock4
+               rts
   
 moveRock4Down ldy rockSprite4Y
               iny
@@ -480,13 +475,13 @@ moveRock4Down ldy rockSprite4Y
               cmp #228
               beq rock4HitBottom
 
-              jmp finishRock4
+              rts
              
 rock4HitBottom lda enableSprites ; remove rock
                eor #32
                sta enableSprites
 
-               jmp finishRock4
+               rts
                         
 checkRock4ForCollision lda spriteCollisionCopy
                        and #34
@@ -496,8 +491,6 @@ checkRock4ForCollision lda spriteCollisionCopy
                        lda enableSprites ; remove rock and missile
                        eor #34
                        sta enableSprites
-                      
-                       jmp finishRock4
 
 finishRock4 rts      
 
@@ -522,7 +515,7 @@ startRock5Move lda random
                lda #50 ; begin y pos
                sta rockSprite5Y
                
-               jmp finishRock5
+               rts
   
 moveRock5Down ldy rockSprite5Y
               iny
@@ -532,13 +525,13 @@ moveRock5Down ldy rockSprite5Y
               cmp #228
               beq rock5HitBottom
 
-              jmp finishRock5
+              rts
              
 rock5HitBottom lda enableSprites ; remove rock
                eor #64
                sta enableSprites
 
-               jmp finishRock5
+               rts
                         
 checkRock5ForCollision lda spriteCollisionCopy
                        and #66
@@ -548,8 +541,6 @@ checkRock5ForCollision lda spriteCollisionCopy
                        lda enableSprites ; remove rock and missile
                        eor #66
                        sta enableSprites
-                      
-                       jmp finishRock5
 
 finishRock5 rts
 
@@ -558,47 +549,47 @@ finishRock5 rts
 checkJoystick lda joyStick1
               eor #255
               cmp #8
-              beq jmpMoveRight
+              beq jumpMoveMoverRight
               cmp #24 ; with fire button
-              beq jmpMoveRight
+              beq jumpMoveMoverRight
               cmp #4
-              beq jmpMoveLeft
+              beq jumpMoveHoverLeft
               cmp #20 ; with fire button
-              beq jmpMoveLeft
+              beq jumpMoveHoverLeft
               cmp #1
-              beq jmpMoveUp
+              beq jumpMoveHoverUp
               cmp #17 ; with fire button
-              beq jmpMoveUp
+              beq jumpMoveHoverUp
               cmp #2
-              beq jmpMoveDown
+              beq jumpMoveHoverDown
               cmp #18 ; with fire button
-              beq jmpMoveDown
+              beq jumpMoveHoverDown
               cmp #9
-              beq jmpMoveUpRight
+              beq jumpMoveHoverUpRight
               cmp #25 ; with fire button
-              beq jmpMoveUpRight
+              beq jumpMoveHoverUpRight
               cmp #5
-              beq jmpMoveUpLeft
+              beq jumpMoveHoverUpLeft
               cmp #21 ; with fire button
-              beq jmpMoveUpLeft
+              beq jumpMoveHoverUpLeft
               cmp #10
-              beq jmpMoveDownRight
+              beq jumpMoveHoverDownRight
               cmp #26 ; with fire button
-              beq jmpMoveDownRight
+              beq jumpMoveHoverDownRight
               cmp #6
-              beq jmpMoveDownLeft
+              beq jumpMoveHoverDownLeft
               cmp #22 ; with fire button
-              beq jmpMoveDownLeft
+              beq jumpMoveHoverDownLeft
               jmp floatHoverDown
     
-jmpMoveRight     jmp moveHoverRight
-jmpMoveLeft      jmp moveHoverLeft
-jmpMoveUp        jmp moveHoverUp
-jmpMoveDown      jmp moveHoverDown
-jmpMoveUpRight   jmp moveHoverUpRight
-jmpMoveUpLeft    jmp moveHoverUpLeft
-jmpMoveDownRight jmp moveHoverDownRight
-jmpMoveDownLeft  jmp moveHoverDownLeft   
+jumpMoveMoverRight     jmp moveHoverRight
+jumpMoveHoverLeft      jmp moveHoverLeft
+jumpMoveHoverUp        jmp moveHoverUp
+jumpMoveHoverDown      jmp moveHoverDown
+jumpMoveHoverUpRight   jmp moveHoverUpRight
+jumpMoveHoverUpLeft    jmp moveHoverUpLeft
+jumpMoveHoverDownRight jmp moveHoverDownRight
+jumpMoveHoverDownLeft  jmp moveHoverDownLeft   
 
 ; -------- hover floats down --------
                 
@@ -611,7 +602,7 @@ floatHoverDown jsr detectHoverHitBottomEdge
                inx
                stx hoverSpriteY
                 
-finishFloatHoverDown jmp gameloop
+finishFloatHoverDown rts
         
 ; -------- move hover moveHoverRight --------
         
@@ -626,7 +617,7 @@ moveHoverRight jsr detectHoverHitRightEdge
                inx
                stx hoverSpriteX
         
-finishMoveHoverRight jmp gameloop
+finishMoveHoverRight rts
         
 ; -------- move hover left --------
         
@@ -641,7 +632,7 @@ moveHoverLeft jsr detectHoverHitLeftEdge
               dex
               stx hoverSpriteX
         
-finishHoveHoverLeft jmp gameloop
+finishHoveHoverLeft rts
 
 ; -------- move hover up --------
                 
@@ -654,7 +645,7 @@ moveHoverUp jsr detectHoverHitTopEdge
             dex
             stx hoverSpriteY
     
-finishMoveHoverUp jmp gameloop
+finishMoveHoverUp rts
         
 ; -------- move hover down --------
                 
@@ -667,7 +658,7 @@ moveHoverDown jsr detectHoverHitBottomEdge
               inx
               stx hoverSpriteY
                 
-finishMoveHoverDown jmp gameloop
+finishMoveHoverDown rts
 
 ; -------- move hover up and to the right --------
 
@@ -691,7 +682,7 @@ moveHoverUpRight jsr detectHoverHitTopEdge
                  dex
                  stx hoverSpriteY
                 
-finishMoveHoverUpRight jmp gameloop
+finishMoveHoverUpRight rts
 
 ; -------- move hover up and to the left --------
 
@@ -715,7 +706,7 @@ moveHoverUpLeft jsr detectHoverHitTopEdge
                 dex
                 stx hoverSpriteY
                 
-finishMoveHoverUpLeft jmp gameloop
+finishMoveHoverUpLeft rts
 
 ; -------- move hover down and to the right --------
 
@@ -739,7 +730,7 @@ moveHoverDownRight jsr detectHoverHitBottomEdge
                    inx
                    stx hoverSpriteY
                 
-finishMoveHoverDownRight jmp gameloop
+finishMoveHoverDownRight rts
 
 ; -------- move hover down and to the left --------
 
@@ -763,7 +754,7 @@ moveHoverDownLeft jsr detectHoverHitBottomEdge
                   inx
                   stx hoverSpriteY
                 
-finishMoveHoverDownLeft jmp gameloop
+finishMoveHoverDownLeft rts
    
 ; -------- function to detect hover hit left edge --------
         
