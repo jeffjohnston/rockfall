@@ -161,14 +161,15 @@ gameloop lda refreshScreen
          sta refreshScreen
 
          lda spriteCollision 
-         sta spriteCollisionCopy ; copy collision
+         sta spriteCollisionDetector ; copy collision
 
          jsr moveMissile
-         jsr moveRock1
-         jsr moveRock2
-         jsr moveRock3
-         jsr moveRock4
-         jsr moveRock5         
+         jsr moveRocks
+         
+;         jsr moveRock2
+;         jsr moveRock3
+;         jsr moveRock4
+;         jsr moveRock5         
          jsr checkFireButton
          jsr checkJoystick
          jmp gameloop
@@ -216,256 +217,118 @@ stopMissile lda enableSprites
             sta missileSpriteY
             rts
 
-; -------- move rock1 --------
+; -------- move rocks --------
 
-moveRock1 lda enableSprites ; see if rock is moving
-          and #4
-          cmp #4
-          beq checkRock1ForCollision
-           
-startRock1Move lda random
-               and #63
-               cmp #7
-               bne finishRock1
 
-               lda enableSprites
-               eor #4
-               sta enableSprites
-               
-               lda #36 ; begin x pos
-               sta rockSprite1X
-               lda #50 ; begin y pos
-               sta rockSprite1Y
-               
-               rts
-  
-moveRock1Down ldy rockSprite1Y
-              iny
-              sty rockSprite1Y
-             
-              lda rockSprite1Y
-              cmp #228
-              beq rock1HitBottom
+moveRocks lda #4
+          sta rockSpriteBit
+          lda #6
+          sta rockSpriteBitPlus2
+          lda #0
+          sta rockSpriteOffset
+          lda #36
+          sta rockSpriteXPos         
 
-              rts
-             
-rock1HitBottom lda enableSprites ; remove rock
-               eor #4
-               sta enableSprites
+          jsr moveRock
+          
+          lda #8
+          sta rockSpriteBit
+          lda #10
+          sta rockSpriteBitPlus2
+          lda #2
+          sta rockSpriteOffset
+          lda #82
+          sta rockSpriteXPos
+          
+          jsr moveRock
 
-               rts
-                        
-checkRock1ForCollision lda spriteCollisionCopy
-                       and #6
-                       cmp #6
-                       bne moveRock1Down
-                      
-                       lda enableSprites ; remove rock and missile
-                       eor #6
-                       sta enableSprites
+          lda #16
+          sta rockSpriteBit
+          lda #18
+          sta rockSpriteBitPlus2
+          lda #4
+          sta rockSpriteOffset
+          lda #128
+          sta rockSpriteXPos
+          
+          jsr moveRock
 
-finishRock1 rts
+          lda #32
+          sta rockSpriteBit
+          lda #34
+          sta rockSpriteBitPlus2
+          lda #6
+          sta rockSpriteOffset
+          lda #174
+          sta rockSpriteXPos
+          
+          jsr moveRock
 
-; -------- move rock2 --------
+          lda #64
+          sta rockSpriteBit
+          lda #66
+          sta rockSpriteBitPlus2
+          lda #8
+          sta rockSpriteOffset
+          lda #220
+          sta rockSpriteXPos
+          
+          jsr moveRock
 
-moveRock2 lda enableSprites ; see if rock is moving
-          and #8
-          cmp #8
-          beq checkRock2ForCollision
-           
-startRock2Move lda random
-               and #63
-               cmp #7
-               bne finishRock2
-
-               lda enableSprites
-               eor #8
-               sta enableSprites
-               
-               lda #82 ; begin x pos
-               sta rockSprite2X
-               lda #50 ; begin y pos
-               sta rockSprite2Y
-               
-               rts
-  
-moveRock2Down ldy rockSprite2Y
-              iny
-              sty rockSprite2Y
+          rts
             
-              lda rockSprite2Y
-              cmp #228
-              beq rock2HitBottom
+; -------- move rock --------
 
-              rts
-             
-rock2HitBottom lda enableSprites ; remove rock
-               eor #8
-               sta enableSprites
-
-               rts
-                        
-checkRock2ForCollision lda spriteCollisionCopy
-                       and #10
-                       cmp #10
-                       bne moveRock2Down
-                      
-                       lda enableSprites ; remove rock and missile
-                       eor #10
-                       sta enableSprites
-
-finishRock2 rts        
-
-; -------- move rock3 --------
-
-moveRock3 lda enableSprites ; see if rock is moving
-          and #16
-          cmp #16
-          beq checkRock3ForCollision
+moveRock lda enableSprites ; see if rock is moving
+         and rockSpriteBit
+         cmp rockSpriteBit
+         beq checkRockForCollision
            
-startRock3Move lda random
-               and #63
-               cmp #7
-               bne finishRock3
+startRockMove lda random
+              and #63
+              cmp #7
+              bne finishRock
 
-               lda enableSprites
-               eor #16
-               sta enableSprites
+              lda enableSprites
+              eor rockSpriteBit
+              sta enableSprites
                
-               lda #128 ; begin x pos
-               sta rockSprite3X
-               lda #50 ; begin y pos
-               sta rockSprite3Y
+              ldx rockSpriteOffset
+              lda rockSpriteXPos ; begin x pos
+              sta rockSprite1X, x
+              lda #50 ; begin y pos
+              sta rockSprite1Y, x
                
-               rts
+              rts
   
-moveRock3Down ldy rockSprite3Y
-              iny
-              sty rockSprite3Y
-            
-              lda rockSprite3Y
-              cmp #228
-              beq rock3HitBottom
+moveRockDown ldx rockSpriteOffset
+             ldy rockSprite1Y, x
+             iny
+             tya
+             sta rockSprite1Y, x
+             
+             lda rockSprite1Y, x
+             cmp #228
+             beq rockHitBottom
+
+             rts
+             
+rockHitBottom lda enableSprites ; remove rock
+              eor rockSpriteBit
+              sta enableSprites
 
               rts
-             
-rock3HitBottom lda enableSprites ; remove rock
-               eor #16
-               sta enableSprites
-
-               rts
                         
-checkRock3ForCollision lda spriteCollisionCopy
-                       and #18
-                       cmp #18
-                       bne moveRock3Down
+checkRockForCollision lda spriteCollisionDetector
+                      and rockSpriteBitPlus2
+                      cmp rockSpriteBitPlus2
+                      bne moveRockDown
                       
-                       lda enableSprites ; remove rock and missile
-                       eor #18
-                       sta enableSprites
+                      lda enableSprites ; remove rock and missile
+                      eor rockSpriteBitPlus2
+                      sta enableSprites
 
-finishRock3 rts      
-
-
-; -------- move rock4 --------
-
-moveRock4 lda enableSprites ; see if rock is moving
-          and #32
-          cmp #32
-          beq checkRock4ForCollision
-           
-startRock4Move lda random
-               and #63
-               cmp #7
-               bne finishRock4
-
-               lda enableSprites
-               eor #32
-               sta enableSprites
-               
-               lda #174 ; begin x pos
-               sta rockSprite4X
-               lda #50 ; begin y pos
-               sta rockSprite4Y
-               
-               rts
-  
-moveRock4Down ldy rockSprite4Y
-              iny
-              sty rockSprite4Y
-            
-              lda rockSprite4Y
-              cmp #228
-              beq rock4HitBottom
-
-              rts
-             
-rock4HitBottom lda enableSprites ; remove rock
-               eor #32
-               sta enableSprites
-
-               rts
-                        
-checkRock4ForCollision lda spriteCollisionCopy
-                       and #34
-                       cmp #34
-                       bne moveRock4Down
-                      
-                       lda enableSprites ; remove rock and missile
-                       eor #34
-                       sta enableSprites
-
-finishRock4 rts      
-
-; -------- move rock5 --------
-
-moveRock5 lda enableSprites ; see if rock is moving
-          and #64
-          cmp #64
-          beq checkRock5ForCollision
-           
-startRock5Move lda random
-               and #63
-               cmp #7
-               bne finishRock5
-
-               lda enableSprites
-               eor #64
-               sta enableSprites
-               
-               lda #220 ; begin x pos
-               sta rockSprite5X
-               lda #50 ; begin y pos
-               sta rockSprite5Y
-               
-               rts
-  
-moveRock5Down ldy rockSprite5Y
-              iny
-              sty rockSprite5Y
-            
-              lda rockSprite5Y
-              cmp #228
-              beq rock5HitBottom
-
-              rts
-             
-rock5HitBottom lda enableSprites ; remove rock
-               eor #64
-               sta enableSprites
-
-               rts
-                        
-checkRock5ForCollision lda spriteCollisionCopy
-                       and #66
-                       cmp #66
-                       bne moveRock5Down
-                      
-                       lda enableSprites ; remove rock and missile
-                       eor #66
-                       sta enableSprites
-
-finishRock5 rts         
+finishRock rts    
 
 ; -------- check fire button --------         
 
@@ -893,12 +756,16 @@ end     rts
 
 ; -------- custom variables --------
 
-hoverHitLeftEdge    .byte 0
-hoverHitRightEdge   .byte 0
-hoverHitTopEdge     .byte 0
-hoverHitBottomEdge  .byte 0
-refreshScreen       .byte 0
-spriteCollisionCopy .byte 0
+hoverHitLeftEdge          .byte 0
+hoverHitRightEdge         .byte 0
+hoverHitTopEdge           .byte 0
+hoverHitBottomEdge        .byte 0
+refreshScreen             .byte 0
+spriteCollisionDetector   .byte 0
+rockSpriteBit             .byte 0 ; bit number
+rockSpriteBitPlus2        .byte 0
+rockSpriteOffset          .byte 0
+rockSpriteXPos            .byte 0
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
