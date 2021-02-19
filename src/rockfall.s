@@ -14,24 +14,17 @@ enableMultiSprites = $d01C ; 53276 enable multi-color sprites
 spriteCollision    = $d01e ; 53278
 graphics           = $d018 ; 53272
 
-cset0    = $d000 ; 53248
-cset1    = $d100 ; 53504
-cset2    = $d200 ; 53760
-cset3    = $d300 ; 54016
-cset4    = $d400 ; 54272
-cset5    = $d500 ; 54528
-cset6    = $d600 ; 54784
-cset7    = $d700 ; 55040 
+charSet0           = $d000 ; 53248
+charSet1           = $d100 ; 53504
+charSet2           = $d200 ; 53760
+charSet3           = $d300 ; 54016
+charSet4           = $d400 ; 54272 ; custom characters in reverse character section
 
-cmem0    = $2000 ; 8192
-cmem1    = $2100 ; 8448
-cmem2    = $2200 ; 8704
-cmem3    = $2300 ; 8960
-cmem4    = $2400 ; 9216
-cmem5    = $2500 ; 9472
-cmem6    = $2600 ; 9728
-cmem7    = $2700 ; 9984
-cmem8    = $2800 ; 10240 ; start of custom characters
+charMem0           = $2000 ; 8192
+charMem1           = $2100 ; 8448
+charMem2           = $2200 ; 8704
+charMem3           = $2300 ; 8960
+charMem4           = $2400 ; 9216
 
 hoverSprite        = $7f8  ; 2040
 hoverColor         = $d027 ; 53287
@@ -144,36 +137,24 @@ setup jsr clearScreen
                sta $01
 
                ldx #0
-defaultCharSet lda cset0,x ; get char data
-               sta cmem0,x ; store in charmem
+defaultCharSet lda charSet0,x ; get char data
+               sta charMem0,x ; store in charmem
 
-               lda cset1,x
-               sta cmem1,x
+               lda charSet1,x
+               sta charMem1,x
 
-               lda cset2,x
-               sta cmem2,x
+               lda charSet2,x
+               sta charMem2,x
 
-               lda cset3,x
-               sta cmem3,x
-
-;               lda cset4,x
-;               sta cmem4,x
-
-;               lda cset5,x
-;               sta cmem5,x
-
-;               lda cset6,x
-;               sta cmem6,x
-
-;               lda cset7,x
-;               sta cmem7,x
+               lda charSet3,x
+               sta charMem3,x
 
                inx
                bne defaultCharSet
 
                ldx #0
 customCharSet1 lda customCharSetData1,x
-               sta cmem4,x
+               sta charMem4,x
                inx
                cpx #7
                bne customCharSet1
