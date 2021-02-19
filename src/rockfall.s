@@ -12,6 +12,26 @@ clearScreen        = $e544 ; clear screen
 enableSprites      = $d015 ; 53269 enable sprites
 enableMultiSprites = $d01C ; 53276 enable multi-color sprites
 spriteCollision    = $d01e ; 53278
+graphics           = $d018 ; 53272
+
+cset0    = $d000 ; 53248
+cset1    = $d100 ; 53504
+cset2    = $d200 ; 53760
+cset3    = $d300 ; 54016
+cset4    = $d400 ; 54272
+cset5    = $d500 ; 54528
+cset6    = $d600 ; 54784
+cset7    = $d700 ; 55040 
+
+cmem0    = $2000 ; 8192
+cmem1    = $2100 ; 8448
+cmem2    = $2200 ; 8704
+cmem3    = $2300 ; 8960
+cmem4    = $2400 ; 9216
+cmem5    = $2500 ; 9472
+cmem6    = $2600 ; 9728
+cmem7    = $2700 ; 9984
+cmem8    = $2800 ; 10240 ; start of custom characters
 
 hoverSprite        = $7f8  ; 2040
 hoverColor         = $d027 ; 53287
@@ -27,35 +47,35 @@ missileSpriteY      = $d003 ; 53251
 missileRightImg     = $3080 ; 12416 block 194
 missileLeftImg      = $30C0 ; 12480 block 195
 
-rockSprite1        = $7fa  ; 2042
-rockSprite1X       = $d004 ; 53252
-rockSprite1Y       = $d005 ; 53253
-rockColor1         = $d029 ; 53289
+rockSprite1         = $7fa  ; 2042
+rockSprite1X        = $d004 ; 53252
+rockSprite1Y        = $d005 ; 53253
+rockColor1          = $d029 ; 53289
 
-rockSprite2        = $7fb  ; 2043
-rockSprite2X       = $d006 ; 53254
-rockSprite2Y       = $d007 ; 53255
-rockColor2         = $d02a ; 53290
+rockSprite2         = $7fb  ; 2043
+rockSprite2X        = $d006 ; 53254
+rockSprite2Y        = $d007 ; 53255
+rockColor2          = $d02a ; 53290
 
-rockSprite3        = $7fc  ; 2044
-rockSprite3X       = $d008 ; 53256
-rockSprite3Y       = $d009 ; 53257
-rockColor3         = $d02b ; 53291
+rockSprite3         = $7fc  ; 2044
+rockSprite3X        = $d008 ; 53256
+rockSprite3Y        = $d009 ; 53257
+rockColor3          = $d02b ; 53291
 
-rockSprite4        = $7fd  ; 2045
-rockSprite4X       = $d00a ; 53258
-rockSprite4Y       = $d00b ; 53259
-rockColor4         = $d02c ; 53292
+rockSprite4         = $7fd  ; 2045
+rockSprite4X        = $d00a ; 53258
+rockSprite4Y        = $d00b ; 53259
+rockColor4          = $d02c ; 53292
 
-rockSprite5        = $7fe  ; 2046
-rockSprite5X       = $d00c ; 53260
-rockSprite5Y       = $d00d ; 53261
-rockColor5         = $d02d ; 53293
+rockSprite5         = $7fe  ; 2046
+rockSprite5X        = $d00c ; 53260
+rockSprite5Y        = $d00d ; 53261
+rockColor5          = $d02d ; 53293
 
-rockImg            = $3100 ; 12544 block 196
+rockImg             = $3100 ; 12544 block 196
 
-mostSigBitX        = $d010 ; 53264
-joyStick1          = $dc01 ; 56321
+mostSigBitX         = $d010 ; 53264
+joyStick1           = $dc01 ; 56321
 
 ; -------- setup --------
 
@@ -114,6 +134,66 @@ setup jsr clearScreen
       lda #$80  ; noise waveform, gate bit off
       sta $d412 ; voice 3 control register
 
+      
+; -------- load custom graphics characters --------
+
+               sei
+              
+               lda $01
+               and #251
+               sta $01
+
+               ldx #0
+defaultCharSet lda cset0,x ; get char data
+               sta cmem0,x ; store in charmem
+
+               lda cset1,x
+               sta cmem1,x
+
+               lda cset2,x
+               sta cmem2,x
+
+               lda cset3,x
+               sta cmem3,x
+
+;               lda cset4,x
+;               sta cmem4,x
+
+;               lda cset5,x
+;               sta cmem5,x
+
+;               lda cset6,x
+;               sta cmem6,x
+
+;               lda cset7,x
+;               sta cmem7,x
+
+               inx
+               bne defaultCharSet
+
+               ldx #0
+customCharSet1 lda customCharSetData1,x
+               sta cmem4,x
+               inx
+               cpx #7
+               bne customCharSet1
+
+               lda $01
+               ora #04
+               sta $01
+
+               lda graphics
+               and #240
+               ora #8
+               sta graphics
+
+               cli
+               
+; test
+lda #128
+sta $0400
+sta $d800
+
 ; -------- build images --------
 
                    ldx #0
@@ -165,11 +245,6 @@ gameloop lda refreshScreen
 
          jsr moveMissile
          jsr moveRocks
-         
-;         jsr moveRock2
-;         jsr moveRock3
-;         jsr moveRock4
-;         jsr moveRock5         
          jsr checkFireButton
          jsr checkJoystick
          jmp gameloop
@@ -741,8 +816,8 @@ setupCustomIrq ldx #0
 ;               lda #7
 ;               sta $d01a
 
-               cli
-               rts
+                cli
+                rts
            
 ; -------- irq delay --------
         
@@ -766,6 +841,9 @@ rockSpriteBit             .byte 0 ; bit number
 rockSpriteBitPlus2        .byte 0
 rockSpriteOffset          .byte 0
 rockSpriteXPos            .byte 0
+
+
+customCharSetData1 .byte $01,$03,$06,$0e,$1a,$30,$60,$c0 ; character number 128
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
