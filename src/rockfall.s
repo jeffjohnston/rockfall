@@ -14,18 +14,31 @@ enableMultiSprites = $d01C ; 53276 enable multi-color sprites
 spriteCollision    = $d01e ; 53278
 graphics           = $d018 ; 53272
 
-screenMemLine1     = 1024 ; 1024
-colourMemLine1     = $d800 ; 55296
-screenMemLine2     = $0428 ; 1064
-colourMemLine2     = $d828 ; 55336
-screenMemLine3     = $0450 ; 1104
-colourMemLine3     = $d850 ; 55376
-screenMemLine4     = $0478 ; 1144
-colourMemLine4     = $d878 ; 55416
-screenMemLine5     = $04a0 ; 1184
-colourMemLine5     = $d8a0 ; 55456
-screenMemLine6     = $04c8 ; 1224
-colourMemLine6     = $d8c8 ; 55496
+screenMemLine1     = 1104
+screenMemLine2     = 1144
+screenMemLine3     = 1184
+screenMemLine4     = 1244
+screenMemLine5     = 1264
+screenMemLine6     = 1304
+screenMemLine7     = 1344
+screenMemLine8     = 1384
+screenMemLine9     = 1424
+screenMemLine10    = 1464
+screenMemLine11    = 1504
+screenMemLine12    = 1544
+
+colourMemLine1     = 55376
+colourMemLine2     = 55416
+colourMemLine3     = 55456
+colourMemLine4     = 55496
+colourMemLine5     = 55536
+colourMemLine6     = 55576
+colourMemLine7     = 55616
+colourMemLine8     = 55656
+colourMemLine9     = 55696
+colourMemLine10    = 55736
+colourMemLine11    = 55776
+colourMemLine12    = 55816
 
 charSet0           = $d000 ; 53248
 charSet1           = $d100 ; 53504
@@ -888,6 +901,72 @@ drawMountainLine6 lda mountainLine6,x
                   inx
                   cpx #32
                   bne drawMountainLine6
+
+                  ldx #0
+drawMountainLine7 lda mountainLine7,x
+                  sta screenMemLine7,x
+               
+                  lda #00
+                  sta colourMemLine7,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine7
+
+                  ldx #0
+drawMountainLine8 lda mountainLine8,x
+                  sta screenMemLine8,x
+               
+                  lda #00
+                  sta colourMemLine8,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine8
+
+                  ldx #0
+drawMountainLine9 lda mountainLine9,x
+                  sta screenMemLine9,x
+               
+                  lda #00
+                  sta colourMemLine9,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine9
+
+                  ldx #0
+drawMountainLine10 lda mountainLine10,x
+                  sta screenMemLine10,x
+               
+                  lda #00
+                  sta colourMemLine10,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine10
+
+                  ldx #0
+drawMountainLine11 lda mountainLine11,x
+                  sta screenMemLine11,x
+               
+                  lda #00
+                  sta colourMemLine11,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine11
+
+                  ldx #0
+drawMountainLine12 lda mountainLine12,x
+                  sta screenMemLine12,x
+               
+                  lda #00
+                  sta colourMemLine12,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine12
               
                   rts
 
@@ -938,6 +1017,36 @@ mountainLine6 .byte $20,$20,$20,$20,$20,$20,$20,$20
               .byte $20,$20,$80,$20,$20,$20,$20,$20
               .byte $20,$20,$20,$20,$20,$20,$20,$20
               .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine7 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$80,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine8 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$80,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine9 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$80,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine10 .byte $20,$20,$20,$20,$20,$20,$20,$20
+               .byte $20,$20,$80,$20,$20,$20,$20,$20
+               .byte $20,$20,$20,$20,$20,$20,$20,$20
+               .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine11 .byte $20,$20,$20,$20,$20,$20,$20,$20
+               .byte $20,$20,$80,$20,$20,$20,$20,$20
+               .byte $20,$20,$20,$20,$20,$20,$20,$20
+               .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine12 .byte $20,$20,$20,$20,$20,$20,$20,$20
+               .byte $20,$20,$80,$20,$20,$20,$20,$20
+               .byte $20,$20,$20,$20,$20,$20,$20,$20
+               .byte $20,$20,$20,$20,$20,$20,$20,$20
 
 customCharSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80
                    .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81
