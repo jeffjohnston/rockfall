@@ -14,6 +14,19 @@ enableMultiSprites = $d01C ; 53276 enable multi-color sprites
 spriteCollision    = $d01e ; 53278
 graphics           = $d018 ; 53272
 
+screenMemLine1     = $0400 ; 1024
+colourMemLine1     = $d800 ; 55296
+screenMemLine2     = $0428 ; 1064
+colourMemLine2     = $d828 ; 55336
+screenMemLine3     = $0450 ; 1104
+colourMemLine3     = $d850 ; 55376
+screenMemLine4     = $0478 ; 1144
+colourMemLine4     = $d878 ; 55416
+screenMemLine5     = $04a0 ; 1184
+colourMemLine5     = $d8a0 ; 55456
+screenMemLine6     = $04c8 ; 1224
+colourMemLine6     = $d8c8 ; 55496
+
 charSet0           = $d000 ; 53248
 charSet1           = $d100 ; 53504
 charSet2           = $d200 ; 53760
@@ -74,6 +87,7 @@ joyStick1           = $dc01 ; 56321
 
 setup jsr clearScreen
       jsr setupCustomIrq
+      jsr setupCharSet
     
       lda #$00
       sta 53280 ; border color
@@ -127,91 +141,9 @@ setup jsr clearScreen
       lda #$80  ; noise waveform, gate bit off
       sta $d412 ; voice 3 control register
 
-      
-; -------- load custom graphics characters --------
+      jsr setupImages
+      jsr drawMountains
 
-               sei
-              
-               lda $01
-               and #251
-               sta $01
-
-               ldx #0
-defaultCharSet lda charSet0,x ; get char data
-               sta charMem0,x ; store in charmem
-
-               lda charSet1,x
-               sta charMem1,x
-
-               lda charSet2,x
-               sta charMem2,x
-
-               lda charSet3,x
-               sta charMem3,x
-
-               inx
-               bne defaultCharSet
-
-               ldx #0
-customCharSet1 lda customCharSetData1,x
-               sta charMem4,x
-               inx
-               cpx #7
-               bne customCharSet1
-
-               lda $01
-               ora #04
-               sta $01
-
-               lda graphics
-               and #240
-               ora #8
-               sta graphics
-
-               cli
-               
-; test
-lda #128
-sta $0400
-sta $d800
-
-; -------- build images --------
-
-                   ldx #0
-buildHoverRightImg lda hoverRightImgData,x
-                   sta hoverRightImg,x
-                   inx
-                   cpx #63
-                   bne buildHoverRightImg
-        
-                  ldx #0
-buildHoverLeftImg lda hoverLeftImgData,x
-                  sta hoverLeftImg,x
-                  inx
-                  cpx #63
-                  bne buildHoverLeftImg
-
-                    ldx #0
-buildMissileRightImg lda missileRightImgData,x
-                    sta missileRightImg,x
-                    inx
-                    cpx #63
-                    bne buildMissileRightImg
-        
-                   ldx #0        
-buildMissileLeftImg lda missileLeftImgData,x
-                   sta missileLeftImg,x
-                   inx
-                   cpx #63
-                   bne buildMissileLeftImg
-                    
-             ldx #0        
-buildRockImg lda rockImgData,x
-             sta rockImg,x
-             inx
-             cpx #63
-             bne buildRockImg
-        
 ; -------- game loop --------
         
 gameloop lda refreshScreen
@@ -805,7 +737,160 @@ setupCustomIrq ldx #0
 customIrq lda #1
           sta refreshScreen
           jmp irqnor
-                                        
+                 
+; -------- build images --------
+
+setupImages        ldx #0
+buildHoverRightImg lda hoverRightImgData,x
+                   sta hoverRightImg,x
+                   inx
+                   cpx #63
+                   bne buildHoverRightImg
+        
+                  ldx #0
+buildHoverLeftImg lda hoverLeftImgData,x
+                  sta hoverLeftImg,x
+                  inx
+                  cpx #63
+                  bne buildHoverLeftImg
+
+                    ldx #0
+buildMissileRightImg lda missileRightImgData,x
+                    sta missileRightImg,x
+                    inx
+                    cpx #63
+                    bne buildMissileRightImg
+        
+                   ldx #0        
+buildMissileLeftImg lda missileLeftImgData,x
+                   sta missileLeftImg,x
+                   inx
+                   cpx #63
+                   bne buildMissileLeftImg
+                    
+             ldx #0        
+buildRockImg lda rockImgData,x
+             sta rockImg,x
+             inx
+             cpx #63
+             bne buildRockImg
+             
+             rts
+                                                               
+; -------- load custom graphics characters --------
+
+setupCharSet   sei
+              
+               lda $01
+               and #251
+               sta $01
+
+               ldx #0
+defaultCharSet lda charSet0,x ; get char data
+               sta charMem0,x ; store in charmem
+
+               lda charSet1,x
+               sta charMem1,x
+
+               lda charSet2,x
+               sta charMem2,x
+
+               lda charSet3,x
+               sta charMem3,x
+
+               inx
+               bne defaultCharSet
+
+               ldx #0
+customCharSet1 lda customCharSetData1,x
+               sta charMem4,x
+               inx
+               cpx #16
+               bne customCharSet1
+
+               lda $01
+               ora #04
+               sta $01
+
+               lda graphics
+               and #240
+               ora #8
+               sta graphics
+
+               cli
+               
+               rts
+
+; -------- draw mountains --------
+            
+drawMountains     ldx #0
+drawMountainLine1 lda mountainLine1,x
+                  sta screenMemLine1,x
+               
+                  lda #00
+                  sta colourMemLine1,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine1
+
+                  ldx #0
+drawMountainLine2 lda mountainLine2,x
+                  sta screenMemLine2,x
+               
+                  lda #00
+                  sta colourMemLine2,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine2
+
+                  ldx #0
+drawMountainLine3 lda mountainLine3,x
+                  sta screenMemLine3,x
+               
+                  lda #00
+                  sta colourMemLine3,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine3
+              
+                  ldx #0
+drawMountainLine4 lda mountainLine4,x
+                  sta screenMemLine4,x
+               
+                  lda #00
+                  sta colourMemLine4,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine4
+              
+                  ldx #0
+drawMountainLine5 lda mountainLine5,x
+                  sta screenMemLine5,x
+               
+                  lda #00
+                  sta colourMemLine5,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine5
+              
+                  ldx #0
+drawMountainLine6 lda mountainLine6,x
+                  sta screenMemLine6,x
+               
+                  lda #00
+                  sta colourMemLine6,x
+               
+                  inx
+                  cpx #32
+                  bne drawMountainLine6
+              
+                  rts
+
 ; -------- end game --------
                 
 end     rts
@@ -824,7 +909,38 @@ rockSpriteOffset          .byte 0
 rockSpriteXPos            .byte 0
 
 
-customCharSetData1 .byte $01,$03,$06,$0e,$1a,$30,$60,$c0 ; character number 128
+mountainLine1 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$81
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine2 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$80,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine3 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$80,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine4 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$80,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine5 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$80,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+mountainLine6 .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$80,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+              .byte $20,$20,$20,$20,$20,$20,$20,$20
+
+customCharSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80
+                   .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
