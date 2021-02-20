@@ -14,7 +14,7 @@ enableMultiSprites = $d01C ; 53276 enable multi-color sprites
 spriteCollision    = $d01e ; 53278
 graphics           = $d018 ; 53272
 
-screenMemLine1     = $0400 ; 1024
+screenMemLine1     = 1024 ; 1024
 colourMemLine1     = $d800 ; 55296
 screenMemLine2     = $0428 ; 1064
 colourMemLine2     = $d828 ; 55336
