@@ -38,6 +38,22 @@ colourMountainLine9  = 55696
 colourMountainLine10 = 55736
 colourMountainLine11 = 55776
 
+screenHouseLine1     = 1704
+screenHouseLine2     = 1744
+screenHouseLine3     = 1784
+screenHouseLine4     = 1824
+screenHouseLine5     = 1864
+screenHouseLine6     = 1904
+screenHouseLine7     = 1944
+
+colourHouseLine1     = 55976
+colourHouseLine2     = 56016
+colourHouseLine3     = 56056
+colourHouseLine4     = 56096
+colourHouseLine5     = 56136
+colourHouseLine6     = 56176
+colourHouseLine7     = 56216
+
 characterSet0        = $d000 ; 53248
 characterSet1        = $d100 ; 53504
 characterSet2        = $d200 ; 53760
@@ -154,6 +170,7 @@ setup jsr clearScreen
 
       jsr setupImages
       jsr drawMountains
+      jsr drawHouses
 
 ; -------- game loop --------
         
@@ -816,7 +833,7 @@ defaultCharacterSet lda characterSet0,x ; get char data
 customCharacterSet1 lda customCharacterSetData1,x
                     sta characterMem4,x
                     inx
-                    cpx #24
+                    cpx #56
                     bne customCharacterSet1
 
                     lda $01
@@ -933,29 +950,110 @@ drawMountainLine9 lda mountainLine9,x
                   cpx #32
                   bne drawMountainLine9
 
-                  ldx #0
+                   ldx #0
 drawMountainLine10 lda mountainLine10,x
-                  sta screenMountainLine10,x
+                   sta screenMountainLine10,x
                
-                  lda #00
-                  sta colourMountainLine10,x
+                   lda #00
+                   sta colourMountainLine10,x
                
-                  inx
-                  cpx #32
-                  bne drawMountainLine10
+                   inx
+                   cpx #32
+                   bne drawMountainLine10
 
-                  ldx #0
+                   ldx #0
 drawMountainLine11 lda mountainLine11,x
-                  sta screenMountainLine11,x
+                   sta screenMountainLine11,x
                
-                  lda #00
-                  sta colourMountainLine11,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine11
+                   lda #00
+                   sta colourMountainLine11,x
+                
+                   inx
+                   cpx #32
+                   bne drawMountainLine11
 
-                  rts
+                   rts
+
+; -------- draw houses --------
+            
+drawHouses     ldx #0
+drawHouseLine1 lda houseLine1,x
+               sta screenHouseLine1,x
+               
+               lda #00
+               sta colourHouseLine1,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine1
+
+               ldx #0
+drawHouseLine2 lda houseLine2,x
+               sta screenHouseLine2,x
+               
+               lda #00
+               sta colourHouseLine2,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine2
+
+               ldx #0
+drawHouseLine3 lda houseLine3,x
+               sta screenHouseLine3,x
+               
+               lda #00
+               sta colourHouseLine3,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine3
+
+               ldx #0
+drawHouseLine4 lda houseLine4,x
+               sta screenHouseLine4,x
+               
+               lda #00
+               sta colourHouseLine4,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine4
+
+               ldx #0
+drawHouseLine5 lda houseLine5,x
+               sta screenHouseLine5,x
+               
+               lda #00
+               sta colourHouseLine5,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine5
+
+               ldx #0
+drawHouseLine6 lda houseLine6,x
+               sta screenHouseLine6,x
+               
+               lda #00
+               sta colourHouseLine6,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine6
+
+               ldx #0
+drawHouseLine7 lda houseLine7,x
+               sta screenHouseLine7,x
+               
+               lda #00
+               sta colourHouseLine7,x
+               
+               inx
+               cpx #32
+               bne drawHouseLine7
+
+               rts
 
 ; -------- end game --------
                 
@@ -997,9 +1095,29 @@ mountainLine10 .byte $20,$20,$20,$80,$20,$20,$20,$20,$20,$20,$20,$20,$20,$82,$20
 
 mountainLine11 .byte $20,$20,$80,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$80,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
 
+houseLine1     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+
+houseLine2     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+
+houseLine3     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+
+houseLine4     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+
+houseLine5     .byte $20,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20
+
+houseLine6     .byte $20,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20
+
+houseLine7     .byte $20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20
+
+
 customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
                         .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
                         .byte $80,$40,$60,$50,$18,$54,$02,$05 ; character number 130 $82 right of mountain
+                        .byte $80,$80,$80,$83,$82,$82,$82,$ff ; character number 131 $83 bottom left side of house
+                        .byte $01,$01,$1d,$95,$9d,$81,$81,$ff ; character number 132 $84 bottom right side of house
+                        .byte $01,$02,$04,$08,$10,$20,$40,$ff ; character number 133 $85 top left side of house
+                        .byte $82,$4c,$2c,$1c,$0c,$04,$02,$ff ; character number 134 $86 top right side of house
+                        
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
