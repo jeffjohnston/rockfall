@@ -38,21 +38,17 @@ colourMountainLine9  = 55696
 colourMountainLine10 = 55736
 colourMountainLine11 = 55776
 
-screenHouseLine1     = 1704
-screenHouseLine2     = 1744
-screenHouseLine3     = 1784
-screenHouseLine4     = 1824
-screenHouseLine5     = 1864
-screenHouseLine6     = 1904
-screenHouseLine7     = 1944
+screenHouseLine1     = 1784
+screenHouseLine2     = 1824
+screenHouseLine3     = 1864
+screenHouseLine4     = 1904
+screenHouseLine5     = 1944
 
-colourHouseLine1     = 55976
-colourHouseLine2     = 56016
-colourHouseLine3     = 56056
-colourHouseLine4     = 56096
-colourHouseLine5     = 56136
-colourHouseLine6     = 56176
-colourHouseLine7     = 56216
+colourHouseLine1     = 56056
+colourHouseLine2     = 56096
+colourHouseLine3     = 56136
+colourHouseLine4     = 56176
+colourHouseLine5     = 56216
 
 characterSet0        = $d000 ; 53248
 characterSet1        = $d100 ; 53504
@@ -1031,28 +1027,6 @@ drawHouseLine5 lda houseLine5,x
                cpx #32
                bne drawHouseLine5
 
-               ldx #0
-drawHouseLine6 lda houseLine6,x
-               sta screenHouseLine6,x
-               
-               lda #00
-               sta colourHouseLine6,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine6
-
-               ldx #0
-drawHouseLine7 lda houseLine7,x
-               sta screenHouseLine7,x
-               
-               lda #00
-               sta colourHouseLine7,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine7
-
                rts
 
 ; -------- end game --------
@@ -1095,19 +1069,15 @@ mountainLine10 .byte $20,$20,$20,$80,$20,$20,$20,$20,$20,$20,$20,$20,$20,$82,$20
 
 mountainLine11 .byte $20,$20,$80,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$80,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
 
-houseLine1     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+houseLine1     .byte $20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20
 
-houseLine2     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+houseLine2     .byte $20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20
 
-houseLine3     .byte $20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+houseLine3     .byte $20,$20,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$20,$20
 
-houseLine4     .byte $20,$20,$20,$83,$84,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20,$20
+houseLine4     .byte $20,$20,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$20,$20
 
-houseLine5     .byte $20,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20,$20,$20,$20,$85,$86,$20
-
-houseLine6     .byte $20,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20,$85,$86,$20,$83,$84,$20
-
-houseLine7     .byte $20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20
+houseLine5     .byte $20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20,$20,$83,$84,$20,$20,$20
 
 
 customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
