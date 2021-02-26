@@ -7,6 +7,7 @@ irqnor               = $ea31 ; 59953 standard irq routine
 chrout               = $ffd2
 textColor            = $0286
 plot                 = $fff0
+linprt               = $bdcd
 random               = $d41b ; 53299
 clearScreen          = $e544 ; clear screen       
 enableSprites        = $d015 ; 53269 enable sprites
@@ -119,6 +120,13 @@ setup jsr clearScreen
       sta 53280 ; border color
       lda #$06
       sta 53281 ; background color
+    
+      lda #0
+      sta textColor
+
+      lda #0
+      sta populationSaved
+      sta populationSaved+1
     
       lda #192 ; block 192
       sta hoverSprite
@@ -343,6 +351,8 @@ checkRockForCollision lda spriteCollisionDetector
                       lda enableSprites ; remove rock and missile
                       eor rockSpriteBitPlus2
                       sta enableSprites
+                      
+                      jsr incrementPopulationSaved
 
 finishRock rts    
 
@@ -706,15 +716,31 @@ missileImgFaceLeft lda #195
                   sta missileSprite
                   rts
       
-; -------- subroutine to pause motion --------
-        
-pause    ldy #0
-         jsr pause255
+; -------- increment population saved --------
+      
+incrementPopulationSaved inc populationSaved
+                         beq incrementPopulationSavedHiByte
 
-pause255 iny
-         cpy #255
-         bne pause255
-         rts
+finishPopulationSaved clc
+                      jmp printPopulationSaved
+
+incrementPopulationSavedHiByte inc populationSaved+1
+                               bne finishPopulationSaved
+                               lda #$ff
+                               sta populationSaved
+                               sta populationSaved+1
+                               sec
+                               jmp printPopulationSaved 
+
+printPopulationSaved ldx #2
+                     ldy #32
+                     jsr $e50c
+      
+                     ldx populationSaved
+                     lda populationSaved+1
+                     jsr linprt
+                     rts
+                                                         
                          
 ; -------- print hex value --------
                  
@@ -1064,6 +1090,7 @@ rockSpriteBit             .byte 0 ; bit number
 rockSpriteBitPlus2        .byte 0
 rockSpriteOffset          .byte 0
 rockSpriteXPos            .byte 0
+populationSaved         .byte 0,0
 
 
 mountainLine1  .byte $20,$20,$20,$20,$20,$20,$20,$20
