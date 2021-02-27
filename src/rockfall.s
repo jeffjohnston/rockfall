@@ -1,58 +1,58 @@
-                    *= $4000
+                     *= $4000
 
-v                    = 53248
-irqvec               = $314 ; 788
-irqnor               = $ea31 ; 59953 standard irq routine
+v                     = 53248
+irqvec                = $314 ; 788
+irqnor                = $ea31 ; 59953 standard irq routine
 
-chrout               = $ffd2
-textColor            = $0286
-plot                 = $fff0
-linprt               = $bdcd
-random               = $d41b ; 53299
-clearScreen          = $e544 ; clear screen       
-enableSprites        = $d015 ; 53269 enable sprites
-enableMultiSprites   = $d01C ; 53276 enable multi-color sprites
-spriteCollision      = $d01e ; 53278
-graphics             = $d018 ; 53272
+chrout                = $ffd2
+textColor             = $0286
+plot                  = $fff0
+linprt                = $bdcd
+random                = $d41b ; 53299
+clearScreen           = $e544 ; clear screen       
+enableSprites         = $d015 ; 53269 enable sprites
+enableMultiSprites    = $d01C ; 53276 enable multi-color sprites
+spriteCollision       = $d01e ; 53278
+graphics              = $d018 ; 53272
 
-screenMountainLine1  = 1104
-screenMountainLine2  = 1144
-screenMountainLine3  = 1184
-screenMountainLine4  = 1224
-screenMountainLine5  = 1264
-screenMountainLine6  = 1304
-screenMountainLine7  = 1344
-screenMountainLine8  = 1384
-screenMountainLine9  = 1424
-screenMountainLine10 = 1464
-screenMountainLine11 = 1504
+screenMountainLine1   = 1104
+screenMountainLine2   = 1144
+screenMountainLine3   = 1184
+screenMountainLine4   = 1224
+screenMountainLine5   = 1264
+screenMountainLine6   = 1304
+screenMountainLine7   = 1344
+screenMountainLine8   = 1384
+screenMountainLine9   = 1424
+screenMountainLine10  = 1464
+screenMountainLine11  = 1504
 
-colourMountainLine1  = 55376
-colourMountainLine2  = 55416
-colourMountainLine3  = 55456
-colourMountainLine4  = 55496
-colourMountainLine5  = 55536
-colourMountainLine6  = 55576
-colourMountainLine7  = 55616
-colourMountainLine8  = 55656
-colourMountainLine9  = 55696
-colourMountainLine10 = 55736
-colourMountainLine11 = 55776
+colourMountainLine1   = 55376
+colourMountainLine2   = 55416
+colourMountainLine3   = 55456
+colourMountainLine4   = 55496
+colourMountainLine5   = 55536
+colourMountainLine6   = 55576
+colourMountainLine7   = 55616
+colourMountainLine8   = 55656
+colourMountainLine9   = 55696
+colourMountainLine10  = 55736
+colourMountainLine11  = 55776
 
-screenHouseLine1     = 1784
-screenHouseLine2     = 1824
-screenHouseLine3     = 1864
-screenHouseLine4     = 1904
-screenHouseLine5     = 1944
+screenHouseLine1      = 1784
+screenHouseLine2      = 1824
+screenHouseLine3      = 1864
+screenHouseLine4      = 1904
+screenHouseLine5      = 1944
 
-colourHouseLine1     = 56056
-colourHouseLine2     = 56096
-colourHouseLine3     = 56136
-colourHouseLine4     = 56176
-colourHouseLine5     = 56216
+colourHouseLine1      = 56056
+colourHouseLine2      = 56096
+colourHouseLine3      = 56136
+colourHouseLine4      = 56176
+colourHouseLine5      = 56216
 
-screenDivideLine1    = 1704
-colourDivideLine1    = 55976
+screenDivideLine1     = 1704
+colourDivideLine1     = 55976
 
 screenLifeMeterLine1  = 1259
 screenLifeMeterLine2  = 1299
@@ -76,65 +76,65 @@ colourLifeMeterLine6  = 55731
 colourLifeMeterLine7  = 55771
 colourLifeMeterLine8  = 55811
 colourLifeMeterLine9  = 55851
-colourLifeMeterLine10  = 55891
-colourLifeMeterLine11  = 55931
+colourLifeMeterLine10 = 55891
+colourLifeMeterLine11 = 55931
 colourLifeMeterLine12 = 55971
 
-characterSet0        = $d000 ; 53248
-characterSet1        = $d100 ; 53504
-characterSet2        = $d200 ; 53760
-characterSet3        = $d300 ; 54016
-characterSet4        = $d400 ; 54272 ; custom characters in reverse character section
+characterSet0         = $d000 ; 53248
+characterSet1         = $d100 ; 53504
+characterSet2         = $d200 ; 53760
+characterSet3         = $d300 ; 54016
+characterSet4         = $d400 ; 54272 ; custom characters in reverse character section
 
-characterMem0        = $2000 ; 8192
-characterMem1        = $2100 ; 8448
-characterMem2        = $2200 ; 8704
-characterMem3        = $2300 ; 8960
-characterMem4        = $2400 ; 9216
+characterMem0         = $2000 ; 8192
+characterMem1         = $2100 ; 8448
+characterMem2         = $2200 ; 8704
+characterMem3         = $2300 ; 8960
+characterMem4         = $2400 ; 9216
 
-hoverSprite          = $7f8  ; 2040
-hoverColor           = $d027 ; 53287
-hoverSpriteX         = $d000 ; 53248
-hoverSpriteY         = $d001 ; 53249
-hoverRightImg        = $3000 ; 12288 block 192 (64*192=12288)
-hoverLeftImg         = $3040 ; 12352 block 193
+hoverSprite           = $7f8  ; 2040
+hoverColor            = $d027 ; 53287
+hoverSpriteX          = $d000 ; 53248
+hoverSpriteY          = $d001 ; 53249
+hoverRightImg         = $3000 ; 12288 block 192 (64*192=12288)
+hoverLeftImg          = $3040 ; 12352 block 193
  
-missileSprite        = $7f9  ; 2041
-missileColor         = $d028 ; 53288
-missileSpriteX       = $d002 ; 53250
-missileSpriteY       = $d003 ; 53251
-missileRightImg      = $3080 ; 12416 block 194
-missileLeftImg       = $30C0 ; 12480 block 195
+missileSprite         = $7f9  ; 2041
+missileColor          = $d028 ; 53288
+missileSpriteX        = $d002 ; 53250
+missileSpriteY        = $d003 ; 53251
+missileRightImg       = $3080 ; 12416 block 194
+missileLeftImg        = $30C0 ; 12480 block 195
 
-rockSprite1          = $7fa  ; 2042
-rockSprite1X         = $d004 ; 53252
-rockSprite1Y         = $d005 ; 53253
-rockColor1           = $d029 ; 53289
+rockSprite1           = $7fa  ; 2042
+rockSprite1X          = $d004 ; 53252
+rockSprite1Y          = $d005 ; 53253
+rockColor1            = $d029 ; 53289
 
-rockSprite2          = $7fb  ; 2043
-rockSprite2X         = $d006 ; 53254
-rockSprite2Y         = $d007 ; 53255
-rockColor2           = $d02a ; 53290
+rockSprite2           = $7fb  ; 2043
+rockSprite2X          = $d006 ; 53254
+rockSprite2Y          = $d007 ; 53255
+rockColor2            = $d02a ; 53290
 
-rockSprite3          = $7fc  ; 2044
-rockSprite3X         = $d008 ; 53256
-rockSprite3Y         = $d009 ; 53257
-rockColor3           = $d02b ; 53291
+rockSprite3           = $7fc  ; 2044
+rockSprite3X          = $d008 ; 53256
+rockSprite3Y          = $d009 ; 53257
+rockColor3            = $d02b ; 53291
 
-rockSprite4          = $7fd  ; 2045
-rockSprite4X         = $d00a ; 53258
-rockSprite4Y         = $d00b ; 53259
-rockColor4           = $d02c ; 53292
+rockSprite4           = $7fd  ; 2045
+rockSprite4X          = $d00a ; 53258
+rockSprite4Y          = $d00b ; 53259
+rockColor4            = $d02c ; 53292
 
-rockSprite5          = $7fe  ; 2046
-rockSprite5X         = $d00c ; 53260
-rockSprite5Y         = $d00d ; 53261
-rockColor5           = $d02d ; 53293
+rockSprite5           = $7fe  ; 2046
+rockSprite5X          = $d00c ; 53260
+rockSprite5Y          = $d00d ; 53261
+rockColor5            = $d02d ; 53293
 
-rockImg              = $3100 ; 12544 block 196
+rockImg               = $3100 ; 12544 block 196
 
-mostSigBitX          = $d010 ; 53264
-joyStick1            = $dc01 ; 56321
+mostSigBitX           = $d010 ; 53264
+joyStick1             = $dc01 ; 56321
 
 ; -------- setup --------
 
@@ -886,7 +886,7 @@ defaultCharacterSet lda characterSet0,x ; get char data
 customCharacterSet1 lda customCharacterSetData1,x
                     sta characterMem4,x
                     inx
-                    cpx #120
+                    cpx #184
                     bne customCharacterSet1
 
                     lda $01
@@ -1369,7 +1369,16 @@ customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number
                         .byte $ff,$00,$00,$00,$00,$00,$00,$00 ; character number 139 $8b bottom life meter                        
                         .byte $80,$00,$00,$00,$00,$00,$00,$00 ; character number 140 $8c bottom right life meter
                         .byte $80,$80,$80,$80,$80,$80,$80,$80 ; character number 141 $8d right life meter
-                        .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter                        
+                        .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter
+
+                        .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f first notch life meter
+                        .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 second notch life meter
+                        .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 third notch life meter
+                        .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 fourth notch life meter
+                        .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 fifth notch life meter
+                        .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 sixth notch life meter
+                        .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 seventh notch life meter
+                        .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 eighth notch life meter
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
