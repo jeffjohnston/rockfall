@@ -54,6 +54,32 @@ colourHouseLine5     = 56216
 screenDivideLine1    = 1704
 colourDivideLine1    = 55976
 
+screenLifeMeterLine1  = 1259
+screenLifeMeterLine2  = 1299
+screenLifeMeterLine3  = 1339
+screenLifeMeterLine4  = 1379
+screenLifeMeterLine5  = 1419
+screenLifeMeterLine6  = 1459
+screenLifeMeterLine7  = 1499
+screenLifeMeterLine8  = 1539
+screenLifeMeterLine9  = 1579
+screenLifeMeterLine10 = 1619
+screenLifeMeterLine11 = 1659
+screenLifeMeterLine12 = 1699
+
+colourLifeMeterLine1  = 55531
+colourLifeMeterLine2  = 55571
+colourLifeMeterLine3  = 55611
+colourLifeMeterLine4  = 55651
+colourLifeMeterLine5  = 55691
+colourLifeMeterLine6  = 55731
+colourLifeMeterLine7  = 55771
+colourLifeMeterLine8  = 55811
+colourLifeMeterLine9  = 55851
+colourLifeMeterLine10  = 55891
+colourLifeMeterLine11  = 55931
+colourLifeMeterLine12 = 55971
+
 characterSet0        = $d000 ; 53248
 characterSet1        = $d100 ; 53504
 characterSet2        = $d200 ; 53760
@@ -179,6 +205,7 @@ setup jsr clearScreen
       jsr drawMountains
       jsr drawHouses
       jsr drawDivide
+      jsr drawLifeMeter
 
 ; -------- game loop --------
         
@@ -859,7 +886,7 @@ defaultCharacterSet lda characterSet0,x ; get char data
 customCharacterSet1 lda customCharacterSetData1,x
                     sta characterMem4,x
                     inx
-                    cpx #56
+                    cpx #120
                     bne customCharacterSet1
 
                     lda $01
@@ -1074,22 +1101,158 @@ drawDivideLine1 lda divideLine1,x
                 
                 rts               
 
+; -------- draw life meter --------
+            
+drawLifeMeter      ldx #0
+drawLifeMeterLine1 lda lifeMeter1,x
+                   sta screenLifeMeterLine1,x
+               
+                   lda #00
+                   sta colourLifeMeterLine1,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine1
+                    
+                   ldx #0
+drawLifeMeterLine2 lda lifeMeter2,x
+                   sta screenLifeMeterLine2,x
+               
+                   lda #00
+                   sta colourLifeMeterLine2,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine2
+                    
+                   ldx #0
+drawLifeMeterLine3 lda lifeMeter3,x
+                   sta screenLifeMeterLine3,x
+               
+                   lda #00
+                   sta colourLifeMeterLine3,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine3
+                    
+                   ldx #0
+drawLifeMeterLine4 lda lifeMeter4,x
+                   sta screenLifeMeterLine4,x
+               
+                   lda #00
+                   sta colourLifeMeterLine4,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine4
+                    
+                   ldx #0
+drawLifeMeterLine5 lda lifeMeter5,x
+                   sta screenLifeMeterLine5,x
+               
+                   lda #00
+                   sta colourLifeMeterLine5,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine5
+                    
+                   ldx #0
+drawLifeMeterLine6 lda lifeMeter6,x
+                   sta screenLifeMeterLine6,x
+               
+                   lda #00
+                   sta colourLifeMeterLine6,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine6
+                    
+                   ldx #0
+drawLifeMeterLine7 lda lifeMeter7,x
+                   sta screenLifeMeterLine7,x
+               
+                   lda #00
+                   sta colourLifeMeterLine7,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine7
+                    
+                   ldx #0
+drawLifeMeterLine8 lda lifeMeter8,x
+                   sta screenLifeMeterLine8,x
+               
+                   lda #00
+                   sta colourLifeMeterLine8,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine8
+                    
+                   ldx #0
+drawLifeMeterLine9 lda lifeMeter9,x
+                   sta screenLifeMeterLine9,x
+               
+                   lda #00
+                   sta colourLifeMeterLine9,x
+                   
+                   inx
+                   cpx #3
+                   bne drawLifeMeterLine9
+                    
+                    ldx #0
+drawLifeMeterLine10 lda lifeMeter10,x
+                    sta screenLifeMeterLine10,x
+               
+                    lda #00
+                    sta colourLifeMeterLine10,x
+                    
+                    inx
+                    cpx #3
+                    bne drawLifeMeterLine10
+                    
+                    ldx #0
+drawLifeMeterLine11 lda lifeMeter11,x
+                    sta screenLifeMeterLine11,x
+               
+                    lda #00
+                    sta colourLifeMeterLine11,x
+                    
+                    inx
+                    cpx #3
+                    bne drawLifeMeterLine11
+                    
+                    ldx #0
+drawLifeMeterLine12 lda lifeMeter12,x
+                    sta screenLifeMeterLine12,x
+               
+                    lda #00
+                    sta colourLifeMeterLine12,x
+                   
+                    inx
+                    cpx #3
+                    bne drawLifeMeterLine12
+                                       
+                   rts               
+
 ; -------- end game --------
                 
 end     rts
 
 ; -------- custom variables --------
 
-hoverHitLeftEdge          .byte 0
-hoverHitRightEdge         .byte 0
-hoverHitTopEdge           .byte 0
-hoverHitBottomEdge        .byte 0
-refreshScreen             .byte 0
-spriteCollisionDetector   .byte 0
-rockSpriteBit             .byte 0 ; bit number
-rockSpriteBitPlus2        .byte 0
-rockSpriteOffset          .byte 0
-rockSpriteXPos            .byte 0
+hoverHitLeftEdge        .byte 0
+hoverHitRightEdge       .byte 0
+hoverHitTopEdge         .byte 0
+hoverHitBottomEdge      .byte 0
+refreshScreen           .byte 0
+spriteCollisionDetector .byte 0
+rockSpriteBit           .byte 0 ; bit number
+rockSpriteBitPlus2      .byte 0
+rockSpriteOffset        .byte 0
+rockSpriteXPos          .byte 0
 populationSaved         .byte 0,0
 
 
@@ -1177,6 +1340,19 @@ divideLine1    .byte $20,$64,$64,$64,$64,$64,$64,$64
                .byte $64,$64,$64,$64,$64,$64,$64,$64
                .byte $64,$64,$64,$64,$64,$64,$64,$64
                .byte $64,$64,$64,$64,$64,$64,$64,$20
+               
+lifeMeter1     .byte $88,$87,$8e
+lifeMeter2     .byte $89,$20,$8d
+lifeMeter3     .byte $89,$20,$8d
+lifeMeter4     .byte $89,$20,$8d
+lifeMeter5     .byte $89,$20,$8d
+lifeMeter6     .byte $89,$20,$8d
+lifeMeter7     .byte $89,$20,$8d
+lifeMeter8     .byte $89,$20,$8d
+lifeMeter9     .byte $89,$20,$8d
+lifeMeter10    .byte $89,$20,$8d
+lifeMeter11    .byte $89,$20,$8d
+lifeMeter12    .byte $8a,$8b,$8c
 
 customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
                         .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
@@ -1185,7 +1361,15 @@ customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number
                         .byte $01,$01,$1d,$95,$9d,$81,$81,$ff ; character number 132 $84 bottom right side of house
                         .byte $01,$02,$04,$08,$10,$20,$40,$ff ; character number 133 $85 top left side of house
                         .byte $82,$4c,$2c,$1c,$0c,$04,$02,$ff ; character number 134 $86 top right side of house
-                        
+
+                        .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 135 $87 top life meter                        
+                        .byte $00,$00,$00,$00,$00,$00,$00,$01 ; character number 136 $88 top left life meter
+                        .byte $01,$01,$01,$01,$01,$01,$01,$01 ; character number 137 $89 left life meter
+                        .byte $01,$00,$00,$00,$00,$00,$00,$00 ; character number 138 $8a bottom left life meter
+                        .byte $ff,$00,$00,$00,$00,$00,$00,$00 ; character number 139 $8b bottom life meter                        
+                        .byte $80,$00,$00,$00,$00,$00,$00,$00 ; character number 140 $8c bottom right life meter
+                        .byte $80,$80,$80,$80,$80,$80,$80,$80 ; character number 141 $8d right life meter
+                        .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter                        
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
@@ -1224,13 +1408,13 @@ hoverLeftUpsideDownImgData .byte $14,$00,$14,$55,$55,$55,$0f,$c3
                            .byte $50,$01,$7d,$40,$00,$55,$00,$82
 
 missileRightImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
-                   .byte $00,$00,$00,$00,$00,$00,$00,$00
-                   .byte $00,$00,$00,$00,$00,$0d,$00,$00
-                   .byte $01,$40,$00,$09,$55,$70,$25,$55
-                   .byte $5c,$09,$55,$70,$01,$40,$00,$0d
-                   .byte $00,$00,$00,$00,$00,$00,$00,$00
-                   .byte $00,$00,$00,$00,$00,$00,$00,$00
-                   .byte $00,$00,$00,$00,$00,$00,$00,$82
+                    .byte $00,$00,$00,$00,$00,$00,$00,$00
+                    .byte $00,$00,$00,$00,$00,$0d,$00,$00
+                    .byte $01,$40,$00,$09,$55,$70,$25,$55
+                    .byte $5c,$09,$55,$70,$01,$40,$00,$0d
+                    .byte $00,$00,$00,$00,$00,$00,$00,$00
+                    .byte $00,$00,$00,$00,$00,$00,$00,$00
+                    .byte $00,$00,$00,$00,$00,$00,$00,$82
 
 missileLeftImgData .byte $00,$00,$00,$00,$00,$00,$00,$00
                    .byte $00,$00,$00,$00,$00,$00,$00,$00
