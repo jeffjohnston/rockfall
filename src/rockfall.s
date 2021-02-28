@@ -200,6 +200,12 @@ setup jsr clearScreen
       sta $d40f ; voice 3 frequency high byte
       lda #$80  ; noise waveform, gate bit off
       sta $d412 ; voice 3 control register
+      
+      lda #0
+      sta lifeMeterNotchCounter  
+
+      lda #80
+      sta lifeMeterCounter    
 
       jsr setupImages
       jsr drawMountains
@@ -367,6 +373,8 @@ moveRockDown ldx rockSpriteOffset
 rockHitBottom lda enableSprites ; remove rock
               eor rockSpriteBit
               sta enableSprites
+              
+              jsr decrementLifeMeter
 
               rts
                         
@@ -767,8 +775,34 @@ printPopulationSaved ldx #2
                      lda populationSaved+1
                      jsr linprt
                      rts
-                                                         
-                         
+             
+; -------- decrement life meter --------
+
+decrementLifeMeter lda lifeMeterCounter
+                   cmp #73
+                   bcs lifeMeterCounter1
+                   rts
+               
+lifeMeterCounter1 ldx lifeMeterNotchCounter
+                  lda lifeMeterCharList,x
+                  sta screenLifeMeterLine2+1
+               
+                  lda #08
+                  sta colourLifeMeterLine2+1
+                   
+                  jmp finishLifeMeter
+
+finishLifeMeter clc
+                lda lifeMeterCounter
+                sbc #1
+                sta lifeMeterCounter
+                
+                lda lifeMeterNotchCounter
+                adc #1
+                sta lifeMeterNotchCounter
+
+                rts
+
 ; -------- print hex value --------
                  
 printHexValue  pha
@@ -1104,7 +1138,7 @@ drawDivideLine1 lda divideLine1,x
 ; -------- draw life meter --------
             
 drawLifeMeter      ldx #0
-drawLifeMeterLine1 lda lifeMeter1,x
+drawLifeMeterLine1 lda lifeMeterLine1,x
                    sta screenLifeMeterLine1,x
                
                    lda #00
@@ -1115,117 +1149,187 @@ drawLifeMeterLine1 lda lifeMeter1,x
                    bne drawLifeMeterLine1
                     
                    ldx #0
-drawLifeMeterLine2 lda lifeMeter2,x
+drawLifeMeterLine2 lda lifeMeterLine2,x
                    sta screenLifeMeterLine2,x
-               
-                   lda #00
+
+                   lda #00                   
                    sta colourLifeMeterLine2,x
-                   
-                   inx
+               
+                   lda lifeMeterLine2,x
+                   cmp #$96
+                   bne jmpLifeMeterLine2
+
+                   lda #08
+                   sta colourLifeMeterLine2,x
+
+jmpLifeMeterLine2  inx
                    cpx #3
                    bne drawLifeMeterLine2
                     
                    ldx #0
-drawLifeMeterLine3 lda lifeMeter3,x
+drawLifeMeterLine3 lda lifeMeterLine3,x
                    sta screenLifeMeterLine3,x
                
                    lda #00
                    sta colourLifeMeterLine3,x
                    
-                   inx
+                   lda lifeMeterLine3,x
+                   cmp #$96
+                   bne jmpLifeMeterLine3
+
+                   lda #08
+                   sta colourLifeMeterLine3,x
+                   
+jmpLifeMeterLine3 inx
                    cpx #3
                    bne drawLifeMeterLine3
                     
                    ldx #0
-drawLifeMeterLine4 lda lifeMeter4,x
+drawLifeMeterLine4 lda lifeMeterLine4,x
                    sta screenLifeMeterLine4,x
                
                    lda #00
                    sta colourLifeMeterLine4,x
                    
-                   inx
+                   lda lifeMeterLine4,x
+                   cmp #$96
+                   bne jmpLifeMeterLine4
+
+                   lda #08
+                   sta colourLifeMeterLine4,x
+                   
+jmpLifeMeterLine4 inx
                    cpx #3
                    bne drawLifeMeterLine4
                     
                    ldx #0
-drawLifeMeterLine5 lda lifeMeter5,x
+drawLifeMeterLine5 lda lifeMeterLine5,x
                    sta screenLifeMeterLine5,x
                
                    lda #00
                    sta colourLifeMeterLine5,x
                    
-                   inx
+                   lda lifeMeterLine5,x
+                   cmp #$96
+                   bne jmpLifeMeterLine5
+
+                   lda #08
+                   sta colourLifeMeterLine5,x
+                   
+jmpLifeMeterLine5 inx
                    cpx #3
                    bne drawLifeMeterLine5
                     
                    ldx #0
-drawLifeMeterLine6 lda lifeMeter6,x
+drawLifeMeterLine6 lda lifeMeterLine6,x
                    sta screenLifeMeterLine6,x
                
                    lda #00
                    sta colourLifeMeterLine6,x
                    
-                   inx
+                   lda lifeMeterLine6,x
+                   cmp #$96
+                   bne jmpLifeMeterLine6
+
+                   lda #08
+                   sta colourLifeMeterLine6,x                   
+                   
+jmpLifeMeterLine6 inx
                    cpx #3
                    bne drawLifeMeterLine6
                     
                    ldx #0
-drawLifeMeterLine7 lda lifeMeter7,x
+drawLifeMeterLine7 lda lifeMeterLine7,x
                    sta screenLifeMeterLine7,x
                
                    lda #00
                    sta colourLifeMeterLine7,x
                    
-                   inx
+                   lda lifeMeterLine7,x
+                   cmp #$96
+                   bne jmpLifeMeterLine7
+
+                   lda #08
+                   sta colourLifeMeterLine7,x
+                   
+jmpLifeMeterLine7  inx
                    cpx #3
                    bne drawLifeMeterLine7
                     
                    ldx #0
-drawLifeMeterLine8 lda lifeMeter8,x
+drawLifeMeterLine8 lda lifeMeterLine8,x
                    sta screenLifeMeterLine8,x
                
                    lda #00
                    sta colourLifeMeterLine8,x
                    
-                   inx
+                   lda lifeMeterLine8,x
+                   cmp #$96
+                   bne jmpLifeMeterLine8
+
+                   lda #08
+                   sta colourLifeMeterLine8,x
+                   
+jmpLifeMeterLine8  inx
                    cpx #3
                    bne drawLifeMeterLine8
                     
                    ldx #0
-drawLifeMeterLine9 lda lifeMeter9,x
+drawLifeMeterLine9 lda lifeMeterLine9,x
                    sta screenLifeMeterLine9,x
                
                    lda #00
                    sta colourLifeMeterLine9,x
                    
-                   inx
+                   lda lifeMeterLine9,x
+                   cmp #$96
+                   bne jmpLifeMeterLine9
+
+                   lda #08
+                   sta colourLifeMeterLine9,x
+                   
+jmpLifeMeterLine9  inx
                    cpx #3
                    bne drawLifeMeterLine9
                     
                     ldx #0
-drawLifeMeterLine10 lda lifeMeter10,x
+drawLifeMeterLine10 lda lifeMeterLine10,x
                     sta screenLifeMeterLine10,x
                
                     lda #00
                     sta colourLifeMeterLine10,x
                     
-                    inx
+                    lda lifeMeterLine10,x
+                    cmp #$96
+                    bne jmpLifeMeterLine10
+
+                    lda #08
+                    sta colourLifeMeterLine10,x
+                    
+jmpLifeMeterLine10  inx
                     cpx #3
                     bne drawLifeMeterLine10
                     
                     ldx #0
-drawLifeMeterLine11 lda lifeMeter11,x
+drawLifeMeterLine11 lda lifeMeterLine11,x
                     sta screenLifeMeterLine11,x
                
                     lda #00
                     sta colourLifeMeterLine11,x
                     
-                    inx
+                    lda lifeMeterLine11,x
+                    cmp #$96
+                    bne jmpLifeMeterLine11
+
+                    lda #08
+                    sta colourLifeMeterLine11,x
+                    
+jmpLifeMeterLine11  inx
                     cpx #3
                     bne drawLifeMeterLine11
                     
                     ldx #0
-drawLifeMeterLine12 lda lifeMeter12,x
+drawLifeMeterLine12 lda lifeMeterLine12,x
                     sta screenLifeMeterLine12,x
                
                     lda #00
@@ -1235,7 +1339,7 @@ drawLifeMeterLine12 lda lifeMeter12,x
                     cpx #3
                     bne drawLifeMeterLine12
                                        
-                   rts               
+                   rts
 
 ; -------- end game --------
                 
@@ -1255,6 +1359,8 @@ rockSpriteOffset        .byte 0
 rockSpriteXPos          .byte 0
 populationSaved         .byte 0,0
 
+lifeMeterCounter        .byte 0
+lifeMeterNotchCounter   .byte 0
 
 mountainLine1  .byte $20,$20,$20,$20,$20,$20,$20,$20
                .byte $20,$20,$20,$20,$20,$20,$20,$20
@@ -1341,18 +1447,20 @@ divideLine1    .byte $20,$64,$64,$64,$64,$64,$64,$64
                .byte $64,$64,$64,$64,$64,$64,$64,$64
                .byte $64,$64,$64,$64,$64,$64,$64,$20
                
-lifeMeter1     .byte $88,$87,$8e
-lifeMeter2     .byte $89,$20,$8d
-lifeMeter3     .byte $89,$20,$8d
-lifeMeter4     .byte $89,$20,$8d
-lifeMeter5     .byte $89,$20,$8d
-lifeMeter6     .byte $89,$20,$8d
-lifeMeter7     .byte $89,$20,$8d
-lifeMeter8     .byte $89,$20,$8d
-lifeMeter9     .byte $89,$20,$8d
-lifeMeter10    .byte $89,$20,$8d
-lifeMeter11    .byte $89,$20,$8d
-lifeMeter12    .byte $8a,$8b,$8c
+lifeMeterLine1  .byte $88,$87,$8e
+lifeMeterLine2  .byte $89,$96,$8d
+lifeMeterLine3  .byte $89,$96,$8d
+lifeMeterLine4  .byte $89,$96,$8d
+lifeMeterLine5  .byte $89,$96,$8d
+lifeMeterLine6  .byte $89,$96,$8d
+lifeMeterLine7  .byte $89,$96,$8d
+lifeMeterLine8  .byte $89,$96,$8d
+lifeMeterLine9  .byte $89,$96,$8d
+lifeMeterLine10 .byte $89,$96,$8d
+lifeMeterLine11 .byte $89,$96,$8d
+lifeMeterLine12 .byte $8a,$8b,$8c
+
+lifeMeterCharList .byte $96,$95,$94,$93,$92,$91,$90,$8f
 
 customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
                         .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
@@ -1371,14 +1479,14 @@ customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number
                         .byte $80,$80,$80,$80,$80,$80,$80,$80 ; character number 141 $8d right life meter
                         .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter
 
-                        .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f first notch life meter
-                        .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 second notch life meter
-                        .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 third notch life meter
-                        .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 fourth notch life meter
-                        .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 fifth notch life meter
-                        .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 sixth notch life meter
-                        .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 seventh notch life meter
-                        .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 eighth notch life meter
+                        .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f 1 notch life meter
+                        .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 2 notch life meter
+                        .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 3 notch life meter
+                        .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 4 notch life meter
+                        .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 5 notch life meter
+                        .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 6 notch life meter
+                        .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 7 notch life meter
+                        .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 8 notch life meter
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
