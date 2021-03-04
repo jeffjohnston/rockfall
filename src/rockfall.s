@@ -14,6 +14,12 @@ enableSprites         = $d015 ; 53269 enable sprites
 enableMultiSprites    = $d01C ; 53276 enable multi-color sprites
 spriteCollision       = $d01e ; 53278
 graphics              = $d018 ; 53272
+zeroPageScreenLoByte  = $fb
+zeroPageScreenHiByte  = $fc
+zeroPageColourLoByte  = $fd
+zeroPageColourHiByte  = $fe
+zeroPageLineLoByte    = $b2
+zeroPageLineHiByte    = $b3
 
 screenMountainLine1   = 1104
 screenMountainLine2   = 1144
@@ -206,7 +212,7 @@ setup jsr clearScreen
 
       lda #80
       sta lifeMeterCounter    
-
+      
       jsr setupImages
       jsr drawMountains
       jsr drawHouses
@@ -917,11 +923,11 @@ defaultCharacterSet lda characterSet0,x ; get char data
                     bne defaultCharacterSet
 
                     ldx #0
-customCharacterSet1 lda customCharacterSetData1,x
+customCharacterSet lda customCharacterSetData,x
                     sta characterMem4,x
                     inx
                     cpx #184
-                    bne customCharacterSet1
+                    bne customCharacterSet
 
                     lda $01
                     ora #04
@@ -937,188 +943,344 @@ customCharacterSet1 lda customCharacterSetData1,x
                     rts
 
 ; -------- draw mountains --------
-            
-drawMountains     ldx #0
-drawMountainLine1 lda mountainLine1,x
-                  sta screenMountainLine1,x
-               
-                  lda #00
-                  sta colourMountainLine1,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine1
 
-                  ldx #0
-drawMountainLine2 lda mountainLine2,x
-                  sta screenMountainLine2,x
-               
-                  lda #00
-                  sta colourMountainLine2,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine2
-
-                  ldx #0
-drawMountainLine3 lda mountainLine3,x
-                  sta screenMountainLine3,x
-               
-                  lda #00
-                  sta colourMountainLine3,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine3
-              
-                  ldx #0
-drawMountainLine4 lda mountainLine4,x
-                  sta screenMountainLine4,x
-               
-                  lda #00
-                  sta colourMountainLine4,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine4
-              
-                  ldx #0
-drawMountainLine5 lda mountainLine5,x
-                  sta screenMountainLine5,x
-               
-                  lda #00
-                  sta colourMountainLine5,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine5
-              
-                  ldx #0
-drawMountainLine6 lda mountainLine6,x
-                  sta screenMountainLine6,x
-               
-                  lda #00
-                  sta colourMountainLine6,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine6
-
-                  ldx #0
-drawMountainLine7 lda mountainLine7,x
-                  sta screenMountainLine7,x
-               
-                  lda #00
-                  sta colourMountainLine7,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine7
-
-                  ldx #0
-drawMountainLine8 lda mountainLine8,x
-                  sta screenMountainLine8,x
-               
-                  lda #00
-                  sta colourMountainLine8,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine8
-
-                  ldx #0
-drawMountainLine9 lda mountainLine9,x
-                  sta screenMountainLine9,x
-               
-                  lda #00
-                  sta colourMountainLine9,x
-               
-                  inx
-                  cpx #32
-                  bne drawMountainLine9
-
-                   ldx #0
-drawMountainLine10 lda mountainLine10,x
-                   sta screenMountainLine10,x
-               
-                   lda #00
-                   sta colourMountainLine10,x
-               
-                   inx
-                   cpx #32
-                   bne drawMountainLine10
-
-                   ldx #0
-drawMountainLine11 lda mountainLine11,x
-                   sta screenMountainLine11,x
-               
-                   lda #00
-                   sta colourMountainLine11,x
+drawMountains   ; --- draw mountain line 1 ---
                 
-                   inx
-                   cpx #32
-                   bne drawMountainLine11
+                lda #<screenMountainLine1
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine1
+                sta zeroPageScreenHiByte
 
-                   rts
+                lda #<colourMountainLine1
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine1
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine1
+                sta zeroPageLineLoByte
+                lda #>mountainLine1
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 2 ---
+                
+                lda #<screenMountainLine2
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine2
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine2
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine2
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine2
+                sta zeroPageLineLoByte
+                lda #>mountainLine2
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 3 ---
+                
+                lda #<screenMountainLine3
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine3
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine3
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine3
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine3
+                sta zeroPageLineLoByte
+                lda #>mountainLine3
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 4 ---
+                
+                lda #<screenMountainLine4
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine4
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine4
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine4
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine4
+                sta zeroPageLineLoByte
+                lda #>mountainLine4
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 5 ---
+                
+                lda #<screenMountainLine5
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine5
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine5
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine5
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine5
+                sta zeroPageLineLoByte
+                lda #>mountainLine5
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 6 ---
+                
+                lda #<screenMountainLine6
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine6
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine6
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine6
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine6
+                sta zeroPageLineLoByte
+                lda #>mountainLine6
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 7 ---
+                
+                lda #<screenMountainLine7
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine7
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine7
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine7
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine7
+                sta zeroPageLineLoByte
+                lda #>mountainLine7
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 8 ---
+                
+                lda #<screenMountainLine8
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine8
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine8
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine8
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine8
+                sta zeroPageLineLoByte
+                lda #>mountainLine8
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 9 ---
+                
+                lda #<screenMountainLine9
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine9
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine9
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine9
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine9
+                sta zeroPageLineLoByte
+                lda #>mountainLine9
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 10 ---
+                
+                lda #<screenMountainLine10
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine10
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine10
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine10
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine10
+                sta zeroPageLineLoByte
+                lda #>mountainLine10
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                ; --- draw mountain line 11 ---
+                
+                lda #<screenMountainLine11
+                sta zeroPageScreenLoByte
+                lda #>screenMountainLine11
+                sta zeroPageScreenHiByte
+
+                lda #<colourMountainLine11
+                sta zeroPageColourLoByte
+                lda #>colourMountainLine11
+                sta zeroPageColourHiByte
+
+                lda #<mountainLine11
+                sta zeroPageLineLoByte
+                lda #>mountainLine11
+                sta zeroPageLineHiByte
+                
+                jsr drawMountainLine;
+
+                rts
+
+                
+drawMountainLine ldy #0
+mountainLine     lda (zeroPageLineLoByte),y
+                 sta (zeroPageScreenLoByte),y
+               
+                 lda #00
+                 sta (zeroPageColourLoByte),y                  
+                   
+                 iny
+                 cpy #32
+                 bne mountainLine
+
+                 rts
 
 ; -------- draw houses --------
             
-drawHouses     ldx #0
-drawHouseLine1 lda houseLine1,x
-               sta screenHouseLine1,x
-               
-               lda #00
-               sta colourHouseLine1,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine1
+drawHouses    ; --- draw house line 1 ---
+                
+              lda #<screenHouseLine1
+              sta zeroPageScreenLoByte
+              lda #>screenHouseLine1
+              sta zeroPageScreenHiByte
 
-               ldx #0
-drawHouseLine2 lda houseLine2,x
-               sta screenHouseLine2,x
-               
-               lda #00
-               sta colourHouseLine2,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine2
+              lda #<colourHouseLine1
+              sta zeroPageColourLoByte
+              lda #>colourHouseLine1
+              sta zeroPageColourHiByte
 
-               ldx #0
-drawHouseLine3 lda houseLine3,x
-               sta screenHouseLine3,x
-               
-               lda #00
-               sta colourHouseLine3,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine3
+              lda #<houseLine1
+              sta zeroPageLineLoByte
+              lda #>houseLine1
+              sta zeroPageLineHiByte
+                
+              jsr drawHouseLine;
 
-               ldx #0
-drawHouseLine4 lda houseLine4,x
-               sta screenHouseLine4,x
-               
-               lda #00
-               sta colourHouseLine4,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine4
+              ; --- draw house line 2 ---
+                
+              lda #<screenHouseLine2
+              sta zeroPageScreenLoByte
+              lda #>screenHouseLine2
+              sta zeroPageScreenHiByte
 
-               ldx #0
-drawHouseLine5 lda houseLine5,x
-               sta screenHouseLine5,x
-               
-               lda #00
-               sta colourHouseLine5,x
-               
-               inx
-               cpx #32
-               bne drawHouseLine5
+              lda #<colourHouseLine2
+              sta zeroPageColourLoByte
+              lda #>colourHouseLine2
+              sta zeroPageColourHiByte
 
-               rts
+              lda #<houseLine2
+              sta zeroPageLineLoByte
+              lda #>houseLine2
+              sta zeroPageLineHiByte
+                
+              jsr drawHouseLine;
+
+              ; --- draw house line 3 ---
+                
+              lda #<screenHouseLine3
+              sta zeroPageScreenLoByte
+              lda #>screenHouseLine3
+              sta zeroPageScreenHiByte
+
+              lda #<colourHouseLine3
+              sta zeroPageColourLoByte
+              lda #>colourHouseLine3
+              sta zeroPageColourHiByte
+
+              lda #<houseLine3
+              sta zeroPageLineLoByte
+              lda #>houseLine3
+              sta zeroPageLineHiByte
+                
+              jsr drawHouseLine;
+
+              ; --- draw house line 4 ---
+                
+              lda #<screenHouseLine4
+              sta zeroPageScreenLoByte
+              lda #>screenHouseLine4
+              sta zeroPageScreenHiByte
+
+              lda #<colourHouseLine4
+              sta zeroPageColourLoByte
+              lda #>colourHouseLine4
+              sta zeroPageColourHiByte
+
+              lda #<houseLine4
+              sta zeroPageLineLoByte
+              lda #>houseLine4
+              sta zeroPageLineHiByte
+                
+              jsr drawHouseLine;
+
+              ; --- draw house line 5 ---
+                
+              lda #<screenHouseLine5
+              sta zeroPageScreenLoByte
+              lda #>screenHouseLine5
+              sta zeroPageScreenHiByte
+
+              lda #<colourHouseLine5
+              sta zeroPageColourLoByte
+              lda #>colourHouseLine5
+              sta zeroPageColourHiByte
+
+              lda #<houseLine5
+              sta zeroPageLineLoByte
+              lda #>houseLine5
+              sta zeroPageLineHiByte
+                
+              jsr drawHouseLine;
+
+              rts
+
+drawHouseLine ldy #0
+houseLine     lda (zeroPageLineLoByte),y
+              sta (zeroPageScreenLoByte),y
+               
+              lda #00
+              sta (zeroPageColourLoByte),y                  
+                   
+              iny
+              cpy #32
+              bne houseLine
+
+              rts
+
                
 ; -------- draw divide --------
             
@@ -1137,209 +1299,256 @@ drawDivideLine1 lda divideLine1,x
 
 ; -------- draw life meter --------
             
-drawLifeMeter      ldx #0
-drawLifeMeterLine1 lda lifeMeterLine1,x
-                   sta screenLifeMeterLine1,x
-               
-                   lda #00
-                   sta colourLifeMeterLine1,x
-                   
-                   inx
-                   cpx #3
-                   bne drawLifeMeterLine1
-                    
-                   ldx #0
-drawLifeMeterLine2 lda lifeMeterLine2,x
-                   sta screenLifeMeterLine2,x
+drawLifeMeter     ; --- draw life meter line 1 ---
+                
+                  lda #<screenLifeMeterLine1
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine1
+                  sta zeroPageScreenHiByte
 
-                   lda #00                   
-                   sta colourLifeMeterLine2,x
-               
-                   lda lifeMeterLine2,x
-                   cmp #$96
-                   bne jmpLifeMeterLine2
+                  lda #<colourLifeMeterLine1
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine1
+                  sta zeroPageColourHiByte
 
-                   lda #08
-                   sta colourLifeMeterLine2,x
+                  lda #<lifeMeterLine1
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine1
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
 
-jmpLifeMeterLine2  inx
-                   cpx #3
-                   bne drawLifeMeterLine2
-                    
-                   ldx #0
-drawLifeMeterLine3 lda lifeMeterLine3,x
-                   sta screenLifeMeterLine3,x
-               
-                   lda #00
-                   sta colourLifeMeterLine3,x
-                   
-                   lda lifeMeterLine3,x
-                   cmp #$96
-                   bne jmpLifeMeterLine3
+                  ; --- draw life meter line 2 ---
+                
+                  lda #<screenLifeMeterLine2
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine2
+                  sta zeroPageScreenHiByte
 
-                   lda #08
-                   sta colourLifeMeterLine3,x
-                   
-jmpLifeMeterLine3 inx
-                   cpx #3
-                   bne drawLifeMeterLine3
-                    
-                   ldx #0
-drawLifeMeterLine4 lda lifeMeterLine4,x
-                   sta screenLifeMeterLine4,x
-               
-                   lda #00
-                   sta colourLifeMeterLine4,x
-                   
-                   lda lifeMeterLine4,x
-                   cmp #$96
-                   bne jmpLifeMeterLine4
+                  lda #<colourLifeMeterLine2
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine2
+                  sta zeroPageColourHiByte
 
-                   lda #08
-                   sta colourLifeMeterLine4,x
-                   
-jmpLifeMeterLine4 inx
-                   cpx #3
-                   bne drawLifeMeterLine4
-                    
-                   ldx #0
-drawLifeMeterLine5 lda lifeMeterLine5,x
-                   sta screenLifeMeterLine5,x
-               
-                   lda #00
-                   sta colourLifeMeterLine5,x
-                   
-                   lda lifeMeterLine5,x
-                   cmp #$96
-                   bne jmpLifeMeterLine5
+                  lda #<lifeMeterLine2
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine2
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
 
-                   lda #08
-                   sta colourLifeMeterLine5,x
-                   
-jmpLifeMeterLine5 inx
-                   cpx #3
-                   bne drawLifeMeterLine5
-                    
-                   ldx #0
-drawLifeMeterLine6 lda lifeMeterLine6,x
-                   sta screenLifeMeterLine6,x
-               
-                   lda #00
-                   sta colourLifeMeterLine6,x
-                   
-                   lda lifeMeterLine6,x
-                   cmp #$96
-                   bne jmpLifeMeterLine6
+                  ; --- draw life meter line 3 ---
+                
+                  lda #<screenLifeMeterLine3
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine3
+                  sta zeroPageScreenHiByte
 
-                   lda #08
-                   sta colourLifeMeterLine6,x                   
-                   
-jmpLifeMeterLine6 inx
-                   cpx #3
-                   bne drawLifeMeterLine6
-                    
-                   ldx #0
-drawLifeMeterLine7 lda lifeMeterLine7,x
-                   sta screenLifeMeterLine7,x
-               
-                   lda #00
-                   sta colourLifeMeterLine7,x
-                   
-                   lda lifeMeterLine7,x
-                   cmp #$96
-                   bne jmpLifeMeterLine7
+                  lda #<colourLifeMeterLine3
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine3
+                  sta zeroPageColourHiByte
 
-                   lda #08
-                   sta colourLifeMeterLine7,x
-                   
-jmpLifeMeterLine7  inx
-                   cpx #3
-                   bne drawLifeMeterLine7
-                    
-                   ldx #0
-drawLifeMeterLine8 lda lifeMeterLine8,x
-                   sta screenLifeMeterLine8,x
-               
-                   lda #00
-                   sta colourLifeMeterLine8,x
-                   
-                   lda lifeMeterLine8,x
-                   cmp #$96
-                   bne jmpLifeMeterLine8
+                  lda #<lifeMeterLine3
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine3
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
 
-                   lda #08
-                   sta colourLifeMeterLine8,x
-                   
-jmpLifeMeterLine8  inx
-                   cpx #3
-                   bne drawLifeMeterLine8
-                    
-                   ldx #0
-drawLifeMeterLine9 lda lifeMeterLine9,x
-                   sta screenLifeMeterLine9,x
-               
-                   lda #00
-                   sta colourLifeMeterLine9,x
-                   
-                   lda lifeMeterLine9,x
-                   cmp #$96
-                   bne jmpLifeMeterLine9
+                  ; --- draw life meter line 4 ---
+                
+                  lda #<screenLifeMeterLine4
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine4
+                  sta zeroPageScreenHiByte
 
-                   lda #08
-                   sta colourLifeMeterLine9,x
-                   
-jmpLifeMeterLine9  inx
-                   cpx #3
-                   bne drawLifeMeterLine9
-                    
-                    ldx #0
-drawLifeMeterLine10 lda lifeMeterLine10,x
-                    sta screenLifeMeterLine10,x
-               
-                    lda #00
-                    sta colourLifeMeterLine10,x
-                    
-                    lda lifeMeterLine10,x
-                    cmp #$96
-                    bne jmpLifeMeterLine10
+                  lda #<colourLifeMeterLine4
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine4
+                  sta zeroPageColourHiByte
 
-                    lda #08
-                    sta colourLifeMeterLine10,x
-                    
-jmpLifeMeterLine10  inx
-                    cpx #3
-                    bne drawLifeMeterLine10
-                    
-                    ldx #0
-drawLifeMeterLine11 lda lifeMeterLine11,x
-                    sta screenLifeMeterLine11,x
-               
-                    lda #00
-                    sta colourLifeMeterLine11,x
-                    
-                    lda lifeMeterLine11,x
-                    cmp #$96
-                    bne jmpLifeMeterLine11
+                  lda #<lifeMeterLine4
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine4
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
 
-                    lda #08
-                    sta colourLifeMeterLine11,x
-                    
-jmpLifeMeterLine11  inx
-                    cpx #3
-                    bne drawLifeMeterLine11
-                    
-                    ldx #0
-drawLifeMeterLine12 lda lifeMeterLine12,x
-                    sta screenLifeMeterLine12,x
+                  ; --- draw life meter line 5 ---
+                
+                  lda #<screenLifeMeterLine5
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine5
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine5
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine5
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine5
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine5
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 6 ---
+                 
+                  lda #<screenLifeMeterLine6
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine6
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine6
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine6
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine6
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine6
+                  sta zeroPageLineHiByte
+                  
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 7 ---
+                
+                  lda #<screenLifeMeterLine7
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine7
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine7
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine7
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine7
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine7
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 8 ---
+                
+                  lda #<screenLifeMeterLine8
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine8
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine8
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine8
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine8
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine8
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 9 ---
+                
+                  lda #<screenLifeMeterLine9
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine9
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine9
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine9
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine9
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine9
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 10 ---
+                
+                  lda #<screenLifeMeterLine10
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine10
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine10
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine10
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine10
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine10
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 11 ---
+                
+                  lda #<screenLifeMeterLine11
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine11
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine11
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine11
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine11
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine11
+                  sta zeroPageLineHiByte
+                 
+                  jsr drawLifeMeterLine;
+
+                  ; --- draw life meter line 12 ---
+                
+                  lda #<screenLifeMeterLine12
+                  sta zeroPageScreenLoByte
+                  lda #>screenLifeMeterLine12
+                  sta zeroPageScreenHiByte
+
+                  lda #<colourLifeMeterLine12
+                  sta zeroPageColourLoByte
+                  lda #>colourLifeMeterLine12
+                  sta zeroPageColourHiByte
+
+                  lda #<lifeMeterLine12
+                  sta zeroPageLineLoByte
+                  lda #>lifeMeterLine12
+                  sta zeroPageLineHiByte
+                
+                  jsr drawLifeMeterLine;
+
+                  rts
+
+                
+drawLifeMeterLine ldy #0
+lifeMeterLine     lda (zeroPageLineLoByte),y
+                  sta (zeroPageScreenLoByte),y
                
-                    lda #00
-                    sta colourLifeMeterLine12,x
+                  lda #00
+                  sta (zeroPageColourLoByte),y     
+                  
+                  lda (zeroPageLineLoByte),y
+                  cmp #$96
+                  bne lifeMeterLineInc
+                  
+                  lda #08
+                  sta (zeroPageColourLoByte),y
                    
-                    inx
-                    cpx #3
-                    bne drawLifeMeterLine12
-                                       
-                   rts
+lifeMeterLineInc  iny
+                  cpy #3
+                  bne lifeMeterLine
+
+                  rts
 
 ; -------- end game --------
                 
@@ -1462,31 +1671,31 @@ lifeMeterLine12 .byte $8a,$8b,$8c
 
 lifeMeterCharList .byte $96,$95,$94,$93,$92,$91,$90,$8f
 
-customCharacterSetData1 .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
-                        .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
-                        .byte $80,$40,$60,$50,$18,$54,$02,$05 ; character number 130 $82 right of mountain
-                        .byte $80,$80,$80,$83,$82,$82,$82,$ff ; character number 131 $83 bottom left side of house
-                        .byte $01,$01,$1d,$95,$9d,$81,$81,$ff ; character number 132 $84 bottom right side of house
-                        .byte $01,$02,$04,$08,$10,$20,$40,$ff ; character number 133 $85 top left side of house
-                        .byte $82,$4c,$2c,$1c,$0c,$04,$02,$ff ; character number 134 $86 top right side of house
+customCharacterSetData .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
+                       .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
+                       .byte $80,$40,$60,$50,$18,$54,$02,$05 ; character number 130 $82 right of mountain
+                       .byte $80,$80,$80,$83,$82,$82,$82,$ff ; character number 131 $83 bottom left side of house
+                       .byte $01,$01,$1d,$95,$9d,$81,$81,$ff ; character number 132 $84 bottom right side of house
+                       .byte $01,$02,$04,$08,$10,$20,$40,$ff ; character number 133 $85 top left side of house
+                       .byte $82,$4c,$2c,$1c,$0c,$04,$02,$ff ; character number 134 $86 top right side of house
 
-                        .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 135 $87 top life meter                        
-                        .byte $00,$00,$00,$00,$00,$00,$00,$01 ; character number 136 $88 top left life meter
-                        .byte $01,$01,$01,$01,$01,$01,$01,$01 ; character number 137 $89 left life meter
-                        .byte $01,$00,$00,$00,$00,$00,$00,$00 ; character number 138 $8a bottom left life meter
-                        .byte $ff,$00,$00,$00,$00,$00,$00,$00 ; character number 139 $8b bottom life meter                        
-                        .byte $80,$00,$00,$00,$00,$00,$00,$00 ; character number 140 $8c bottom right life meter
-                        .byte $80,$80,$80,$80,$80,$80,$80,$80 ; character number 141 $8d right life meter
-                        .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter
+                       .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 135 $87 top life meter                        
+                       .byte $00,$00,$00,$00,$00,$00,$00,$01 ; character number 136 $88 top left life meter
+                       .byte $01,$01,$01,$01,$01,$01,$01,$01 ; character number 137 $89 left life meter
+                       .byte $01,$00,$00,$00,$00,$00,$00,$00 ; character number 138 $8a bottom left life meter
+                       .byte $ff,$00,$00,$00,$00,$00,$00,$00 ; character number 139 $8b bottom life meter                        
+                       .byte $80,$00,$00,$00,$00,$00,$00,$00 ; character number 140 $8c bottom right life meter
+                       .byte $80,$80,$80,$80,$80,$80,$80,$80 ; character number 141 $8d right life meter
+                       .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter
 
-                        .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f 1 notch life meter
-                        .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 2 notch life meter
-                        .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 3 notch life meter
-                        .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 4 notch life meter
-                        .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 5 notch life meter
-                        .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 6 notch life meter
-                        .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 7 notch life meter
-                        .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 8 notch life meter
+                       .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f 1 notch life meter
+                       .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 2 notch life meter
+                       .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 3 notch life meter
+                       .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 4 notch life meter
+                       .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 5 notch life meter
+                       .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 6 notch life meter
+                       .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 7 notch life meter
+                       .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 8 notch life meter
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
