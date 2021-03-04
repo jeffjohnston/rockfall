@@ -924,236 +924,236 @@ defaultCharacterSet lda characterSet0,x ; get char data
 
                     ldx #0
 customCharacterSet lda customCharacterSetData,x
-                    sta characterMem4,x
-                    inx
-                    cpx #184
-                    bne customCharacterSet
+                   sta characterMem4,x
+                   inx
+                   cpx #184
+                   bne customCharacterSet
 
-                    lda $01
-                    ora #04
-                    sta $01
+                   lda $01
+                   ora #04
+                   sta $01
 
-                    lda graphics
-                    and #240
-                    ora #8
-                    sta graphics
+                   lda graphics
+                   and #240
+                   ora #8
+                   sta graphics
 
-                    cli
+                   cli
                    
-                    rts
+                   rts
 
 ; -------- draw mountains --------
 
-drawMountains   ; --- draw mountain line 1 ---
+drawMountains    ; --- draw mountain line 1 ---
                 
-                lda #<screenMountainLine1
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine1
-                sta zeroPageScreenHiByte
+                 lda #<screenMountainLine1
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine1
+                 sta zeroPageScreenHiByte
 
-                lda #<colourMountainLine1
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine1
-                sta zeroPageColourHiByte
+                 lda #<colourMountainLine1
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine1
+                 sta zeroPageColourHiByte
 
-                lda #<mountainLine1
-                sta zeroPageLineLoByte
-                lda #>mountainLine1
-                sta zeroPageLineHiByte
+                 lda #<mountainLine1
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine1
+                 sta zeroPageLineHiByte
+                 
+                 jsr drawMountainLine;
+
+                 ; --- draw mountain line 2 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine2
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine2
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 2 ---
+                 lda #<colourMountainLine2
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine2
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine2
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine2
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine2
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine2
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine2
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine2
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine2
-                sta zeroPageLineLoByte
-                lda #>mountainLine2
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 3 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine3
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine3
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 3 ---
+                 lda #<colourMountainLine3
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine3
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine3
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine3
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine3
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine3
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine3
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine3
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine3
-                sta zeroPageLineLoByte
-                lda #>mountainLine3
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 4 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine4
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine4
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 4 ---
+                 lda #<colourMountainLine4
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine4
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine4
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine4
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine4
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine4
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine4
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine4
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine4
-                sta zeroPageLineLoByte
-                lda #>mountainLine4
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 5 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine5
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine5
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 5 ---
+                 lda #<colourMountainLine5
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine5
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine5
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine5
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine5
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine5
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine5
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine5
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine5
-                sta zeroPageLineLoByte
-                lda #>mountainLine5
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 6 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine6
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine6
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 6 ---
+                 lda #<colourMountainLine6
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine6
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine6
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine6
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine6
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine6
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine6
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine6
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine6
-                sta zeroPageLineLoByte
-                lda #>mountainLine6
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 7 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine7
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine7
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 7 ---
+                 lda #<colourMountainLine7
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine7
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine7
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine7
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine7
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine7
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine7
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine7
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine7
-                sta zeroPageLineLoByte
-                lda #>mountainLine7
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 8 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine8
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine8
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 8 ---
+                 lda #<colourMountainLine8
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine8
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine8
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine8
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine8
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine8
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine8
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine8
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine8
-                sta zeroPageLineLoByte
-                lda #>mountainLine8
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 9 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine9
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine9
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 9 ---
+                 lda #<colourMountainLine9
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine9
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine9
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine9
+                 sta zeroPageLineHiByte
                 
-                lda #<screenMountainLine9
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine9
-                sta zeroPageScreenHiByte
+                 jsr drawMountainLine;
 
-                lda #<colourMountainLine9
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine9
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine9
-                sta zeroPageLineLoByte
-                lda #>mountainLine9
-                sta zeroPageLineHiByte
+                 ; --- draw mountain line 10 ---
                 
-                jsr drawMountainLine;
+                 lda #<screenMountainLine10
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine10
+                 sta zeroPageScreenHiByte
 
-                ; --- draw mountain line 10 ---
+                 lda #<colourMountainLine10
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine10
+                 sta zeroPageColourHiByte
+
+                 lda #<mountainLine10
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine10
+                 sta zeroPageLineHiByte
+                 
+                 jsr drawMountainLine;
+
+                 ; --- draw mountain line 11 ---
                 
-                lda #<screenMountainLine10
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine10
-                sta zeroPageScreenHiByte
+                 lda #<screenMountainLine11
+                 sta zeroPageScreenLoByte
+                 lda #>screenMountainLine11
+                 sta zeroPageScreenHiByte
 
-                lda #<colourMountainLine10
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine10
-                sta zeroPageColourHiByte
+                 lda #<colourMountainLine11
+                 sta zeroPageColourLoByte
+                 lda #>colourMountainLine11
+                 sta zeroPageColourHiByte
 
-                lda #<mountainLine10
-                sta zeroPageLineLoByte
-                lda #>mountainLine10
-                sta zeroPageLineHiByte
+                 lda #<mountainLine11
+                 sta zeroPageLineLoByte
+                 lda #>mountainLine11
+                 sta zeroPageLineHiByte
                 
-                jsr drawMountainLine;
+                 jsr drawMountainLine;
 
-                ; --- draw mountain line 11 ---
-                
-                lda #<screenMountainLine11
-                sta zeroPageScreenLoByte
-                lda #>screenMountainLine11
-                sta zeroPageScreenHiByte
-
-                lda #<colourMountainLine11
-                sta zeroPageColourLoByte
-                lda #>colourMountainLine11
-                sta zeroPageColourHiByte
-
-                lda #<mountainLine11
-                sta zeroPageLineLoByte
-                lda #>mountainLine11
-                sta zeroPageLineHiByte
-                
-                jsr drawMountainLine;
-
-                rts
+                 rts
 
                 
 drawMountainLine ldy #0
@@ -1268,6 +1268,7 @@ drawHouses    ; --- draw house line 1 ---
 
               rts
 
+
 drawHouseLine ldy #0
 houseLine     lda (zeroPageLineLoByte),y
               sta (zeroPageScreenLoByte),y
@@ -1280,7 +1281,6 @@ houseLine     lda (zeroPageLineLoByte),y
               bne houseLine
 
               rts
-
                
 ; -------- draw divide --------
             
