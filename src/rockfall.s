@@ -787,14 +787,42 @@ printPopulationSaved ldx #2
                      rts
              
 ; -------- decrement life meter --------
-
- 
                
 decrementLifeMeter lda lifeMeterCounter
+                   cmp #09
+                   bcc jumpLifeMeterSection10
+                   cmp #17
+                   bcc jumpLifeMeterSection9
+                   cmp #25
+                   bcc jumpLifeMeterSection8
+                   cmp #33
+                   bcc jumpLifeMeterSection7
+                   cmp #41
+                   bcc jumpLifeMeterSection6
+                   cmp #49
+                   bcc jumpLifeMeterSection5
+                   cmp #57
+                   bcc jumpLifeMeterSection4
+                   cmp #65
+                   bcc jumpLifeMeterSection3
                    cmp #73
-                   bcc lifeMeterSection2
+                   bcc jumpLifeMeterSection2
+                   cmp #81
+                   bcc jumpLifeMeterSection1
+                   rts
 
-                   lda #<screenLifeMeterLine2+1
+jumpLifeMeterSection1  jmp lifeMeterSection1
+jumpLifeMeterSection2  jmp lifeMeterSection2
+jumpLifeMeterSection3  jmp lifeMeterSection3
+jumpLifeMeterSection4  jmp lifeMeterSection4
+jumpLifeMeterSection5  jmp lifeMeterSection5
+jumpLifeMeterSection6  jmp lifeMeterSection6
+jumpLifeMeterSection7  jmp lifeMeterSection7
+jumpLifeMeterSection8  jmp lifeMeterSection8
+jumpLifeMeterSection9  jmp lifeMeterSection9
+jumpLifeMeterSection10 jmp lifeMeterSection10
+
+lifeMeterSection1  lda #<screenLifeMeterLine2+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine2+1
                    sta zeroPageScreenHiByte
@@ -807,11 +835,7 @@ decrementLifeMeter lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection2  lda lifeMeterCounter
-                   cmp #65
-                   bcc lifeMeterSection3
-
-                   lda #<screenLifeMeterLine3+1
+lifeMeterSection2  lda #<screenLifeMeterLine3+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine3+1
                    sta zeroPageScreenHiByte
@@ -824,11 +848,7 @@ lifeMeterSection2  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection3  lda lifeMeterCounter
-                   cmp #57
-                   bcc lifeMeterSection4
-
-                   lda #<screenLifeMeterLine4+1
+lifeMeterSection3  lda #<screenLifeMeterLine4+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine4+1
                    sta zeroPageScreenHiByte
@@ -841,11 +861,7 @@ lifeMeterSection3  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection4  lda lifeMeterCounter
-                   cmp #49
-                   bcc lifeMeterSection5
-
-                   lda #<screenLifeMeterLine5+1
+lifeMeterSection4  lda #<screenLifeMeterLine5+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine5+1
                    sta zeroPageScreenHiByte
@@ -858,11 +874,7 @@ lifeMeterSection4  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection5  lda lifeMeterCounter
-                   cmp #41
-                   bcc lifeMeterSection6
-
-                   lda #<screenLifeMeterLine6+1
+lifeMeterSection5  lda #<screenLifeMeterLine6+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine6+1
                    sta zeroPageScreenHiByte
@@ -875,11 +887,7 @@ lifeMeterSection5  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection6  lda lifeMeterCounter
-                   cmp #33
-                   bcc lifeMeterSection7
-
-                   lda #<screenLifeMeterLine7+1
+lifeMeterSection6  lda #<screenLifeMeterLine7+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine7+1
                    sta zeroPageScreenHiByte
@@ -892,11 +900,7 @@ lifeMeterSection6  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection7  lda lifeMeterCounter
-                   cmp #25
-                   bcc lifeMeterSection8
-
-                   lda #<screenLifeMeterLine8+1
+lifeMeterSection7  lda #<screenLifeMeterLine8+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine8+1
                    sta zeroPageScreenHiByte
@@ -909,11 +913,7 @@ lifeMeterSection7  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection8  lda lifeMeterCounter
-                   cmp #17
-                   bcc lifeMeterSection9
-
-                   lda #<screenLifeMeterLine9+1
+lifeMeterSection8  lda #<screenLifeMeterLine9+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine9+1
                    sta zeroPageScreenHiByte
@@ -926,11 +926,7 @@ lifeMeterSection8  lda lifeMeterCounter
                    jsr drawLifeMeterSection
                    jmp finishLifeMeter
 
-lifeMeterSection9  lda lifeMeterCounter
-                   cmp #09
-                   bcc lifeMeterSection10
-
-                   lda #<screenLifeMeterLine10+1
+lifeMeterSection9  lda #<screenLifeMeterLine10+1
                    sta zeroPageScreenLoByte
                    lda #>screenLifeMeterLine10+1
                    sta zeroPageScreenHiByte
