@@ -208,7 +208,7 @@ setup jsr clearScreen
       sta $d412 ; voice 3 control register
       
       lda #0
-      sta lifeMeterNotchCounter  
+      sta lifeMeterSubCounter  
 
       lda #80
       sta lifeMeterCounter    
@@ -786,11 +786,11 @@ printPopulationSaved ldx #2
 
 decrementLifeMeter lda lifeMeterCounter
                    cmp #73
-                   bcs lifeMeterCounter1
+                   bcs lifeMeterSection1
                    rts
                
-lifeMeterCounter1 ldx lifeMeterNotchCounter
-                  lda lifeMeterCharList,x
+lifeMeterSection1 ldx lifeMeterSubCounter
+                  lda lifeMeterCharacterList,x
                   sta screenLifeMeterLine2+1
                
                   lda #08
@@ -803,11 +803,17 @@ finishLifeMeter clc
                 sbc #1
                 sta lifeMeterCounter
                 
-                lda lifeMeterNotchCounter
+                lda lifeMeterSubCounter
                 adc #1
-                sta lifeMeterNotchCounter
-
+                sta lifeMeterSubCounter
+                cmp #8
+                beq resetLifeMeterSubCounter
                 rts
+
+resetLifeMeterSubCounter lda #0
+                         sta lifeMeterSubCounter
+
+                         rts
 
 ; -------- print hex value --------
                  
@@ -1569,7 +1575,7 @@ rockSpriteXPos          .byte 0
 populationSaved         .byte 0,0
 
 lifeMeterCounter        .byte 0
-lifeMeterNotchCounter   .byte 0
+lifeMeterSubCounter   .byte 0
 
 mountainLine1  .byte $20,$20,$20,$20,$20,$20,$20,$20
                .byte $20,$20,$20,$20,$20,$20,$20,$20
@@ -1669,7 +1675,7 @@ lifeMeterLine10 .byte $89,$96,$8d
 lifeMeterLine11 .byte $89,$96,$8d
 lifeMeterLine12 .byte $8a,$8b,$8c
 
-lifeMeterCharList .byte $96,$95,$94,$93,$92,$91,$90,$8f
+lifeMeterCharacterList .byte $96,$95,$94,$93,$92,$91,$90,$8f
 
 customCharacterSetData .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
                        .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
@@ -1688,14 +1694,14 @@ customCharacterSetData .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 
                        .byte $80,$80,$80,$80,$80,$80,$80,$80 ; character number 141 $8d right life meter
                        .byte $00,$00,$00,$00,$00,$00,$00,$80 ; character number 142 $8e right top life meter
 
-                       .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f 1 notch life meter
-                       .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 2 notch life meter
-                       .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 3 notch life meter
-                       .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 4 notch life meter
-                       .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 5 notch life meter
-                       .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 6 notch life meter
-                       .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 7 notch life meter
-                       .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 8 notch life meter
+                       .byte $00,$00,$00,$00,$00,$00,$00,$ff ; character number 143 $8f 1 life meter
+                       .byte $00,$00,$00,$00,$00,$00,$ff,$ff ; character number 144 $90 2 life meter
+                       .byte $00,$00,$00,$00,$00,$ff,$ff,$ff ; character number 145 $91 3 life meter
+                       .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff ; character number 146 $92 4 life meter
+                       .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff ; character number 147 $93 5 life meter
+                       .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff ; character number 148 $94 6 life meter
+                       .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 149 $95 7 life meter
+                       .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff ; character number 150 $96 8 life meter
 
 hoverRightImgData .byte $00,$55,$00,$01,$7d,$40,$05,$7f
                   .byte $c0,$07,$7d,$c0,$07,$7d,$f0,$07
