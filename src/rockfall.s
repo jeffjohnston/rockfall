@@ -207,12 +207,12 @@ setup jsr clearScreen
       lda #$80  ; noise waveform, gate bit off
       sta $d412 ; voice 3 control register
       
-      lda #0
-      sta lifeMeterSubCounter  
-
       lda #80
       sta lifeMeterCounter    
       
+      lda #0
+      sta lifeMeterSubCounter  
+
       jsr setupImages
       jsr drawMountains
       jsr drawHouses
@@ -227,6 +227,10 @@ gameloop lda refreshScreen
          
          lda #0
          sta refreshScreen
+         
+         ; will not have to do this with game over routine
+         lda lifeMeterCounter
+         beq gameloop        
 
          lda spriteCollision 
          sta spriteCollisionDetector ; copy collision
@@ -784,28 +788,208 @@ printPopulationSaved ldx #2
              
 ; -------- decrement life meter --------
 
+ 
+               
 decrementLifeMeter lda lifeMeterCounter
                    cmp #73
-                   bcs lifeMeterSection1
-                   rts
-               
-lifeMeterSection1 ldx lifeMeterSubCounter
-                  lda lifeMeterCharacterList,x
-                  sta screenLifeMeterLine2+1
-               
-                  lda #08
-                  sta colourLifeMeterLine2+1
-                   
-                  jmp finishLifeMeter
+                   bcc lifeMeterSection2
 
-finishLifeMeter clc
-                lda lifeMeterCounter
+                   lda #<screenLifeMeterLine2+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine2+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine2+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine2+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection2  lda lifeMeterCounter
+                   cmp #65
+                   bcc lifeMeterSection3
+
+                   lda #<screenLifeMeterLine3+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine3+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine3+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine3+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection3  lda lifeMeterCounter
+                   cmp #57
+                   bcc lifeMeterSection4
+
+                   lda #<screenLifeMeterLine4+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine4+1
+                   sta zeroPageScreenHiByte
+ 
+                   lda #<colourLifeMeterLine4+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine4+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection4  lda lifeMeterCounter
+                   cmp #49
+                   bcc lifeMeterSection5
+
+                   lda #<screenLifeMeterLine5+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine5+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine5+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine5+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection5  lda lifeMeterCounter
+                   cmp #41
+                   bcc lifeMeterSection6
+
+                   lda #<screenLifeMeterLine6+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine6+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine6+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine6+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection6  lda lifeMeterCounter
+                   cmp #33
+                   bcc lifeMeterSection7
+
+                   lda #<screenLifeMeterLine7+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine7+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine7+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine7+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection7  lda lifeMeterCounter
+                   cmp #25
+                   bcc lifeMeterSection8
+
+                   lda #<screenLifeMeterLine8+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine8+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine8+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine8+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection8  lda lifeMeterCounter
+                   cmp #17
+                   bcc lifeMeterSection9
+
+                   lda #<screenLifeMeterLine9+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine9+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine9+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine9+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection9  lda lifeMeterCounter
+                   cmp #09
+                   bcc lifeMeterSection10
+
+                   lda #<screenLifeMeterLine10+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine10+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine10+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine10+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+lifeMeterSection10 lda #<screenLifeMeterLine11+1
+                   sta zeroPageScreenLoByte
+                   lda #>screenLifeMeterLine11+1
+                   sta zeroPageScreenHiByte
+
+                   lda #<colourLifeMeterLine11+1
+                   sta zeroPageColourLoByte
+                   lda #>colourLifeMeterLine11+1
+                   sta zeroPageColourHiByte
+                  
+                   jsr drawLifeMeterSection
+                   jmp finishLifeMeter
+
+drawLifeMeterSection ldx lifeMeterSubCounter                  
+                     ldy #0
+                     lda lifeMeterCharacterList,x
+                     sta (zeroPageScreenLoByte),y
+    
+                     lda lifeMeterSubCounter
+                     cmp #7
+                     beq lifeMeterBackgroundColor
+               
+                     lda #08
+                     sta (zeroPageColourLoByte),y
+                     rts
+                     
+lifeMeterBackgroundColor lda #06
+                         sta (zeroPageColourLoByte),y
+                  
+                         rts
+
+finishLifeMeter lda lifeMeterCounter
+                beq gameOver
+
+                sec                
                 sbc #1
                 sta lifeMeterCounter
                 
+                lda lifeMeterCounter
+                beq gameOver
+                
+                clc
                 lda lifeMeterSubCounter
                 adc #1
                 sta lifeMeterSubCounter
+
+                lda lifeMeterSubCounter
                 cmp #8
                 beq resetLifeMeterSubCounter
                 rts
@@ -814,6 +998,10 @@ resetLifeMeterSubCounter lda #0
                          sta lifeMeterSubCounter
 
                          rts
+
+; -------- game over --------
+
+gameOver rts ; this is good enought for now
 
 ; -------- print hex value --------
                  
@@ -1575,7 +1763,7 @@ rockSpriteXPos          .byte 0
 populationSaved         .byte 0,0
 
 lifeMeterCounter        .byte 0
-lifeMeterSubCounter   .byte 0
+lifeMeterSubCounter     .byte 0
 
 mountainLine1  .byte $20,$20,$20,$20,$20,$20,$20,$20
                .byte $20,$20,$20,$20,$20,$20,$20,$20
@@ -1675,7 +1863,7 @@ lifeMeterLine10 .byte $89,$96,$8d
 lifeMeterLine11 .byte $89,$96,$8d
 lifeMeterLine12 .byte $8a,$8b,$8c
 
-lifeMeterCharacterList .byte $96,$95,$94,$93,$92,$91,$90,$8f
+lifeMeterCharacterList .byte $95,$94,$93,$92,$91,$90,$8f,$96
 
 customCharacterSetData .byte $01,$02,$06,$0a,$18,$2a,$40,$a0 ; character number 128 $80 left of mountain
                        .byte $00,$00,$00,$00,$18,$3c,$5a,$ff ; character number 129 $81 top of mountain
