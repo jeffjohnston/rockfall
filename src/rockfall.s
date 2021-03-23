@@ -213,6 +213,9 @@ setup jsr clearScreen
       lda #0
       sta lifeMeterSubCounter  
 
+      lda #0
+      sta lastRockHoverHit  
+
       jsr setupImages
       jsr drawMountains
       jsr drawHouses
@@ -289,6 +292,8 @@ stopMissile lda enableSprites
 
 moveRocks lda #4
           sta rockSpriteBit
+          lda #5
+          sta rockSpriteBitPlus1
           lda #6
           sta rockSpriteBitPlus2
           lda #0
@@ -300,6 +305,8 @@ moveRocks lda #4
           
           lda #8
           sta rockSpriteBit
+          lda #9
+          sta rockSpriteBitPlus1
           lda #10
           sta rockSpriteBitPlus2
           lda #2
@@ -311,6 +318,8 @@ moveRocks lda #4
 
           lda #16
           sta rockSpriteBit
+          lda #17
+          sta rockSpriteBitPlus1
           lda #18
           sta rockSpriteBitPlus2
           lda #4
@@ -322,6 +331,8 @@ moveRocks lda #4
 
           lda #32
           sta rockSpriteBit
+          lda #33
+          sta rockSpriteBitPlus1
           lda #34
           sta rockSpriteBitPlus2
           lda #6
@@ -333,6 +344,8 @@ moveRocks lda #4
 
           lda #64
           sta rockSpriteBit
+          lda #65
+          sta rockSpriteBitPlus1
           lda #66
           sta rockSpriteBitPlus2
           lda #8
@@ -366,8 +379,20 @@ startRockMove lda random
               lda #50 ; begin y pos
               sta rockSprite1Y, x
                
-              rts
-  
+finishRock rts
+              
+rockHitHover lda lastRockHoverHit
+             cmp rockSpriteBit
+             beq moveRockDown
+
+             lda rockSpriteBit
+             sta lastRockHoverHit
+             jsr decrementLifeMeter
+             jsr decrementLifeMeter
+             jsr decrementLifeMeter
+             jsr decrementLifeMeter
+             jsr decrementLifeMeter
+
 moveRockDown ldx rockSpriteOffset
              ldy rockSprite1Y, x
              iny
@@ -386,9 +411,18 @@ rockHitBottom lda enableSprites ; remove rock
               
               jsr decrementLifeMeter
 
+              lda lastRockHoverHit
+              cmp rockSpriteBit
+              bne clearLastRockHitHover
+
               rts
                         
 checkRockForCollision lda spriteCollisionDetector
+                      and rockSpriteBitPlus1
+                      cmp rockSpriteBitPlus1
+                      beq rockHitHover
+
+                      lda spriteCollisionDetector
                       and rockSpriteBitPlus2
                       cmp rockSpriteBitPlus2
                       bne moveRockDown
@@ -399,7 +433,12 @@ checkRockForCollision lda spriteCollisionDetector
                       
                       jsr incrementPopulationSaved
 
-finishRock rts    
+                      rts
+
+clearLastRockHitHover lda #0
+                      sta lastRockHoverHit
+
+                      rts
 
 ; -------- check fire button --------         
 
@@ -1753,10 +1792,12 @@ hoverHitBottomEdge      .byte 0
 refreshScreen           .byte 0
 spriteCollisionDetector .byte 0
 rockSpriteBit           .byte 0 ; bit number
+rockSpriteBitPlus1      .byte 0
 rockSpriteBitPlus2      .byte 0
 rockSpriteOffset        .byte 0
 rockSpriteXPos          .byte 0
 populationSaved         .byte 0,0
+lastRockHoverHit        .byte 0
 
 lifeMeterCounter        .byte 0
 lifeMeterSubCounter     .byte 0

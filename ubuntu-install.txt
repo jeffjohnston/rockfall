@@ -1,0 +1,52 @@
+sudo apt-get update
+sudo apt-get install build-essential
+
+# install other software
+sudo apt-get install flex
+sudo apt-get install bison
+sudo apt-get install dos2unix
+sudo apt-get install texinfo
+sudo apt-get install texlive-latex-base
+sudo apt-get install libsdl-image1.2-dev
+sudo apt-get install libsdl-dev
+sudo apt install autoconf
+sudo apt-get install libglew-dev
+
+# install this software
+The xa assembler is missing, either install it via your
+distribution or build and install it using the latest source
+from https://www.floodgap.com/retrotech/xa/
+
+
+# install turbo macro pro
+https://style64.org/release/tmpx-v1.1.0-style
+sudo cp TMPx_v1.1.0-STYLE/linux-x86_64/tmpx /usr/bin
+sudo chmod 777 /usr/bin/tmpx
+
+# install exomizer
+https://bitbucket.org/magli143/exomizer/wiki/Home
+cd /exomizer-3.1.0/src
+make
+sudo cp exomizer /usr/bin
+sudo chmod 777 /usr/bin/exomizer
+
+
+#download vice
+https://vice-emu.sourceforge.io/index.html#download
+
+.configure
+make
+sudo make install
+
+
+
+HAS_USB_JOYSTICK LINUX_JOYSTICK
+
+
+# CODESLAYER
+sudo apt-get install libglib2.0-dev libgtk-3-dev libgtksourceview-3.0-dev intltool libtool gtk-doc-tools
+./configure 
+make 
+sudo make install sudo ldconfig
+
+
