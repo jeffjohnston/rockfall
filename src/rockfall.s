@@ -102,40 +102,47 @@ hoverSprite           = $7f8  ; 2040
 hoverColor            = $d027 ; 53287
 hoverSpriteX          = $d000 ; 53248
 hoverSpriteY          = $d001 ; 53249
+
+missileSprite1        = $7f9  ; 2041
+missileColor1         = $d028 ; 53288
+missileSprite1X       = $d002 ; 53250
+missileSprite1Y       = $d003 ; 53251
+
+missileSprite2        = $7fa  ; 2042
+missileColor2         = $d029 ; 53289
+missileSprite2X       = $d004 ; 53252
+missileSprite2Y       = $d005 ; 53253
+
+rockSprite1           = $7fb  ; 2043
+rockColor1            = $d02a ; 53290
+rockSprite1X          = $d006 ; 53254
+rockSprite1Y          = $d007 ; 53255
+
+rockSprite2           = $7fc  ; 2044
+rockColor2            = $d02b ; 53291
+rockSprite2X          = $d008 ; 53256
+rockSprite2Y          = $d009 ; 53257
+
+rockSprite3           = $7fd  ; 2045
+rockColor3            = $d02c ; 53292
+rockSprite3X          = $d00a ; 53258
+rockSprite3Y          = $d00b ; 53259
+
+rockSprite4           = $7fe  ; 2046
+rockColor4            = $d02d ; 53293
+rockSprite4X          = $d00c ; 53260
+rockSprite4Y          = $d00d ; 53261
+
+rockSprite5           = $7ff  ; 2047
+rockColor5            = $d02e ; 53294
+rockSprite5X          = $d00e ; 53262
+rockSprite5Y          = $d00f ; 53263
+
 hoverRightImg         = $3000 ; 12288 block 192 (64*192=12288)
 hoverLeftImg          = $3040 ; 12352 block 193
  
-missileSprite         = $7f9  ; 2041
-missileColor          = $d028 ; 53288
-missileSpriteX        = $d002 ; 53250
-missileSpriteY        = $d003 ; 53251
 missileRightImg       = $3080 ; 12416 block 194
 missileLeftImg        = $30C0 ; 12480 block 195
-
-rockSprite1           = $7fa  ; 2042
-rockSprite1X          = $d004 ; 53252
-rockSprite1Y          = $d005 ; 53253
-rockColor1            = $d029 ; 53289
-
-rockSprite2           = $7fb  ; 2043
-rockSprite2X          = $d006 ; 53254
-rockSprite2Y          = $d007 ; 53255
-rockColor2            = $d02a ; 53290
-
-rockSprite3           = $7fc  ; 2044
-rockSprite3X          = $d008 ; 53256
-rockSprite3Y          = $d009 ; 53257
-rockColor3            = $d02b ; 53291
-
-rockSprite4           = $7fd  ; 2045
-rockSprite4X          = $d00a ; 53258
-rockSprite4Y          = $d00b ; 53259
-rockColor4            = $d02c ; 53292
-
-rockSprite5           = $7fe  ; 2046
-rockSprite5X          = $d00c ; 53260
-rockSprite5Y          = $d00d ; 53261
-rockColor5            = $d02d ; 53293
 
 rockImg               = $3100 ; 12544 block 196
 
@@ -163,7 +170,8 @@ setup jsr clearScreen
       lda #192 ; block 192
       sta hoverSprite
       lda #194 ; block 194
-      sta missileSprite
+      sta missileSprite1
+      sta missileSprite2
       lda #196 ; block 196
       sta rockSprite1
       sta rockSprite2
@@ -178,7 +186,8 @@ setup jsr clearScreen
     
       lda #$02 ; red (individual color)
       sta hoverColor
-      sta missileColor
+      sta missileColor1
+      sta missileColor2
     
       lda #$08 ; brown (individual color)
       sta rockColor1
@@ -212,9 +221,8 @@ setup jsr clearScreen
       
       lda #0
       sta lifeMeterSubCounter  
-
-      lda #0
       sta lastRockHoverHit  
+      sta fireButtonDelay
 
       jsr setupImages
       jsr drawMountains
@@ -224,12 +232,12 @@ setup jsr clearScreen
 
 ; -------- game loop --------
         
-gameloop lda refreshScreen
+gameloop lda screenRefresh
          cmp #1
          bne gameloop
          
          lda #0
-         sta refreshScreen
+         sta screenRefresh
          
          ; will not have to do this with game over routine
          lda lifeMeterCounter
@@ -238,64 +246,90 @@ gameloop lda refreshScreen
          lda spriteCollision 
          sta spriteCollisionDetector ; copy collision
 
-         jsr moveMissile
+         jsr moveMissiles
          jsr moveRocks
          jsr checkFireButton
          jsr checkJoystick
          jmp gameloop
          
-; -------- move missile --------
+; -------- move missiles --------
+
+moveMissiles lda #2
+             sta missleSpriteBit
+             lda #0
+             sta missleSpriteOffset
+             lda missileSprite1
+             sta missleSpriteBlock
+
+             jsr moveMissile
+             
+             lda #4
+             sta missleSpriteBit
+             lda #2
+             sta missleSpriteOffset
+             lda missileSprite2
+             sta missleSpriteBlock
+
+             jsr moveMissile
+             rts
 
 moveMissile lda enableSprites
-            and #2
-            cmp #2 
+            and missleSpriteBit
+            cmp missleSpriteBit
             beq moveMissileLR
             rts
 
-moveMissileLR ldx missileSprite
+moveMissileLR ldx missleSpriteBlock
               cpx #194
               beq moveMissileRight
               bne moveMissileLeft
               rts
            
-moveMissileRight ldx missileSpriteX
-                 inx
-                 inx
-                 stx missileSpriteX
+moveMissileRight ldx missleSpriteOffset
+                 ldy missileSprite1X, x
+                 iny
+                 iny
+                 tya
+                 sta missileSprite1X, x
 
-                 lda missileSpriteX
+                 lda missileSprite1X, x
                  cmp #254
                  bcs stopMissile
                  rts
 
-moveMissileLeft ldx missileSpriteX
-                dex
-                dex
-                stx missileSpriteX
+moveMissileLeft ldx missleSpriteOffset
+                ldy missileSprite1X, x
+                dey
+                dey
+                tya
+                sta missileSprite1X, x
 
-                lda missileSpriteX
+                lda missileSprite1X, x
                 cmp #24
                 bcc stopMissile
                 rts
                 
 stopMissile lda enableSprites
-            eor #2
+            eor missleSpriteBit
             sta enableSprites
 
             lda #0
-            sta missileSpriteX
-            sta missileSpriteY
+            ldx missleSpriteOffset
+            sta missileSprite1X, x
+            sta missileSprite1Y, x
             rts
 
 ; -------- move rocks --------
 
 
-moveRocks lda #4
+moveRocks lda #8
           sta rockSpriteBit
-          lda #5
+          lda #9
           sta rockSpriteBitPlus1
-          lda #6
+          lda #10
           sta rockSpriteBitPlus2
+          lda #12
+          sta rockSpriteBitPlus4
           lda #0
           sta rockSpriteOffset
           lda #36
@@ -303,28 +337,17 @@ moveRocks lda #4
 
           jsr moveRock
           
-          lda #8
-          sta rockSpriteBit
-          lda #9
-          sta rockSpriteBitPlus1
-          lda #10
-          sta rockSpriteBitPlus2
-          lda #2
-          sta rockSpriteOffset
-          lda #82
-          sta rockSpriteXPos
-          
-          jsr moveRock
-
           lda #16
           sta rockSpriteBit
           lda #17
           sta rockSpriteBitPlus1
           lda #18
           sta rockSpriteBitPlus2
-          lda #4
+          lda #20
+          sta rockSpriteBitPlus4
+          lda #2
           sta rockSpriteOffset
-          lda #128
+          lda #82
           sta rockSpriteXPos
           
           jsr moveRock
@@ -335,9 +358,11 @@ moveRocks lda #4
           sta rockSpriteBitPlus1
           lda #34
           sta rockSpriteBitPlus2
-          lda #6
+          lda #36
+          sta rockSpriteBitPlus4
+          lda #4
           sta rockSpriteOffset
-          lda #174
+          lda #128
           sta rockSpriteXPos
           
           jsr moveRock
@@ -348,6 +373,23 @@ moveRocks lda #4
           sta rockSpriteBitPlus1
           lda #66
           sta rockSpriteBitPlus2
+          lda #68
+          sta rockSpriteBitPlus4
+          lda #6
+          sta rockSpriteOffset
+          lda #174
+          sta rockSpriteXPos
+          
+          jsr moveRock
+
+          lda #128
+          sta rockSpriteBit
+          lda #129
+          sta rockSpriteBitPlus1
+          lda #130
+          sta rockSpriteBitPlus2
+          lda #132
+          sta rockSpriteBitPlus4
           lda #8
           sta rockSpriteOffset
           lda #220
@@ -425,10 +467,17 @@ checkRockForCollision lda spriteCollisionDetector
                       lda spriteCollisionDetector
                       and rockSpriteBitPlus2
                       cmp rockSpriteBitPlus2
+                      beq removeRock
+                      
+                      lda spriteCollisionDetector
+                      and rockSpriteBitPlus4
+                      cmp rockSpriteBitPlus4
+                      beq removeRock
+
                       bne moveRockDown
                       
-                      lda enableSprites ; remove rock and missile
-                      eor rockSpriteBitPlus2
+removeRock            lda enableSprites ; remove rock
+                      eor rockSpriteBit
                       sta enableSprites
                       
                       jsr incrementPopulationSaved
@@ -442,72 +491,130 @@ clearLastRockHitHover lda #0
 
 ; -------- check fire button --------         
 
-checkFireButton lda joyStick1
+checkFireButton lda fireButtonDelay
+                cmp #10
+                bne waitFireButtonDelay
+
+                lda joyStick1
                 eor #255
                 cmp #16
-                beq shootMissile
+                beq shootMissiles
                 cmp #24 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #20 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #17 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #18 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #25 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #21 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #26 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 cmp #22 ; with fire button
-                beq shootMissile
+                beq shootMissiles
                 rts
+                
+waitFireButtonDelay clc
+                    lda fireButtonDelay
+                    cmp #10
+                    beq finishFireButton
+                    
+                    adc #1
+                    sta fireButtonDelay
+                     
+finishFireButton rts               
+                    
 
 ; -------- shoot missile --------  
 
+shootMissiles lda enableSprites
+              and #2
+              cmp #2
+              bne shootMissile1
+              beq shootMissile2
+
+shootMissile1 lda #<missileSprite1
+              sta zeroPageScreenLoByte
+              lda #>missileSprite1
+              sta zeroPageScreenHiByte
+              
+              lda #2
+              sta missleSpriteBit
+              lda #0
+              sta missleSpriteOffset
+
+              jsr shootMissile
+              rts
+              
+shootMissile2 lda #<missileSprite2
+              sta zeroPageScreenLoByte
+              lda #>missileSprite2
+              sta zeroPageScreenHiByte
+              
+              lda #4
+              sta missleSpriteBit
+              lda #2
+              sta missleSpriteOffset
+
+              jsr shootMissile
+              rts
+
 shootMissile lda enableSprites
-             and #2
-             cmp #2 
+             and missleSpriteBit
+             cmp missleSpriteBit
              beq finishShootMissile
+             
+             lda #0
+             sta fireButtonDelay             
 
              ldx hoverSprite
              cpx #192
              beq shootMissileRight
              bne shootMissileLeft
 
-shootMissileRight jsr missileImgFaceRight
+shootMissileRight ldy #0
+                  ldx missleSpriteOffset
+                  
+                  lda #194
+                  sta (zeroPageScreenLoByte),y
 
                   lda hoverSpriteX
                   cmp #234
                   bcs finishShootMissile
                  
                   adc #21
-                  sta missileSpriteX
+                  sta missileSprite1X,x
 
                   lda hoverSpriteY
-                  sta missileSpriteY
+                  sta missileSprite1Y,x
                  
                   lda enableSprites
-                  eor #2
+                  eor missleSpriteBit
                   sta enableSprites
                  
                   rts
 
-shootMissileLeft jsr missileImgFaceLeft
+shootMissileLeft ldy #0
+                 ldx missleSpriteOffset
+
+                 lda #195
+                 sta (zeroPageScreenLoByte),y
 
                  lda hoverSpriteX
                  cmp #47
                  bcc finishShootMissile
                 
                  sbc #22
-                 sta missileSpriteX
+                 sta missileSprite1X,x
 
                  lda hoverSpriteY
-                 sta missileSpriteY
+                 sta missileSprite1Y,x
                  
                  lda enableSprites
-                 eor #2
+                 eor missleSpriteBit
                  sta enableSprites
                 
 finishShootMissile rts
@@ -787,18 +894,6 @@ hoverImgFaceRight lda #192
 hoverImgFaceLeft lda #193
                  sta hoverSprite
                  rts
-
-; -------- turn missile right --------
-               
-missileImgFaceRight lda #194
-                   sta missileSprite
-                   rts
-
-; -------- turn missile left --------
-               
-missileImgFaceLeft lda #195
-                  sta missileSprite
-                  rts
       
 ; -------- increment population saved --------
       
@@ -1038,55 +1133,6 @@ resetLifeMeterSubCounter lda #0
 
 gameOver rts ; this is good enought for now
 
-; -------- print hex value --------
-                 
-printHexValue  pha
-               lsr
-               lsr
-               lsr
-               lsr
-               jsr printHexNybble
-               pla
-               and #$0f
-printHexNybble cmp #$0a
-               bcs phnIsLetter
-phnIsDigit     ora #$30
-               bne phnPrint
-phnIsLetter    sbc #$09
-phnPrint       sta $0400, x
-               inx
-               rts
-             
-; -------- setup irq delay --------
-
-setupCustomIrq ldx #0
-               stx refreshScreen
-
-               sei
-               lda #<customIrq
-               sta irqvec
-               lda #>customIrq
-               sta irqvec+1
-               
-;               lda #$00
-;               sta $d012
-;               lda #$36
-;               sta $d012
-;               lda #$7f
-;               sta $dc0d
-;               lda #$1b
-;               sta $d011
-;               lda #7
-;               sta $d01a
-
-                cli
-                rts
-           
-; -------- irq delay --------
-        
-customIrq lda #1
-          sta refreshScreen
-          jmp irqnor
                  
 ; -------- build images --------
 
@@ -1104,19 +1150,19 @@ buildHoverLeftImg lda hoverLeftImgData,x
                   cpx #63
                   bne buildHoverLeftImg
 
-                    ldx #0
+                     ldx #0
 buildMissileRightImg lda missileRightImgData,x
-                    sta missileRightImg,x
+                     sta missileRightImg,x
+                     inx
+                     cpx #63
+                     bne buildMissileRightImg
+        
+                    ldx #0        
+buildMissileLeftImg lda missileLeftImgData,x
+                    sta missileLeftImg,x
                     inx
                     cpx #63
-                    bne buildMissileRightImg
-        
-                   ldx #0        
-buildMissileLeftImg lda missileLeftImgData,x
-                   sta missileLeftImg,x
-                   inx
-                   cpx #63
-                   bne buildMissileLeftImg
+                    bne buildMissileLeftImg
                     
              ldx #0        
 buildRockImg lda rockImgData,x
@@ -1783,21 +1829,79 @@ lifeMeterLineInc  iny
                 
 end     rts
 
+; -------- print hex value --------
+                 
+printHexValue  pha
+               lsr
+               lsr
+               lsr
+               lsr
+               jsr printHexNybble
+               pla
+               and #$0f
+printHexNybble cmp #$0a
+               bcs phnIsLetter
+phnIsDigit     ora #$30
+               bne phnPrint
+phnIsLetter    sbc #$09
+phnPrint       sta $0400, x
+               inx
+               rts
+             
+; -------- setup irq delay --------
+
+setupCustomIrq ldx #0
+               stx screenRefresh
+
+               sei
+               lda #<customIrq
+               sta irqvec
+               lda #>customIrq
+               sta irqvec+1
+               
+;               lda #$00
+;               sta $d012
+;               lda #$36
+;               sta $d012
+;               lda #$7f
+;               sta $dc0d
+;               lda #$1b
+;               sta $d011
+;               lda #7
+;               sta $d01a
+
+                cli
+                rts
+        
+customIrq lda #1
+          sta screenRefresh
+          jmp irqnor
+
 ; -------- custom variables --------
 
 hoverHitLeftEdge        .byte 0
 hoverHitRightEdge       .byte 0
 hoverHitTopEdge         .byte 0
 hoverHitBottomEdge      .byte 0
-refreshScreen           .byte 0
-spriteCollisionDetector .byte 0
+
+missleSpriteBit         .byte 0 ; bit number
+missleSpriteOffset      .byte 0
+missleSpriteXPos        .byte 0
+missleSpriteBlock       .byte 0
+
+
 rockSpriteBit           .byte 0 ; bit number
-rockSpriteBitPlus1      .byte 0
-rockSpriteBitPlus2      .byte 0
+rockSpriteBitPlus1      .byte 0 ; rock plus hover
+rockSpriteBitPlus2      .byte 0 ; rock plus missle1
+rockSpriteBitPlus4      .byte 0 ; rock plus missle2
 rockSpriteOffset        .byte 0
 rockSpriteXPos          .byte 0
+
+screenRefresh           .byte 0
+fireButtonDelay         .byte 0
 populationSaved         .byte 0,0
 lastRockHoverHit        .byte 0
+spriteCollisionDetector .byte 0
 
 lifeMeterCounter        .byte 0
 lifeMeterSubCounter     .byte 0
