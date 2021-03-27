@@ -455,7 +455,7 @@ rockHitBottom lda enableSprites ; remove rock
 
               lda lastRockHoverHit
               cmp rockSpriteBit
-              bne clearLastRockHitHover
+              beq clearLastRockHitHover
 
               rts
                         
