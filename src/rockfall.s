@@ -4,6 +4,14 @@ v                     = 53248
 irqvec                = $314 ; 788
 irqnor                = $ea31 ; 59953 standard irq routine
 
+sidVolume             = 54296
+sidAttackDecay        = 54277
+sidSustainRelease     = 54278
+sidFrequencyLoByte    = 54272  ; start of sid 
+sidFrequencyHiByte    = 54273
+sidVoice1             = 54276
+jiffyClockLoByte      = 162
+
 chrout                = $ffd2
 textColor             = $0286
 plot                  = $fff0
@@ -467,18 +475,20 @@ checkRockForCollision lda spriteCollisionDetector
                       lda spriteCollisionDetector
                       and rockSpriteBitPlus2
                       cmp rockSpriteBitPlus2
-                      beq removeRock
+                      beq missileHitRock
                       
                       lda spriteCollisionDetector
                       and rockSpriteBitPlus4
                       cmp rockSpriteBitPlus4
-                      beq removeRock
+                      beq missileHitRock
 
                       bne moveRockDown
                       
-removeRock            lda enableSprites ; remove rock
+missileHitRock        lda enableSprites ; remove rock
                       eor rockSpriteBit
                       sta enableSprites
+                      
+                      jsr explodeSound
                       
                       jsr incrementPopulationSaved
 
@@ -581,6 +591,7 @@ shootMissileRight ldy #0
                   lda #194
                   sta (zeroPageScreenLoByte),y
 
+                  clc
                   lda hoverSpriteX
                   cmp #234
                   bcs finishShootMissile
@@ -1828,6 +1839,45 @@ lifeMeterLineInc  iny
 ; -------- end game --------
                 
 end     rts
+
+; -------- explode sound --------
+
+explodeSound jsr sidClear
+
+             lda #15
+             sta sidVolume
+
+             lda #$0c
+             sta sidAttackDecay
+
+             lda #$18
+             sta sidSustainRelease
+
+             lda #0
+             sta sidFrequencyLoByte
+
+             lda #24
+             sta sidFrequencyHiByte
+
+             lda #%10000001
+             sta sidVoice1
+
+;             lda #1
+;             adc jiffyClockLoByte       
+;sidDelay     cmp jiffyClockLoByte
+;             bne sidDelay
+
+;             lda #%10000000
+;             sta sidVoice1
+             rts
+       
+sidClear     lda #0
+             ldy #8
+sidClearLoop sta sidFrequencyLoByte,y
+             dey
+             bpl sidClearLoop
+             rts       
+
 
 ; -------- print hex value --------
                  
